@@ -1,2 +1,2 @@
 var printerName = "LC Dental";
-var repo = "PhotocentricPublic/Photonic3D";
+var repo = "mateuszbetlej/Photonic3DTestingV1";
