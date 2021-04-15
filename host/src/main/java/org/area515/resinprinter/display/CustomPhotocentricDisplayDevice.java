@@ -40,10 +40,10 @@ public class CustomPhotocentricDisplayDevice extends GraphicsDevice {
 
 	public CustomPhotocentricDisplayDevice(String displayName) {
 		this.displayName = displayName;
-		bitDepth = 24;
-		refreshRate = 24;
-		width = 3840;
-		height = 2160;
+		bitDepth = 32;
+		refreshRate = 60;
+		width = 2048;
+		height = 1536;
 
 		logger.debug("CustomPhotocentricDisplayDevice initialising...\n");
 		try {
