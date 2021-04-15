@@ -125,7 +125,7 @@ public class CustomPhotocentricDisplayDevice extends GraphicsDevice {
         }
 
         try {
-            photocentricDisplayServerProcess = Runtime.getRuntime().exec("/home/pi/raspidmx/pngview/pngview -d 5 " + filename);
+            photocentricDisplayServerProcess = Runtime.getRuntime().exec("/opt/cwh/os/Linux/armv61/pdp 5 300 " + filename);
         } catch ( IOException e ) {
             logger.debug("Failed to spawn Photocentric display server process\n");
         }
