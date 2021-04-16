@@ -125,7 +125,7 @@ public class CustomPhotocentricDisplayDevice extends GraphicsDevice {
         }
 
         try {
-            photocentricDisplayServerProcess = Runtime.getRuntime().exec("/home/pi/raspidmx/pngview/pngview -d 5 /printdir/SliceJob_LiquidCrystalDental_15-04-2021.cws/creationworkshop0001.png");
+            photocentricDisplayServerProcess = Runtime.getRuntime().exec("/home/pi/raspidmx/pngview/pngview -d 5 /home/pi/creationworkshop0002.png");
         } catch ( IOException e ) {
             logger.debug("Failed to spawn Photocentric display server process\n");
         }
