@@ -303,6 +303,7 @@ public class DispManXDevice implements GraphicsOutputInterface {
 		} finally {
 			activityLock.unlock();
 		}
+	
 	}
 	
 	@Override
@@ -311,6 +312,7 @@ public class DispManXDevice implements GraphicsOutputInterface {
 		startingTimeForCurrentSlice = System.currentTimeMillis();
 
 		if (image.getWidth() == imageWidth && image.getHeight() == imageHeight) {
+			//fix these , we're not returning 
 			imagePixels = showImage(imagePixels, image);
 		} else {
 			imagePixels = showImage(null, image);

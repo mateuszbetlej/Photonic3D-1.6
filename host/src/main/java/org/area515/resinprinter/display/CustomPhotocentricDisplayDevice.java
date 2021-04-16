@@ -46,26 +46,26 @@ public class CustomPhotocentricDisplayDevice extends GraphicsDevice {
 		height = 1536;
 
 		logger.debug("CustomPhotocentricDisplayDevice initialising...\n");
-		try {
-			ProcessBuilder pb = new ProcessBuilder("/opt/cwh/os/Linux/armv61/pdp", "5");
-			pb.redirectErrorStream(true);
+		// try {
+		// 	ProcessBuilder pb = new ProcessBuilder("/opt/cwh/os/Linux/armv61/pdp", "5");
+		// 	pb.redirectErrorStream(true);
 
-			photocentricDisplayServerProcess = pb.start(); 
-			BufferedReader br = new BufferedReader(new InputStreamReader(photocentricDisplayServerProcess.getInputStream()));
+		// 	photocentricDisplayServerProcess = pb.start(); 
+		// 	BufferedReader br = new BufferedReader(new InputStreamReader(photocentricDisplayServerProcess.getInputStream()));
 
-			String line = br.readLine();
-			photocentricDisplayServerProcess.waitFor();
-            logger.debug("PDP Init: processraw={}\n", line);
-			String[] dims = line.split(",");
-			width = Integer.parseInt( dims[0].trim() );
-			height = Integer.parseInt( dims[1].trim() );
-            logger.debug("PDP Init: w={} h={}\n", width, height);
-			photocentricDisplayServerProcess.destroy();
-        } catch ( IOException e ) {
-            logger.error("Failed to spawn Photocentric display server process [IO]\n");
-        } catch ( InterruptedException e) {
-			logger.error("Failed to spawn Photocentric display server process [Interrupted]\n");
-        }
+		// 	String line = br.readLine();
+		// 	photocentricDisplayServerProcess.waitFor();
+        //     logger.debug("PDP Init: processraw={}\n", line);
+		// 	String[] dims = line.split(",");
+		// 	width = Integer.parseInt( dims[0].trim() );
+		// 	height = Integer.parseInt( dims[1].trim() );
+        //     logger.debug("PDP Init: w={} h={}\n", width, height);
+		// 	photocentricDisplayServerProcess.destroy();
+        // } catch ( IOException e ) {
+        //     logger.error("Failed to spawn Photocentric display server process [IO]\n");
+        // } catch ( InterruptedException e) {
+		// 	logger.error("Failed to spawn Photocentric display server process [Interrupted]\n");
+        // }
 	}
 
 	@Override
