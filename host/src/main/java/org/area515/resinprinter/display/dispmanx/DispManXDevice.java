@@ -94,7 +94,8 @@ public class DispManXDevice implements GraphicsOutputInterface {
 	    	}
 	    	bounds.setBounds(0, 0, width.getValue(), height.getValue());
 	    	
-	    	displayHandle = DispManX.INSTANCE.vc_dispmanx_display_open(screen.getId());
+	    	//displayHandle = DispManX.INSTANCE.vc_dispmanx_display_open(screen.getId());
+			displayHandle = 5;
 	    	if (displayHandle == 0) {
 	    		throw new IllegalArgumentException("vc_dispmanx_display_open failed with:" + returnCode);
 	    	}
@@ -104,7 +105,7 @@ public class DispManXDevice implements GraphicsOutputInterface {
 	        alpha.opacity = 255;
 	        screenInitialized = false;
     	} finally {
-    		//displayLock.unlock();
+    		displayLock.unlock();
     	}
     }
     
