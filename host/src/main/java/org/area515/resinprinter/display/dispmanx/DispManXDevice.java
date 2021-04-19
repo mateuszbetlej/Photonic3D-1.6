@@ -131,180 +131,180 @@ public class DispManXDevice implements GraphicsOutputInterface {
     }
     
 	private Memory loadBitmapRGB565(BufferedImage image, Memory destPixels, IntByReference width, IntByReference height, IntByReference pitchByRef) {
-		int bytesPerPixel = 2;
-		int pitch = getPitch(bytesPerPixel * image.getWidth(), 32);
-		pitchByRef.setValue(pitch);
-		if (destPixels == null) {
-			destPixels = new Memory(pitch * image.getHeight());
-		}
+		// int bytesPerPixel = 2;
+		// int pitch = getPitch(bytesPerPixel * image.getWidth(), 32);
+		// pitchByRef.setValue(pitch);
+		// if (destPixels == null) {
+		// 	destPixels = new Memory(pitch * image.getHeight());
+		// }
 		
-        for (int y = 0; y < image.getHeight(); y++) {
-            for (int x = 0; x < image.getWidth(); x++) {
-        		int rgb = image.getRGB(x, y);
-        		destPixels.setShort((y*(pitch / bytesPerPixel) + x) * bytesPerPixel, (short)(((rgb & 0xf80000) >>> 8) | ((rgb & 0xfc00) >>> 5) | (rgb & 0xf8 >>> 3)));
-            }
-        }
-        width.setValue(image.getWidth());
-        height.setValue(image.getHeight());
-        return destPixels;
+        // for (int y = 0; y < image.getHeight(); y++) {
+        //     for (int x = 0; x < image.getWidth(); x++) {
+        // 		int rgb = image.getRGB(x, y);
+        // 		destPixels.setShort((y*(pitch / bytesPerPixel) + x) * bytesPerPixel, (short)(((rgb & 0xf80000) >>> 8) | ((rgb & 0xfc00) >>> 5) | (rgb & 0xf8 >>> 3)));
+        //     }
+        // }
+        // width.setValue(image.getWidth());
+        // height.setValue(image.getHeight());
+        // return destPixels;
 	}
 
 	private Memory loadBitmapARGB8888(BufferedImage image, Memory destPixels, IntByReference width, IntByReference height, IntByReference pitchByRef) {
-		int bytesPerPixel = 4;
-		int pitch = getPitch(bytesPerPixel * image.getWidth(), 32);
-		pitchByRef.setValue(pitch);
-		if (destPixels == null) {
-			destPixels = new Memory(pitch * image.getHeight());
-		}
+		// int bytesPerPixel = 4;
+		// int pitch = getPitch(bytesPerPixel * image.getWidth(), 32);
+		// pitchByRef.setValue(pitch);
+		// if (destPixels == null) {
+		// 	destPixels = new Memory(pitch * image.getHeight());
+		// }
 		
-		logger.debug("loadBitmapARGB8888 alg started:{}", () -> Log4jUtil.splitTimer(IMAGE_REALIZE_TIMER));
-		byte[] raw_image = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-		for (int y = 0; y < image.getHeight(); y++) {
-			destPixels.write(y * pitch, raw_image, y * image.getWidth() * bytesPerPixel,
-					image.getWidth() * bytesPerPixel);
-		}
-		logger.debug("loadBitmapARGB8888 alg complete:{}", () -> Log4jUtil.completeTimer(IMAGE_REALIZE_TIMER));
+		// logger.debug("loadBitmapARGB8888 alg started:{}", () -> Log4jUtil.splitTimer(IMAGE_REALIZE_TIMER));
+		// byte[] raw_image = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+		// for (int y = 0; y < image.getHeight(); y++) {
+		// 	destPixels.write(y * pitch, raw_image, y * image.getWidth() * bytesPerPixel,
+		// 			image.getWidth() * bytesPerPixel);
+		// }
+		// logger.debug("loadBitmapARGB8888 alg complete:{}", () -> Log4jUtil.completeTimer(IMAGE_REALIZE_TIMER));
 
-        width.setValue(image.getWidth());
-        height.setValue(image.getHeight());
-        return destPixels;
+        // width.setValue(image.getWidth());
+        // height.setValue(image.getHeight());
+        // return destPixels;
 	}
 
 	@Override
 	public void showBlankImage() {
-		initializeScreen();
-		removeAllElementsFromScreen();
+		// initializeScreen();
+		// removeAllElementsFromScreen();
 	}
 
 	private void removeAllElementsFromScreen() {
-		logger.info("screen cleanup started");
-        int updateHandle = DispManX.INSTANCE.vc_dispmanx_update_start( 0 );
-        if (updateHandle == 0) {
-        	logger.info("vc_dispmanx_update_start failed");
-        } else {
-        	logger.debug("image vc_dispmanx_element_remove result:" + DispManX.INSTANCE.vc_dispmanx_element_remove(updateHandle, imageElementHandle));
-        	logger.debug("vc_dispmanx_update_submit_sync result:" + DispManX.INSTANCE.vc_dispmanx_update_submit_sync(updateHandle));
-        	logger.debug("image vc_dispmanx_resource_delete result:" + DispManX.INSTANCE.vc_dispmanx_resource_delete(imageResourceHandle));
-        }
+		// logger.info("screen cleanup started");
+        // int updateHandle = DispManX.INSTANCE.vc_dispmanx_update_start( 0 );
+        // if (updateHandle == 0) {
+        // 	logger.info("vc_dispmanx_update_start failed");
+        // } else {
+        // 	logger.debug("image vc_dispmanx_element_remove result:" + DispManX.INSTANCE.vc_dispmanx_element_remove(updateHandle, imageElementHandle));
+        // 	logger.debug("vc_dispmanx_update_submit_sync result:" + DispManX.INSTANCE.vc_dispmanx_update_submit_sync(updateHandle));
+        // 	logger.debug("image vc_dispmanx_resource_delete result:" + DispManX.INSTANCE.vc_dispmanx_resource_delete(imageResourceHandle));
+        // }
 	}
 	
 	private void initializeCalibrationAndGridImage() {
-		if (calibrationAndGridImage != null) {
-			return;
-		}
+		// if (calibrationAndGridImage != null) {
+		// 	return;
+		// }
 		
-		calibrationAndGridImage = new BufferedImage(bounds.width, bounds.height, BufferedImage.TYPE_INT_ARGB);
+		// calibrationAndGridImage = new BufferedImage(bounds.width, bounds.height, BufferedImage.TYPE_INT_ARGB);
 	}
 	
 	@Override
 	public void showCalibrationImage(int xPixels, int yPixels) {
-		logger.debug("Calibration assigned:{}", () -> Log4jUtil.startTimer(IMAGE_REALIZE_TIMER));
-		showBlankImage();
-		initializeCalibrationAndGridImage();
-		Graphics2D graphics = (Graphics2D)calibrationAndGridImage.createGraphics();
-		GraphicsOutputInterface.showCalibration(graphics, bounds, xPixels, yPixels);
-		graphics.dispose();
-		calibrationAndGridPixels = showImage(calibrationAndGridPixels, calibrationAndGridImage);
-		logger.debug("Calibration realized:{}", () -> Log4jUtil.completeTimer(IMAGE_REALIZE_TIMER));
+		// logger.debug("Calibration assigned:{}", () -> Log4jUtil.startTimer(IMAGE_REALIZE_TIMER));
+		// showBlankImage();
+		// initializeCalibrationAndGridImage();
+		// Graphics2D graphics = (Graphics2D)calibrationAndGridImage.createGraphics();
+		// GraphicsOutputInterface.showCalibration(graphics, bounds, xPixels, yPixels);
+		// graphics.dispose();
+		// calibrationAndGridPixels = showImage(calibrationAndGridPixels, calibrationAndGridImage);
+		// logger.debug("Calibration realized:{}", () -> Log4jUtil.completeTimer(IMAGE_REALIZE_TIMER));
 	}
 	
 	@Override
 	public void showGridImage(int pixels) {
-		logger.debug("Grid assigned:{}", () -> Log4jUtil.startTimer(IMAGE_REALIZE_TIMER));
-		showBlankImage();
-		initializeCalibrationAndGridImage();
-		Graphics2D graphics = (Graphics2D)calibrationAndGridImage.createGraphics();
-		GraphicsOutputInterface.showGrid(graphics, bounds, pixels);
-		graphics.dispose();
+		// logger.debug("Grid assigned:{}", () -> Log4jUtil.startTimer(IMAGE_REALIZE_TIMER));
+		// showBlankImage();
+		// initializeCalibrationAndGridImage();
+		// Graphics2D graphics = (Graphics2D)calibrationAndGridImage.createGraphics();
+		// GraphicsOutputInterface.showGrid(graphics, bounds, pixels);
+		// graphics.dispose();
 		
-		calibrationAndGridPixels = showImage(calibrationAndGridPixels, calibrationAndGridImage);		
-		logger.debug("Grid realized:{}", () -> Log4jUtil.completeTimer(IMAGE_REALIZE_TIMER));
+		// calibrationAndGridPixels = showImage(calibrationAndGridPixels, calibrationAndGridImage);		
+		// logger.debug("Grid realized:{}", () -> Log4jUtil.completeTimer(IMAGE_REALIZE_TIMER));
 	}
 	
 	private Memory showImage(Memory memory, BufferedImage image) {
-		activityLock.lock();
-		try {
-			showBlankImage();//delete the old resources because we are creating new ones...
+		// activityLock.lock();
+		// try {
+		// 	showBlankImage();//delete the old resources because we are creating new ones...
 			
-	        IntByReference imageWidth = new IntByReference();
-	        IntByReference imageHeight = new IntByReference();
-	        IntByReference imagePitch = new IntByReference();
+	    //     IntByReference imageWidth = new IntByReference();
+	    //     IntByReference imageHeight = new IntByReference();
+	    //     IntByReference imagePitch = new IntByReference();
 	        
-	        memory = loadBitmapARGB8888(image, memory, imageWidth, imageHeight, imagePitch);
-	        VC_RECT_T.ByReference sourceRect = new VC_RECT_T.ByReference();
-	        DispManX.INSTANCE.vc_dispmanx_rect_set(sourceRect, 0, 0, imageWidth.getValue()<<16, imageHeight.getValue()<<16);//Shifting by 16 is a zoom factor of zero
+	    //     memory = loadBitmapARGB8888(image, memory, imageWidth, imageHeight, imagePitch);
+	    //     VC_RECT_T.ByReference sourceRect = new VC_RECT_T.ByReference();
+	    //     DispManX.INSTANCE.vc_dispmanx_rect_set(sourceRect, 0, 0, imageWidth.getValue()<<16, imageHeight.getValue()<<16);//Shifting by 16 is a zoom factor of zero
 	        
-	        IntByReference nativeImageReference = new IntByReference();
-	        imageResourceHandle = DispManX.INSTANCE.vc_dispmanx_resource_create(
-	        		VC_IMAGE_TYPE_T.VC_IMAGE_ARGB8888.getcIndex(), 
-	        		imageWidth.getValue(), 
-	        		imageHeight.getValue(), 
-	        		nativeImageReference);
-	        if (imageResourceHandle == 0) {
-	        	throw new IllegalArgumentException("Couldn't create resourceHandle for dispmanx");
-	        }
+	    //     IntByReference nativeImageReference = new IntByReference();
+	    //     imageResourceHandle = DispManX.INSTANCE.vc_dispmanx_resource_create(
+	    //     		VC_IMAGE_TYPE_T.VC_IMAGE_ARGB8888.getcIndex(), 
+	    //     		imageWidth.getValue(), 
+	    //     		imageHeight.getValue(), 
+	    //     		nativeImageReference);
+	    //     if (imageResourceHandle == 0) {
+	    //     	throw new IllegalArgumentException("Couldn't create resourceHandle for dispmanx");
+	    //     }
 	        
-	        VC_RECT_T.ByReference sizeRect = new VC_RECT_T.ByReference();
-	        DispManX.INSTANCE.vc_dispmanx_rect_set(sizeRect, 0, 0, imageWidth.getValue(), imageHeight.getValue());
-	        int returnCode = DispManX.INSTANCE.vc_dispmanx_resource_write_data( 
-	        		imageResourceHandle, 
-	        		VC_IMAGE_TYPE_T.VC_IMAGE_ARGB8888.getcIndex(), 
-	        		imagePitch.getValue() , 
-	        		memory, 
-	        		sizeRect);
-	        if (returnCode != 0) {
-	        	throw new IllegalArgumentException("Couldn't vc_dispmanx_resource_write_data for dispmanx:" + returnCode);
-	        }
+	    //     VC_RECT_T.ByReference sizeRect = new VC_RECT_T.ByReference();
+	    //     DispManX.INSTANCE.vc_dispmanx_rect_set(sizeRect, 0, 0, imageWidth.getValue(), imageHeight.getValue());
+	    //     int returnCode = DispManX.INSTANCE.vc_dispmanx_resource_write_data( 
+	    //     		imageResourceHandle, 
+	    //     		VC_IMAGE_TYPE_T.VC_IMAGE_ARGB8888.getcIndex(), 
+	    //     		imagePitch.getValue() , 
+	    //     		memory, 
+	    //     		sizeRect);
+	    //     if (returnCode != 0) {
+	    //     	throw new IllegalArgumentException("Couldn't vc_dispmanx_resource_write_data for dispmanx:" + returnCode);
+	    //     }
 	        
-	        int updateHandle = DispManX.INSTANCE.vc_dispmanx_update_start(0);  //This method should be called create update
-	        if (updateHandle == 0) {
-	        	throw new IllegalArgumentException("Couldn't vc_dispmanx_update_start for dispmanx");
-	        }
+	    //     int updateHandle = DispManX.INSTANCE.vc_dispmanx_update_start(0);  //This method should be called create update
+	    //     if (updateHandle == 0) {
+	    //     	throw new IllegalArgumentException("Couldn't vc_dispmanx_update_start for dispmanx");
+	    //     }
 	
-	        VC_RECT_T.ByReference destinationRect = new VC_RECT_T.ByReference();
-	        DispManX.INSTANCE.vc_dispmanx_rect_set(
-	        		destinationRect, 
-	        		(bounds.width - imageWidth.getValue()) / 2, 
-	        		(bounds.height - imageHeight.getValue()) / 2, 
-	        		imageWidth.getValue(), 
-	        		imageHeight.getValue());
-	        imageElementHandle = DispManX.INSTANCE.vc_dispmanx_element_add(     //Creates and adds the element to the current screen update
-	        		updateHandle, 
-	        		displayHandle, 
-	        		1, 
-	        		destinationRect, 
-	        		imageResourceHandle, 
-	        		sourceRect, 
-	        		PROTECTION.DISPMANX_PROTECTION_NONE.getcConst(), 
-	        		alpha, 
-	        		0, 
-	        		VC_IMAGE_TRANSFORM_T.VC_IMAGE_ROT0.getcConst());
-	        if (updateHandle == 0) {
-	        	throw new IllegalArgumentException("Couldn't vc_dispmanx_element_add for dispmanx");
-	        }
+	    //     VC_RECT_T.ByReference destinationRect = new VC_RECT_T.ByReference();
+	    //     DispManX.INSTANCE.vc_dispmanx_rect_set(
+	    //     		destinationRect, 
+	    //     		(bounds.width - imageWidth.getValue()) / 2, 
+	    //     		(bounds.height - imageHeight.getValue()) / 2, 
+	    //     		imageWidth.getValue(), 
+	    //     		imageHeight.getValue());
+	    //     imageElementHandle = DispManX.INSTANCE.vc_dispmanx_element_add(     //Creates and adds the element to the current screen update
+	    //     		updateHandle, 
+	    //     		displayHandle, 
+	    //     		1, 
+	    //     		destinationRect, 
+	    //     		imageResourceHandle, 
+	    //     		sourceRect, 
+	    //     		PROTECTION.DISPMANX_PROTECTION_NONE.getcConst(), 
+	    //     		alpha, 
+	    //     		0, 
+	    //     		VC_IMAGE_TRANSFORM_T.VC_IMAGE_ROT0.getcConst());
+	    //     if (updateHandle == 0) {
+	    //     	throw new IllegalArgumentException("Couldn't vc_dispmanx_element_add for dispmanx");
+	    //     }
 	
-	        returnCode = DispManX.INSTANCE.vc_dispmanx_update_submit_sync(updateHandle);//Wait for the update to complete
-	        if (returnCode != 0) {
-	        	throw new IllegalArgumentException("Couldn't vc_dispmanx_update_submit_sync for dispmanx:" + returnCode);
-	        }
+	    //     returnCode = DispManX.INSTANCE.vc_dispmanx_update_submit_sync(updateHandle);//Wait for the update to complete
+	    //     if (returnCode != 0) {
+	    //     	throw new IllegalArgumentException("Couldn't vc_dispmanx_update_submit_sync for dispmanx:" + returnCode);
+	    //     }
 	        
-	        return memory;
-		} finally {
-			activityLock.unlock();
-		}
+	    //     return memory;
+		// } finally {
+		// 	activityLock.unlock();
+		// }
 	}
 	
 	@Override
 	public void showImage(BufferedImage image, boolean performFullUpdate) {
-		logger.debug("Image assigned:{}", () -> Log4jUtil.startTimer(IMAGE_REALIZE_TIMER));
-		if (image.getWidth() == imageWidth && image.getHeight() == imageHeight) {
-			imagePixels = showImage(imagePixels, image);
-		} else {
-			imagePixels = showImage(null, image);
-		}
-		imageWidth = image.getWidth();
-		imageHeight = image.getHeight();
-		logger.debug("Image realized:{}", () -> Log4jUtil.completeTimer(IMAGE_REALIZE_TIMER));
+		// logger.debug("Image assigned:{}", () -> Log4jUtil.startTimer(IMAGE_REALIZE_TIMER));
+		// if (image.getWidth() == imageWidth && image.getHeight() == imageHeight) {
+		// 	imagePixels = showImage(imagePixels, image);
+		// } else {
+		// 	imagePixels = showImage(null, image);
+		// }
+		// imageWidth = image.getWidth();
+		// imageHeight = image.getHeight();
+		// logger.debug("Image realized:{}", () -> Log4jUtil.completeTimer(IMAGE_REALIZE_TIMER));
 	}
 	
 	@Override
