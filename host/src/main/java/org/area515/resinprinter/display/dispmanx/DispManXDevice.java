@@ -147,6 +147,7 @@ public class DispManXDevice implements GraphicsOutputInterface {
         // width.setValue(image.getWidth());
         // height.setValue(image.getHeight());
         // return destPixels;
+		return
 	}
 
 	private Memory loadBitmapARGB8888(BufferedImage image, Memory destPixels, IntByReference width, IntByReference height, IntByReference pitchByRef) {
@@ -168,6 +169,7 @@ public class DispManXDevice implements GraphicsOutputInterface {
         // width.setValue(image.getWidth());
         // height.setValue(image.getHeight());
         // return destPixels;
+		return
 	}
 
 	@Override
@@ -292,6 +294,7 @@ public class DispManXDevice implements GraphicsOutputInterface {
 		// } finally {
 		// 	activityLock.unlock();
 		// }
+		return
 	}
 	
 	@Override
