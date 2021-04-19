@@ -195,6 +195,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 							// Call display driver.
 							logger.info("Display picture on screen: {}", imageFilename);
 							//printer.showImage(data.getPrintableImage(), true);
+							exec("/home/pi/raspidmx/pngview/pngview -d 5 /home/pi/creationworkshop0002.png");
 							
 							if (oldImage != null) {
 								oldImage.flush();
