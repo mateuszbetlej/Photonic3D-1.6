@@ -270,7 +270,7 @@ public class DispManXDevice implements GraphicsOutputInterface {
 	        		imageHeight.getValue());
 	        imageElementHandle = DispManX.INSTANCE.vc_dispmanx_element_add(     //Creates and adds the element to the current screen update
 	        		updateHandle, 
-	        		//displayHandle, 
+	        		displayHandle, 
 	        		1, 
 	        		destinationRect, 
 	        		imageResourceHandle, 
