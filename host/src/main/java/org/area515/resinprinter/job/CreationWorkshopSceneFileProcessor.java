@@ -166,7 +166,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 
 						if (matcher.group(1).toUpperCase().equals("BLANK")) {
 							logger.info("Show Blank");
-							printer.showBlankImage();
+							//printer.showBlankImage();
 							
 							//This is the perfect time to wait for a pause if one is required.
 							printer.waitForPauseIfRequired();
@@ -194,7 +194,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 
 							// Call display driver.
 							logger.info("Display picture on screen: {}", imageFilename);
-							printer.showImage(data.getPrintableImage(), true);
+							//printer.showImage(data.getPrintableImage(), true);
 							
 							if (oldImage != null) {
 								oldImage.flush();
