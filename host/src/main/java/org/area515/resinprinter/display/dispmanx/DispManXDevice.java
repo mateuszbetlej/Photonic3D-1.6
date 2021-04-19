@@ -94,10 +94,10 @@ public class DispManXDevice implements GraphicsOutputInterface {
 	    // 	}
 	    // 	bounds.setBounds(0, 0, width.getValue(), height.getValue());
 	    	
-	    // 	// displayHandle = DispManX.INSTANCE.vc_dispmanx_display_open(screen.getId());
-	    // 	// if (displayHandle == 0) {
-	    // 	// 	throw new IllegalArgumentException("vc_dispmanx_display_open failed with:" + returnCode);
-	    // 	// }
+		displayHandle = DispManX.INSTANCE.vc_dispmanx_display_open(screen.getId());
+		if (displayHandle == 0) {
+			throw new IllegalArgumentException("vc_dispmanx_display_open failed with:" + returnCode);
+		}
 	    	
 	    //     VC_DISPMANX_ALPHA_T.ByReference alpha = new VC_DISPMANX_ALPHA_T.ByReference();
 	    //     alpha.flags = ALPHA.DISPMANX_FLAGS_ALPHA_FROM_SOURCE.getFlag() | ALPHA.DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS.getFlag();
