@@ -94,10 +94,10 @@ public class DispManXDevice implements GraphicsOutputInterface {
 	    	}
 	    	bounds.setBounds(0, 0, width.getValue(), height.getValue());
 	    	
-	    	displayHandle = DispManX.INSTANCE.vc_dispmanx_display_open(screen.getId());
-	    	if (displayHandle == 0) {
-	    		throw new IllegalArgumentException("vc_dispmanx_display_open failed with:" + returnCode);
-	    	}
+	    	// displayHandle = DispManX.INSTANCE.vc_dispmanx_display_open(screen.getId());
+	    	// if (displayHandle == 0) {
+	    	// 	throw new IllegalArgumentException("vc_dispmanx_display_open failed with:" + returnCode);
+	    	// }
 	    	
 	        VC_DISPMANX_ALPHA_T.ByReference alpha = new VC_DISPMANX_ALPHA_T.ByReference();
 	        alpha.flags = ALPHA.DISPMANX_FLAGS_ALPHA_FROM_SOURCE.getFlag() | ALPHA.DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS.getFlag();
@@ -114,7 +114,7 @@ public class DispManXDevice implements GraphicsOutputInterface {
     	try {
 			logger.info("dispose screen");
 			removeAllElementsFromScreen();
-	    	logger.info("vc_dispmanx_display_close result:" + DispManX.INSTANCE.vc_dispmanx_display_close(displayHandle));
+	    	//logger.info("vc_dispmanx_display_close result:" + DispManX.INSTANCE.vc_dispmanx_display_close(displayHandle));
 	    	calibrationAndGridPixels = null;
 	    	imagePixels = null;
 	    	calibrationAndGridImage = null;
@@ -270,7 +270,7 @@ public class DispManXDevice implements GraphicsOutputInterface {
 	        		imageHeight.getValue());
 	        imageElementHandle = DispManX.INSTANCE.vc_dispmanx_element_add(     //Creates and adds the element to the current screen update
 	        		updateHandle, 
-	        		displayHandle, 
+	        		//displayHandle, 
 	        		1, 
 	        		destinationRect, 
 	        		imageResourceHandle, 
