@@ -42,35 +42,35 @@ public class GraphicsDeviceOutputInterface implements GraphicsOutputInterface {
 		return false;
 	}
 
-	@Override
-	public void resetSliceCount() {
-		throw new IllegalStateException("You should never call resetSliceCount from this class");
-	}
+	// @Override
+	// public void resetSliceCount() {
+	// 	throw new IllegalStateException("You should never call resetSliceCount from this class");
+	// }
 
-	@Override
-	public void dispose() {
-		throw new IllegalStateException("You should never call dispose from this class");
-	}
+	// @Override
+	// public void dispose() {
+	// 	throw new IllegalStateException("You should never call dispose from this class");
+	// }
 
-	@Override
-	public void showBlankImage() {
-		throw new IllegalStateException("You should never call showBlankImage from this class");
-	}
+	// @Override
+	// public void showBlankImage() {
+	// 	throw new IllegalStateException("You should never call showBlankImage from this class");
+	// }
 
-	@Override
-	public void showCalibrationImage(int xPixels, int yPixels) {
-		throw new IllegalStateException("You should never call showCalibrationImage from this class");
-	}
+	// @Override
+	// public void showCalibrationImage(int xPixels, int yPixels) {
+	// 	throw new IllegalStateException("You should never call showCalibrationImage from this class");
+	// }
 
-	@Override
-	public void showGridImage(int pixels) {
-		throw new IllegalStateException("You should never call showGridImage from this class");
-	}
+	// @Override
+	// public void showGridImage(int pixels) {
+	// 	throw new IllegalStateException("You should never call showGridImage from this class");
+	// }
 
-	@Override
-	public void showImage(BufferedImage image, boolean performFullUpdate) {
-		throw new IllegalStateException("You should never call showImage from this class");
-	}
+	// @Override
+	// public void showImage(BufferedImage image, boolean performFullUpdate) {
+	// 	throw new IllegalStateException("You should never call showImage from this class");
+	// }
 
 	@Override
 	public String buildIDString() {
