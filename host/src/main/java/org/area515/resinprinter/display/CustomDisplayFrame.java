@@ -25,19 +25,19 @@ public class CustomDisplayFrame extends Frame {
 		graphicsDevice = device;
 	}
 
-	// public void repaint() {
-	// 	CustomPhotocentricDisplayDevice dev = (CustomPhotocentricDisplayDevice)graphicsDevice;
-	// 	Rectangle screenSize = dev.getBounds();
-	// 	BufferedImage bi = new BufferedImage(screenSize.width, screenSize.height, BufferedImage.TYPE_4BYTE_ABGR);
-	// 	Graphics2D g2 = bi.createGraphics();
-	// 	paint( g2 );
-	// 	dev.outputImage( bi );
-	// 	g2.dispose();
-	// 	bi.flush();
-	// }
+	public void repaint() {
+		CustomPhotocentricDisplayDevice dev = (CustomPhotocentricDisplayDevice)graphicsDevice;
+		Rectangle screenSize = dev.getBounds();
+		BufferedImage bi = new BufferedImage(screenSize.width, screenSize.height, BufferedImage.TYPE_4BYTE_ABGR);
+		Graphics2D g2 = bi.createGraphics();
+		paint( g2 );
+		dev.outputImage( bi );
+		g2.dispose();
+		bi.flush();
+	}
 
-	// public Rectangle getBounds() {
-	// 	CustomPhotocentricDisplayDevice dev = (CustomPhotocentricDisplayDevice)graphicsDevice;
-	// 	return dev.getBounds();
-	// }
+	public Rectangle getBounds() {
+		CustomPhotocentricDisplayDevice dev = (CustomPhotocentricDisplayDevice)graphicsDevice;
+		return dev.getBounds();
+	}
 }
