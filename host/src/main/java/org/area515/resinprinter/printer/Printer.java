@@ -128,7 +128,7 @@ public class Printer {
 			logger.info("Moving from status:" + this.status + " to status:" + status);
 			this.status = status;
 			if (!status.isPrintInProgress()) {
-				refreshFrame.resetSliceCount();
+				//refreshFrame.resetSliceCount();
 			}
 		} finally {
 			statusLock.unlock();
@@ -187,21 +187,21 @@ public class Printer {
 		return displayDeviceID;
 	}
 	
-	public void showBlankImage() {	
-		refreshFrame.showBlankImage();
-	}
+	// public void showBlankImage() {	
+	// 	refreshFrame.showBlankImage();
+	// }
 	
-	public void showCalibrationImage(int xPixels, int yPixels) {
-		refreshFrame.showCalibrationImage(xPixels, yPixels);
-	}
+	// public void showCalibrationImage(int xPixels, int yPixels) {
+	// 	refreshFrame.showCalibrationImage(xPixels, yPixels);
+	// }
 	
-	public void showGridImage(int pixels) {
-		refreshFrame.showGridImage(pixels);
-	}
+	// public void showGridImage(int pixels) {
+	// 	refreshFrame.showGridImage(pixels);
+	// }
 	
-	public void showImage(BufferedImage image, boolean performFullUpdate) {
-		refreshFrame.showImage(image, performFullUpdate);
-	}
+	// public void showImage(BufferedImage image, boolean performFullUpdate) {
+	// 	refreshFrame.showImage(image, performFullUpdate);
+	// }
 	
 	@JsonIgnore
 	@XmlTransient
