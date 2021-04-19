@@ -73,39 +73,39 @@ public class DispManXDevice implements GraphicsOutputInterface {
     }
     
     private void initializeScreen() {
-    	// if (screenInitialized) {
-    	// 	return;
-    	// }
+    	if (screenInitialized) {
+    		return;
+    	}
     	
-    	// displayLock.lock();
-    	// try {
-        // 	if (screenInitialized) {
-        // 		return;
-        // 	}
+    	displayLock.lock();
+    	try {
+        	if (screenInitialized) {
+        		return;
+        	}
 
-        // 	logger.info("initialize screen");
-	    // 	bcmHostInit();
+        	logger.info("initialize screen");
+	    	bcmHostInit();
 	    	
-	    //     IntByReference width = new IntByReference();
-	    //     IntByReference height = new IntByReference();
-	    // 	int returnCode = DispManX.INSTANCE.graphics_get_display_size(screen.getId(), width, height);
-	    // 	if (returnCode != 0) {
-	    // 		throw new IllegalArgumentException("graphics_get_display_size failed with:" + returnCode);
-	    // 	}
-	    // 	bounds.setBounds(0, 0, width.getValue(), height.getValue());
+	        IntByReference width = new IntByReference();
+	        IntByReference height = new IntByReference();
+	    	int returnCode = DispManX.INSTANCE.graphics_get_display_size(screen.getId(), width, height);
+	    	if (returnCode != 0) {
+	    		throw new IllegalArgumentException("graphics_get_display_size failed with:" + returnCode);
+	    	}
+	    	bounds.setBounds(0, 0, width.getValue(), height.getValue());
 	    	
-		displayHandle = DispManX.INSTANCE.vc_dispmanx_display_open(screen.getId());
-		if (displayHandle == 0) {
-			throw new IllegalArgumentException("vc_dispmanx_display_open failed with:" + returnCode);
-		}
+	    	displayHandle = DispManX.INSTANCE.vc_dispmanx_display_open(screen.getId());
+	    	if (displayHandle == 0) {
+	    		throw new IllegalArgumentException("vc_dispmanx_display_open failed with:" + returnCode);
+	    	}
 	    	
-	    //     VC_DISPMANX_ALPHA_T.ByReference alpha = new VC_DISPMANX_ALPHA_T.ByReference();
-	    //     alpha.flags = ALPHA.DISPMANX_FLAGS_ALPHA_FROM_SOURCE.getFlag() | ALPHA.DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS.getFlag();
-	    //     alpha.opacity = 255;
-	    //     screenInitialized = true;
-    	// } finally {
-    	// 	displayLock.unlock();
-    	// }
+	        VC_DISPMANX_ALPHA_T.ByReference alpha = new VC_DISPMANX_ALPHA_T.ByReference();
+	        alpha.flags = ALPHA.DISPMANX_FLAGS_ALPHA_FROM_SOURCE.getFlag() | ALPHA.DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS.getFlag();
+	        alpha.opacity = 255;
+	        screenInitialized = false;
+    	} finally {
+    		displayLock.unlock();
+    	}
     }
     
 	@Override
@@ -114,7 +114,7 @@ public class DispManXDevice implements GraphicsOutputInterface {
     	try {
 			logger.info("dispose screen");
 			removeAllElementsFromScreen();
-	    	//logger.info("vc_dispmanx_display_close result:" + DispManX.INSTANCE.vc_dispmanx_display_close(displayHandle));
+	    	logger.info("vc_dispmanx_display_close result:" + DispManX.INSTANCE.vc_dispmanx_display_close(displayHandle));
 	    	calibrationAndGridPixels = null;
 	    	imagePixels = null;
 	    	calibrationAndGridImage = null;
