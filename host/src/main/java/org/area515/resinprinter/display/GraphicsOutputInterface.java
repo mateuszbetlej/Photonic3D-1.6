@@ -9,11 +9,11 @@ import java.awt.image.BufferedImage;
 public interface GraphicsOutputInterface {
 	public boolean isDisplayBusy();	//It's not necessary, but it's helpful to let the user know(via a gui) that the display might be busy
 	public void resetSliceCount();
-	public void dispose();
-	public void showBlankImage();
-	public void showCalibrationImage(int xPixels, int yPixels);
-	public void showGridImage(int pixels);
-	public void showImage(BufferedImage image, boolean incrementSlice);
+	//public void dispose();
+	//public void showBlankImage();
+	//public void showCalibrationImage(int xPixels, int yPixels);
+	//public void showGridImage(int pixels);
+	//public void showImage(BufferedImage image, boolean incrementSlice);
 	public Rectangle getBoundary();
 	public String getIDstring();
 	public String buildIDString();
