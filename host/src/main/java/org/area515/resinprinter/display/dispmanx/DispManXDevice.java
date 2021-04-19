@@ -103,7 +103,7 @@ public class DispManXDevice implements GraphicsOutputInterface {
 	        VC_DISPMANX_ALPHA_T.ByReference alpha = new VC_DISPMANX_ALPHA_T.ByReference();
 	        alpha.flags = ALPHA.DISPMANX_FLAGS_ALPHA_FROM_SOURCE.getFlag() | ALPHA.DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS.getFlag();
 	        alpha.opacity = 255;
-	        screenInitialized = false;
+	        screenInitialized = true;
     	} finally {
     		displayLock.unlock();
     	}
