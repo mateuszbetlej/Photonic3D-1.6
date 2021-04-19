@@ -77,24 +77,24 @@ public class GraphicsDeviceOutputInterface implements GraphicsOutputInterface {
 		return displayName;
 	}
 
-	@Override
-	public GraphicsOutputInterface initializeDisplay(String displayId) {
-		GraphicsDevice device;
-		try {
-			device = ((GraphicsDeviceOutputInterface)DisplayManager.Instance().getDisplayDevice(displayId)).device;
-		} catch (InappropriateDeviceException e) {
-			throw new IllegalArgumentException("Couldn't find displayId:" + displayId, e);
-		}
-		PrinterDisplayFrame refreshFrame = new PrinterDisplayFrame(device);
-		refreshFrame.setAlwaysOnTop(true);
-		refreshFrame.setUndecorated(true);
-		refreshFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		Dimension dim = device.getDefaultConfiguration().getBounds().getSize();
-		refreshFrame.setMinimumSize(dim);
-		refreshFrame.setSize(dim);
-		refreshFrame.setVisible(true);
-		if (device.isFullScreenSupported()) {
-			device.setFullScreenWindow(refreshFrame);//TODO: Does projector not support full screen
+	// @Override
+	// public GraphicsOutputInterface initializeDisplay(String displayId) {
+	// 	GraphicsDevice device;
+	// 	try {
+	// 		device = ((GraphicsDeviceOutputInterface)DisplayManager.Instance().getDisplayDevice(displayId)).device;
+	// 	} catch (InappropriateDeviceException e) {
+	// 		throw new IllegalArgumentException("Couldn't find displayId:" + displayId, e);
+	// 	}
+	// 	PrinterDisplayFrame refreshFrame = new PrinterDisplayFrame(device);
+	// 	refreshFrame.setAlwaysOnTop(true);
+	// 	refreshFrame.setUndecorated(true);
+	// 	refreshFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+	// 	Dimension dim = device.getDefaultConfiguration().getBounds().getSize();
+	// 	refreshFrame.setMinimumSize(dim);
+	// 	refreshFrame.setSize(dim);
+	// 	refreshFrame.setVisible(true);
+	// 	if (device.isFullScreenSupported()) {
+	// 		device.setFullScreenWindow(refreshFrame);//TODO: Does projector not support full screen
 		}
 		//This can only be done with a real graphics device since it would reassign the printer Simulation
 		//OLD getConfiguration().getMachineConfig().setOSMonitorID(device.getDefaultConfiguration().getDevice().getIDstring());
