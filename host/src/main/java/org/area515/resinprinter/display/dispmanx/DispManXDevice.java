@@ -104,7 +104,7 @@ public class DispManXDevice implements GraphicsOutputInterface {
 	        alpha.opacity = 255;
 	        screenInitialized = false;
     	} finally {
-    		displayLock.unlock();
+    		//displayLock.unlock();
     	}
     }
     
