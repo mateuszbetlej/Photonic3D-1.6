@@ -42,59 +42,59 @@ public class GraphicsDeviceOutputInterface implements GraphicsOutputInterface {
 		return false;
 	}
 
-	// @Override
-	// public void resetSliceCount() {
-	// 	throw new IllegalStateException("You should never call resetSliceCount from this class");
-	// }
+	@Override
+	public void resetSliceCount() {
+		throw new IllegalStateException("You should never call resetSliceCount from this class");
+	}
 
-	// @Override
-	// public void dispose() {
-	// 	throw new IllegalStateException("You should never call dispose from this class");
-	// }
+	@Override
+	public void dispose() {
+		throw new IllegalStateException("You should never call dispose from this class");
+	}
 
-	// @Override
-	// public void showBlankImage() {
-	// 	throw new IllegalStateException("You should never call showBlankImage from this class");
-	// }
+	@Override
+	public void showBlankImage() {
+		throw new IllegalStateException("You should never call showBlankImage from this class");
+	}
 
-	// @Override
-	// public void showCalibrationImage(int xPixels, int yPixels) {
-	// 	throw new IllegalStateException("You should never call showCalibrationImage from this class");
-	// }
+	@Override
+	public void showCalibrationImage(int xPixels, int yPixels) {
+		throw new IllegalStateException("You should never call showCalibrationImage from this class");
+	}
 
-	// @Override
-	// public void showGridImage(int pixels) {
-	// 	throw new IllegalStateException("You should never call showGridImage from this class");
-	// }
+	@Override
+	public void showGridImage(int pixels) {
+		throw new IllegalStateException("You should never call showGridImage from this class");
+	}
 
-	// @Override
-	// public void showImage(BufferedImage image, boolean performFullUpdate) {
-	// 	throw new IllegalStateException("You should never call showImage from this class");
-	// }
+	@Override
+	public void showImage(BufferedImage image, boolean performFullUpdate) {
+		throw new IllegalStateException("You should never call showImage from this class");
+	}
 
 	@Override
 	public String buildIDString() {
 		return displayName;
 	}
 
-	// @Override
-	// public GraphicsOutputInterface initializeDisplay(String displayId) {
-	// 	GraphicsDevice device;
-	// 	try {
-	// 		device = ((GraphicsDeviceOutputInterface)DisplayManager.Instance().getDisplayDevice(displayId)).device;
-	// 	} catch (InappropriateDeviceException e) {
-	// 		throw new IllegalArgumentException("Couldn't find displayId:" + displayId, e);
-	// 	}
-	// 	PrinterDisplayFrame refreshFrame = new PrinterDisplayFrame(device);
-	// 	refreshFrame.setAlwaysOnTop(true);
-	// 	refreshFrame.setUndecorated(true);
-	// 	refreshFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-	// 	Dimension dim = device.getDefaultConfiguration().getBounds().getSize();
-	// 	refreshFrame.setMinimumSize(dim);
-	// 	refreshFrame.setSize(dim);
-	// 	refreshFrame.setVisible(true);
-	// 	if (device.isFullScreenSupported()) {
-	// 		device.setFullScreenWindow(refreshFrame);//TODO: Does projector not support full screen
+	@Override
+	public GraphicsOutputInterface initializeDisplay(String displayId) {
+		GraphicsDevice device;
+		try {
+			device = ((GraphicsDeviceOutputInterface)DisplayManager.Instance().getDisplayDevice(displayId)).device;
+		} catch (InappropriateDeviceException e) {
+			throw new IllegalArgumentException("Couldn't find displayId:" + displayId, e);
+		}
+		PrinterDisplayFrame refreshFrame = new PrinterDisplayFrame(device);
+		refreshFrame.setAlwaysOnTop(true);
+		refreshFrame.setUndecorated(true);
+		refreshFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		Dimension dim = device.getDefaultConfiguration().getBounds().getSize();
+		refreshFrame.setMinimumSize(dim);
+		refreshFrame.setSize(dim);
+		refreshFrame.setVisible(true);
+		if (device.isFullScreenSupported()) {
+			device.setFullScreenWindow(refreshFrame);//TODO: Does projector not support full screen
 		}
 		//This can only be done with a real graphics device since it would reassign the printer Simulation
 		//OLD getConfiguration().getMachineConfig().setOSMonitorID(device.getDefaultConfiguration().getDevice().getIDstring());
