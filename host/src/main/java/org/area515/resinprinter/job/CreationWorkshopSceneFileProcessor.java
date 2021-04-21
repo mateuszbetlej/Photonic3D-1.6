@@ -148,9 +148,9 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 			// Image cache object, automatically pre-loading and transforming images.
 			String baseFilename = FilenameUtils.removeExtension(gCodeFile.getName());
 			int padLength = determinePadLength(gCodeFile);
-			imageCache = new CreationWorkshopImageCache(gCodeFile.getParentFile(), baseFilename, padLength, imageTransformOp);
+			//imageCache = new CreationWorkshopImageCache(gCodeFile.getParentFile(), baseFilename, padLength, imageTransformOp);
 			// Start image caching thread.
-			imageCache.start();
+			//imageCache.start();
 
 			//We can't set these values, that means they aren't set to helpful values when this job starts
 			//data.printJob.setExposureTime(data.inkConfiguration.getExposureTime());
@@ -177,17 +177,17 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 							}
 							startOfLastImageDisplay = System.currentTimeMillis();
 							
-							RenderedData data = aid.cache.getOrCreateIfMissing(Boolean.TRUE);
-							BufferedImage oldImage = data.getPrintableImage();
+							//RenderedData data = aid.cache.getOrCreateIfMissing(Boolean.TRUE);
+							//BufferedImage oldImage = data.getPrintableImage();
 							int sliceIndex = Integer.parseInt(matcher.group(1));
 							//printJob.setCurrentSlice(sliceIndex);
 							String imageNumber = String.format("%0" + padLength + "d", sliceIndex);
 							String imageFilename = FilenameUtils.removeExtension(gCodeFile.getName()) + imageNumber + ".png";
 
 							logger.info("Load cached picture from file: {}", imageFilename);
-							BufferedImage newImage = imageCache.getCachedOrLoadImage(sliceIndex);
+							//BufferedImage newImage = imageCache.getCachedOrLoadImage(sliceIndex);
 							// applyBulbMask(aid, (Graphics2D)newImage.getGraphics(), newImage.getWidth(), newImage.getHeight());
-							data.setPrintableImage(newImage);
+							//data.setPrintableImage(newImage);
 							// Notify the client that the printJob has increased the currentSlice
 							
 							NotificationManager.jobChanged(printer, printJob);
@@ -197,9 +197,9 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 							//printer.showImage(data.getPrintableImage(), true);
 							Runtime.getRuntime().exec("/home/pi/raspidmx/pngview_with_gpio_vsync/pngview -d 5 /tmp/printdir/block_test_1.cws/"+imageFilename);
 							
-							if (oldImage != null) {
-								oldImage.flush();
-							}
+							// if (oldImage != null) {
+							// 	oldImage.flush();
+							// }
 						}
 						continue;
 					}
