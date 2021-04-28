@@ -65,7 +65,7 @@ public class Main {
 	public static final String PRINTER_TYPE = "3DPrinterHost";
 	public static final String PRINTERS_DIRECTORY = "printers";
 	public static final String BRANCH = "master";
-	//public static String REPO = "area515/Photonic3D";
+	//public static String REPO = "area515/Photonic3D"; <<<<<<<<<
 	public static String REPO = "mateuszbetlej/Photonic3DTestingV1";
 	
 	private static Set<PrintableDevice> foundDevices = new HashSet<PrintableDevice>();
