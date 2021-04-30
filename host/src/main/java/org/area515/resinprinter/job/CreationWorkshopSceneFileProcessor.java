@@ -221,7 +221,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 							logger.error("Interrupted while waiting for exposure to complete.", e);
 						}
 						continue;
-					}*/
+					}*///
 					
 					matcher = sliceCountPattern.matcher(currentLine);
 					if (matcher.matches()) {
