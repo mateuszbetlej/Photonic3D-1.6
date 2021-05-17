@@ -120,6 +120,8 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 	@Override
 	public JobStatus processFile(final PrintJob printJob) throws Exception {
 		File gCodeFile = findGcodeFile(printJob.getJobFile());
+		String FilepathAsString = gCodeFile.getAbsolutePath();
+		String FilePath = FilenameUtils.getPath(FilepathAsString);
 		DataAid aid = initializeJobCacheWithDataAid(printJob);
 		
 		Printer printer = printJob.getPrinter();
@@ -127,6 +129,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 		long startOfLastImageDisplay = -1;
 		try {
 			logger.info("Parsing file:{}", gCodeFile);
+			logger.info("Parsing file Path:{}", FilePath);
 			stream = new BufferedReader(new FileReader(gCodeFile));
 			String currentLine;
 			Integer sliceCount = null;
@@ -134,6 +137,10 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 			Pattern liftSpeedPattern = Pattern.compile(   "\\s*;\\s*\\(?\\s*Z\\s*Lift\\s*Feed\\s*Rate\\s*=\\s*([\\d\\.]+)\\s*(?:[Mm]{2}?/[Ss])?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
 			Pattern liftDistancePattern = Pattern.compile("\\s*;\\s*\\(?\\s*Lift\\s*Distance\\s*=\\s*([\\d\\.]+)\\s*(?:[Mm]{2})?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
 			Pattern sliceCountPattern = Pattern.compile("\\s*;\\s*Number\\s*of\\s*Slices\\s*=\\s*(\\d+)\\s*", Pattern.CASE_INSENSITIVE);
+
+			Pattern bottomDelay = Pattern.compile("\\s*;\\s*\\(?\\s*Bottom\\s*Layers\\s*Time\\s*=\\s*([\\d\\.]+)\\s*(?:ms)?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
+			Pattern exposureDelay = Pattern.compile("\\s*;\\s*\\(?\\s*Layer\\s*Time\\s*=\\s*([\\d\\.]+)\\s*(?:ms)?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
+			Pattern bottomLayerNumber = Pattern.compile("\\s*;\\s*\\(?\\s*Number\\s*of\\s*Bottom\\s*Layers\\s*=\\s*([\\d\\.]+)\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
 			// Transform unary operator on buffered image, to pass to cache thread.
 			UnaryOperator<BufferedImage> imageTransformOp = image -> {
 				BufferedImage transformedImage = null;
@@ -148,6 +155,8 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 			// Image cache object, automatically pre-loading and transforming images.
 			String baseFilename = FilenameUtils.removeExtension(gCodeFile.getName());
 			int padLength = determinePadLength(gCodeFile);
+
+			
 			//imageCache = new CreationWorkshopImageCache(gCodeFile.getParentFile(), baseFilename, padLength, imageTransformOp);
 			// Start image caching thread.
 			//imageCache.start();
@@ -157,8 +166,12 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 			//data.printJob.setZLiftDistance(data.slicingProfile.getLiftFeedRate());
 			//data.printJob.setZLiftSpeed(data.slicingProfile.getLiftDistance());
 			ImageIO.setUseCache(false);
+			int numberOfBottomLayers = 0;
+			int sliceExposureDelay = 0;
+			int bottomLayerExposureDelay = 0;
 			while ((currentLine = stream.readLine()) != null && printer.isPrintActive()) {
 					Matcher matcher = slicePattern.matcher(currentLine);
+					
 					if (matcher.matches()) {
 						if (sliceCount == null) {
 							throw new IllegalArgumentException("No 'Number of Slices' line in gcode file");
@@ -192,10 +205,14 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 							
 							NotificationManager.jobChanged(printer, printJob);
 
+							
+							logger.info("Found: Bottom Layer Delay of:{}", bottomLayerExposureDelay);
+							logger.info("Found: Layer Exposure Delay of:{}", sliceExposureDelay);
+							logger.info("Found: Number of Bottom Layers:{}", numberOfBottomLayers);
 							// Call display driver.
 							logger.info("Display picture on screen: {}", imageFilename);
 							//printer.showImage(data.getPrintableImage(), true);
-							Process showingSlice = Runtime.getRuntime().exec("/home/pi/raspidmx/pngview_with_gpio_vsync/pngview -d 5 -t "+ sliceIndex + " /tmp/printdir/block_test_1.cws/"+imageFilename);
+							Process showingSlice = Runtime.getRuntime().exec("/home/pi/raspidmx/pngview_with_gpio_vsync/pngview -d 5 -t "+ sliceIndex + " -e "+ sliceExposureDelay +" -b " + numberOfBottomLayers + " -x " + bottomLayerExposureDelay + " /" + FilePath + imageFilename);
 							showingSlice.waitFor();
 
 							// if (oldImage != null) {
@@ -254,7 +271,30 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 						}
 						continue;
 					}
+
+					matcher = bottomDelay.matcher(currentLine);
+					if (matcher.matches()) {
+						Integer foundBottomDelay = Integer.parseInt(matcher.group(1));
+						logger.info("Found: Bottom Layer Delay of:{}", foundBottomDelay);
+						bottomLayerExposureDelay = foundBottomDelay;
+						continue;
+					}
+
+					matcher = exposureDelay.matcher(currentLine);
+					if (matcher.matches()) {
+						Integer foundExposureDelay = Integer.parseInt(matcher.group(1));
+						logger.info("Found: Layer Exposure Delay of:{}", foundExposureDelay);
+						sliceExposureDelay = foundExposureDelay;
+						continue;
+					}
 					
+					matcher = bottomLayerNumber.matcher(currentLine);
+					if (matcher.matches()) {
+						Integer foundBottomLayers = Integer.parseInt(matcher.group(1));
+						logger.info("Found: Number of Bottom Layers:{}", foundBottomLayers);
+						numberOfBottomLayers = foundBottomLayers;
+						continue;
+					}
 					/*matcher = gCodePattern.matcher(currentLine);
 					if (matcher.matches()) {
 						String gCode = matcher.group(1).trim();
@@ -390,7 +430,6 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 		return false;
 		
 	}
-	
 	
 	private File findGcodeFile(File jobFile) throws JobManagerException{
 	
