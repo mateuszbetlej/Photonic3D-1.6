@@ -157,9 +157,9 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 			int padLength = determinePadLength(gCodeFile);
 
 			
-			//imageCache = new CreationWorkshopImageCache(gCodeFile.getParentFile(), baseFilename, padLength, imageTransformOp);
+			imageCache = new CreationWorkshopImageCache(gCodeFile.getParentFile(), baseFilename, padLength, imageTransformOp);
 			// Start image caching thread.
-			//imageCache.start();
+			imageCache.start();
 
 			//We can't set these values, that means they aren't set to helpful values when this job starts
 			//data.printJob.setExposureTime(data.inkConfiguration.getExposureTime());
@@ -169,9 +169,17 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 			int numberOfBottomLayers = 0;
 			int sliceExposureDelay = 0;
 			int bottomLayerExposureDelay = 0;
+			String printerName = printer.getName();
+			String priterType = "";
+			if (printerName.equals("Photocentric Magna")){
+				priterType = "Magna";
+			}else{
+				priterType = "Dental";
+			}
 			while ((currentLine = stream.readLine()) != null && printer.isPrintActive()) {
 					Matcher matcher = slicePattern.matcher(currentLine);
-					
+					logger.info("Printer is: {}", printerName);
+					logger.info("Printer type is: {}", priterType);
 					if (matcher.matches()) {
 						if (sliceCount == null) {
 							throw new IllegalArgumentException("No 'Number of Slices' line in gcode file");
@@ -190,17 +198,17 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 							}
 							startOfLastImageDisplay = System.currentTimeMillis();
 							
-							//RenderedData data = aid.cache.getOrCreateIfMissing(Boolean.TRUE);
-							//BufferedImage oldImage = data.getPrintableImage();
+							RenderedData data = aid.cache.getOrCreateIfMissing(Boolean.TRUE);
+							BufferedImage oldImage = data.getPrintableImage();
 							int sliceIndex = Integer.parseInt(matcher.group(1));
 							//printJob.setCurrentSlice(sliceIndex);
 							String imageNumber = String.format("%0" + padLength + "d", sliceIndex);
 							String imageFilename = FilenameUtils.removeExtension(gCodeFile.getName()) + imageNumber + ".png";
 
 							//logger.info("Load cached picture from file: {}", imageFilename);
-							//BufferedImage newImage = imageCache.getCachedOrLoadImage(sliceIndex);
+							BufferedImage newImage = imageCache.getCachedOrLoadImage(sliceIndex);
 							// applyBulbMask(aid, (Graphics2D)newImage.getGraphics(), newImage.getWidth(), newImage.getHeight());
-							//data.setPrintableImage(newImage);
+							data.setPrintableImage(newImage);
 							// Notify the client that the printJob has increased the currentSlice
 							
 							NotificationManager.jobChanged(printer, printJob);
@@ -212,12 +220,14 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 							// Call display driver.
 							logger.info("Display picture on screen: {}", imageFilename);
 							//printer.showImage(data.getPrintableImage(), true);
-							Process showingSlice = Runtime.getRuntime().exec("/home/pi/raspidmx/pngview_with_gpio_vsync/pngview -d 5 -t "+ sliceIndex + " -e "+ sliceExposureDelay +" -b " + numberOfBottomLayers + " -x " + bottomLayerExposureDelay + " /" + FilePath + imageFilename);
+							//"-p \""+ printerName+ "\
+							logger.info("Slice = /{}{}", FilePath, imageFilename );
+							Process showingSlice = Runtime.getRuntime().exec("/home/pi/raspidmx/pngview_with_gpio_vsync/pngview -d 5 -t "+ sliceIndex + " -p " + priterType + " -e "+ sliceExposureDelay +" -b " + numberOfBottomLayers + " -x " + bottomLayerExposureDelay +  " /" + FilePath + imageFilename);
 							showingSlice.waitFor();
 
-							// if (oldImage != null) {
-							// 	oldImage.flush();
-							// }
+							 if (oldImage != null) {
+							 	oldImage.flush();
+							 }
 						}
 						continue;
 					}
