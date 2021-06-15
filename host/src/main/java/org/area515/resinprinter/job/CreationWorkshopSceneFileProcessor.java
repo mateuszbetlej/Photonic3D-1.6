@@ -124,7 +124,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 		String FilePath = FilenameUtils.getPath(FilepathAsString);
 		DataAid aid = initializeJobCacheWithDataAid(printJob);
 
-		String PrintFilePath = myFilePathString.replaceAll(" ", "\ ");
+		String PrintFilePath = FilePath.replaceAll(" ", "\\ ");
 		
 		Printer printer = printJob.getPrinter();
 		BufferedReader stream = null;
