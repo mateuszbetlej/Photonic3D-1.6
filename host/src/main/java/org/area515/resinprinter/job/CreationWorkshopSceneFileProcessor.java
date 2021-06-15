@@ -223,8 +223,10 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 							logger.info("Display picture on screen: {}", imageFilename);
 							//printer.showImage(data.getPrintableImage(), true);
 							//"-p \""+ printerName+ "\
-							logger.info("Slice = /{}{}", FilePath.replace(" ", "\\ "), imageFilename );
-							Process showingSlice = Runtime.getRuntime().exec("/home/pi/raspidmx/pngview_with_gpio_vsync/pngview -d 5 -t "+ sliceIndex + " -p " + priterType + " -e "+ sliceExposureDelay +" -b " + numberOfBottomLayers + " -x " + bottomLayerExposureDelay +  " /" + FilePath.replace(" ", "\\ ") + imageFilename);
+							//logger.info("Slice = /{}{}", FilePath.replace(" ", "\\ "), imageFilename );
+							String slicePath = FilePath.replace(" ", "\\ ") + imageFilename;
+							logger.info("Slice = /{}", slicePath );
+							Process showingSlice = Runtime.getRuntime().exec("/home/pi/raspidmx/pngview_with_gpio_vsync/pngview -d 5 -t "+ sliceIndex + " -p " + priterType + " -e "+ sliceExposureDelay +" -b " + numberOfBottomLayers + " -x " + bottomLayerExposureDelay +  " /" + slicePath);
 							showingSlice.waitFor();
 
 							 if (oldImage != null) {
