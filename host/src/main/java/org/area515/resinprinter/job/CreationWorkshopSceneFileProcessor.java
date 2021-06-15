@@ -226,7 +226,8 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 							//logger.info("Slice = /{}{}", FilePath.replace(" ", "\\ "), imageFilename );
 							String slicePath = "/" + FilePath + imageFilename;
 							logger.info("Slice = {}", slicePath );
-							Process showingSlice = Runtime.getRuntime().exec("/home/pi/raspidmx/pngview_with_gpio_vsync/pngview -d 5 -t "+ sliceIndex + " -p " + priterType + " -e "+ sliceExposureDelay +" -b " + numberOfBottomLayers + " -x " + bottomLayerExposureDelay +  " \"" + slicePath + "\"");
+							String cmd = "/home/pi/raspidmx/pngview_with_gpio_vsync/pngview -d 5 -t " + sliceIndex + " -p " + priterType + " -e "+ sliceExposureDelay +" -b " + numberOfBottomLayers + " -x " + bottomLayerExposureDelay + " " + slicePath;
+							Process showingSlice = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", cmd});
 							showingSlice.waitFor();
 
 							 if (oldImage != null) {
