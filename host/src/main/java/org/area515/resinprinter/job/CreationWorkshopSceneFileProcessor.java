@@ -123,6 +123,8 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 		String FilepathAsString = gCodeFile.getAbsolutePath();
 		String FilePath = FilenameUtils.getPath(FilepathAsString);
 		DataAid aid = initializeJobCacheWithDataAid(printJob);
+
+		String PrintFilePath = myFilePathString.replaceAll(" ", "\ ");
 		
 		Printer printer = printJob.getPrinter();
 		BufferedReader stream = null;
@@ -221,8 +223,8 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 							logger.info("Display picture on screen: {}", imageFilename);
 							//printer.showImage(data.getPrintableImage(), true);
 							//"-p \""+ printerName+ "\
-							logger.info("Slice = /{}{}", FilePath, imageFilename );
-							Process showingSlice = Runtime.getRuntime().exec("/home/pi/raspidmx/pngview_with_gpio_vsync/pngview -d 5 -t "+ sliceIndex + " -p " + priterType + " -e "+ sliceExposureDelay +" -b " + numberOfBottomLayers + " -x " + bottomLayerExposureDelay +  " /" + FilePath + imageFilename);
+							logger.info("Slice = /{}{}", PrintFilePath, imageFilename );
+							Process showingSlice = Runtime.getRuntime().exec("/home/pi/raspidmx/pngview_with_gpio_vsync/pngview -d 5 -t "+ sliceIndex + " -p " + priterType + " -e "+ sliceExposureDelay +" -b " + numberOfBottomLayers + " -x " + bottomLayerExposureDelay +  " /" + PrintFilePath + imageFilename);
 							showingSlice.waitFor();
 
 							 if (oldImage != null) {
