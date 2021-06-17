@@ -228,7 +228,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 							logger.info("Slice = {}", slicePath );
 							String cmd = "/home/pi/raspidmx/pngview_with_gpio_vsync/pngview -d 5 -t " + sliceIndex + " -p " + priterType + " -e "+ sliceExposureDelay +" -b " + numberOfBottomLayers + " -x " + bottomLayerExposureDelay + " " + slicePath;
 							//Process showingSlice = Runtime.getRuntime().exec(new String[]{"/home/pi/raspidmx/pngview_with_gpio_vsync/pngview", "-d", "5", "-t", Integer.toString(sliceIndex), "-p", priterType, "-e", Integer.toString(sliceExposureDelay), "-b", Integer.toString(numberOfBottomLayers), "-x", Integer.toString(bottomLayerExposureDelay), slicePath});
-							Process showingSlice = Runtime.getRuntime().exec(new String[]{"/home/pi/raspidmx/demo_mask_overlay_with_args/show_image", "-d", "5", "-t", Integer.toString(sliceIndex), "-p", priterType, "-e", Integer.toString(sliceExposureDelay), "-b", Integer.toString(numberOfBottomLayers), "-x", Integer.toString(bottomLayerExposureDelay), "-m", "/home/pi/raspidmx/demo_mask_overlay_with_args/demo_mask.png", slicePath});
+							Process showingSlice = Runtime.getRuntime().exec(new String[]{"/home/pi/raspidmx/demo_mask_overlay_with_args/show_image", "-d", "5", "-t", Integer.toString(sliceIndex), "-p", priterType, "-e", Integer.toString(sliceExposureDelay), "-b", Integer.toString(numberOfBottomLayers), "-x", Integer.toString(bottomLayerExposureDelay), "-m", "/home/pi/raspidmx/demo_mask_overlay_with_args/demo-mask.png", slicePath});
 							showingSlice.waitFor();
 
 							 if (oldImage != null) {
