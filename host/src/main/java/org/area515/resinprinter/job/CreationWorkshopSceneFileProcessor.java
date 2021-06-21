@@ -56,6 +56,17 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 	public boolean acceptsFile(File processingFile) {
 		//TODO: we shouldn't except all zip files only those that have embedded gif/jpg/png information.
 		if (processingFile.getName().toLowerCase().endsWith(".zip") || processingFile.getName().toLowerCase().endsWith(".cws")) {
+
+			String fileName = processingFile.getPath()+"/creationworkshop.gcode";
+			String lineToRemove = ";<Delay> (20000)";	 
+			
+			try (Stream<String> stream = Files.lines(Paths.get(fileName))) { 
+				stream.filter(line->!line.trim().equals(lineToRemove)).forEach(System.out::println); 
+			} catch (IOException e) { 
+				e.printStackTrace(); 
+			} 
+
+
 			if (zipHasGCode(processingFile)) {
 				// if the zip has gcode, treat it as a CW scene
 				logger.info("Accepting new printable {} as a {}", processingFile.getName(), this.getFriendlyName());
