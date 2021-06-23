@@ -187,7 +187,11 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 
 					// trim newline when comparing with lineToRemove
 					String trimmedLine = currentLine.trim();
-					if(trimmedLine.equals(";<Delay> 2000") || trimmedLine.equals(";<Delay> " + sliceExposureDelay) || trimmedLine.equals(";<Delay> " + bottomLayerExposureDelay) || trimmedLine.contains("M42 P0 S1" && "SLICE LED on") || trimmedLine.equals("M42 P0 S0" &&"SLICE LED off")) continue;
+					if(currentLine.equals(";<Delay> 2000") || currentLine.equals(";<Delay> " + sliceExposureDelay) || currentLine.equals(";<Delay> " + bottomLayerExposureDelay) || (currentLine.contains("M42 P0 S1") && currentLine.contains("SLICE LED on")) || (currentLine.contains("M42 P0 S0") && currentLine.contains("SLICE LED off")))
+					{
+						currentLine.trim();
+						continue;
+					}
 					writer.write(currentLine + System.getProperty("line.separator"));
 				}
 				writer.close(); 
@@ -234,8 +238,12 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 					}
 
 					// trim newline when comparing with lineToRemove
-					String trimmedLine = currentLine.trim();
-					if(trimmedLine.contains("G4" %% "SLICE Exposure Delay") || trimmedLine.contains("M42 P0 S1" && "SLICE LED On") || trimmedLine.equals("M42 P0 S0" && "SLICE LED Off")) continue;
+					//String trimmedLine = currentLine.trim();
+					if((currentLine.contains("G4") && currentLine.contains("SLICE Exposure Delay")) || (currentLine.contains("M42 P0 S1") && currentLine.contains("SLICE LED On")) || (currentLine.contains("M42 P0 S0") && currentLine.contains("SLICE LED Off"))) 
+					{
+						currentLine.trim();
+						continue;
+					}
 					writer.write(currentLine + System.getProperty("line.separator"));
 				}
 				writer.close(); 
