@@ -129,6 +129,15 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 	public JobStatus processFile(final PrintJob printJob) throws Exception {
 		File gCodeFile = findGcodeFile(printJob.getJobFile());
 		DataAid aid = initializeJobCacheWithDataAid(printJob);
+		
+		int numberOfBottomLayers = 0;
+		int sliceExposureDelay = 0;
+		int bottomLayerExposureDelay = 0;
+
+		Pattern slicePattern = Pattern.compile("\\s*;\\s*<\\s*Slice\\s*>\\s*(\\d+|blank)\\s*", Pattern.CASE_INSENSITIVE);
+		Pattern bottomDelay = Pattern.compile("\\s*;\\s*\\(?\\s*Bottom\\s*Layers\\s*Time\\s*=\\s*([\\d\\.]+)\\s*(?:ms)?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
+		Pattern exposureDelay = Pattern.compile("\\s*;\\s*\\(?\\s*Layer\\s*Time\\s*=\\s*([\\d\\.]+)\\s*(?:ms)?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
+		Pattern bottomLayerNumber = Pattern.compile("\\s*;\\s*\\(?\\s*Number\\s*of\\s*Bottom\\s*Layers\\s*=\\s*([\\d\\.]+)\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
 		try {
 			File inputFile = new File(gCodeFile.getPath());
 			File tempFile = new File("/tmp/myTempFile.txt");
@@ -139,9 +148,34 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 			String currentLine;
 
 			while((currentLine = reader.readLine()) != null) {
+				Matcher matcher = slicePattern.matcher(currentLine);
+				matcher = bottomDelay.matcher(currentLine);
+				if (matcher.matches()) {
+					Integer foundBottomDelay = Integer.parseInt(matcher.group(1));
+					logger.info("Found: Bottom Layer Delay of:{}", foundBottomDelay);
+					bottomLayerExposureDelay = foundBottomDelay;
+					continue;
+				}
+
+				matcher = exposureDelay.matcher(currentLine);
+				if (matcher.matches()) {
+					Integer foundExposureDelay = Integer.parseInt(matcher.group(1));
+					logger.info("Found: Layer Exposure Delay of:{}", foundExposureDelay);
+					sliceExposureDelay = foundExposureDelay;
+					continue;
+				}
+				
+				matcher = bottomLayerNumber.matcher(currentLine);
+				if (matcher.matches()) {
+					Integer foundBottomLayers = Integer.parseInt(matcher.group(1));
+					logger.info("Found: Number of Bottom Layers:{}", foundBottomLayers);
+					numberOfBottomLayers = foundBottomLayers;
+					continue;
+				}
+
 				// trim newline when comparing with lineToRemove
 				String trimmedLine = currentLine.trim();
-				if(trimmedLine.equals(lineToRemove)) continue;
+				if(trimmedLine.equals(";<Delay> 2000") || trimmedLine.equals(";<Delay> " + sliceExposureDelay) || trimmedLine.equals(";<Delay> " + bottomLayerExposureDelay) || trimmedLine.equals("M42 P0 S1; LED on") || trimmedLine.equals("M42 P0 S0; LED off")) continue;
 				writer.write(currentLine + System.getProperty("line.separator"));
 			}
 			writer.close(); 
@@ -159,10 +193,15 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 			stream = new BufferedReader(new FileReader(gCodeFile));
 			String currentLine;
 			Integer sliceCount = null;
-			Pattern slicePattern = Pattern.compile("\\s*;\\s*<\\s*Slice\\s*>\\s*(\\d+|blank)\\s*", Pattern.CASE_INSENSITIVE);
+			//Pattern slicePattern = Pattern.compile("\\s*;\\s*<\\s*Slice\\s*>\\s*(\\d+|blank)\\s*", Pattern.CASE_INSENSITIVE);
 			Pattern liftSpeedPattern = Pattern.compile(   "\\s*;\\s*\\(?\\s*Z\\s*Lift\\s*Feed\\s*Rate\\s*=\\s*([\\d\\.]+)\\s*(?:[Mm]{2}?/[Ss])?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
 			Pattern liftDistancePattern = Pattern.compile("\\s*;\\s*\\(?\\s*Lift\\s*Distance\\s*=\\s*([\\d\\.]+)\\s*(?:[Mm]{2})?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
 			Pattern sliceCountPattern = Pattern.compile("\\s*;\\s*Number\\s*of\\s*Slices\\s*=\\s*(\\d+)\\s*", Pattern.CASE_INSENSITIVE);
+
+			// Pattern bottomDelay = Pattern.compile("\\s*;\\s*\\(?\\s*Bottom\\s*Layers\\s*Time\\s*=\\s*([\\d\\.]+)\\s*(?:ms)?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
+			// Pattern exposureDelay = Pattern.compile("\\s*;\\s*\\(?\\s*Layer\\s*Time\\s*=\\s*([\\d\\.]+)\\s*(?:ms)?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
+			// Pattern bottomLayerNumber = Pattern.compile("\\s*;\\s*\\(?\\s*Number\\s*of\\s*Bottom\\s*Layers\\s*=\\s*([\\d\\.]+)\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
+
 			// Transform unary operator on buffered image, to pass to cache thread.
 			UnaryOperator<BufferedImage> imageTransformOp = image -> {
 				BufferedImage transformedImage = null;
@@ -281,7 +320,30 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 						}
 						continue;
 					}
+					matcher = bottomDelay.matcher(currentLine);
+					if (matcher.matches()) {
+						Integer foundBottomDelay = Integer.parseInt(matcher.group(1));
+						logger.info("Found: Bottom Layer Delay of:{}", foundBottomDelay);
+						bottomLayerExposureDelay = foundBottomDelay;
+						continue;
+					}
+
+					matcher = exposureDelay.matcher(currentLine);
+					if (matcher.matches()) {
+						Integer foundExposureDelay = Integer.parseInt(matcher.group(1));
+						logger.info("Found: Layer Exposure Delay of:{}", foundExposureDelay);
+						sliceExposureDelay = foundExposureDelay;
+						continue;
+					}
 					
+					matcher = bottomLayerNumber.matcher(currentLine);
+					if (matcher.matches()) {
+						Integer foundBottomLayers = Integer.parseInt(matcher.group(1));
+						logger.info("Found: Number of Bottom Layers:{}", foundBottomLayers);
+						numberOfBottomLayers = foundBottomLayers;
+						continue;
+					}
+
 					/*matcher = gCodePattern.matcher(currentLine);
 					if (matcher.matches()) {
 						String gCode = matcher.group(1).trim();
