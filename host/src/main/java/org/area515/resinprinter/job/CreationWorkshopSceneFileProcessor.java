@@ -170,7 +170,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 					Integer foundBottomDelay = Integer.parseInt(matcher.group(1));
 					logger.info("Found: Bottom Layer Delay of:{}", foundBottomDelay);
 					bottomLayerExposureDelay = foundBottomDelay;
-					continue;
+					//continue;
 				}
 
 				matcher = exposureDelay.matcher(currentLine);
@@ -178,7 +178,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 					Integer foundExposureDelay = Integer.parseInt(matcher.group(1));
 					logger.info("Found: Layer Exposure Delay of:{}", foundExposureDelay);
 					sliceExposureDelay = foundExposureDelay;
-					continue;
+					//continue;
 				}
 				
 				matcher = bottomLayerNumber.matcher(currentLine);
@@ -186,7 +186,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 					Integer foundBottomLayers = Integer.parseInt(matcher.group(1));
 					logger.info("Found: Number of Bottom Layers:{}", foundBottomLayers);
 					numberOfBottomLayers = foundBottomLayers;
-					continue;
+					//continue;
 				}
 
 				//trim line for specific printer
