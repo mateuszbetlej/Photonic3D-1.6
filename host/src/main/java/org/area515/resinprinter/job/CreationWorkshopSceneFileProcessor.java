@@ -193,13 +193,11 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 				if(printerType == "Dental"){
 					if((currentLine.contains("G4") && currentLine.contains("SLICE Exposure Delay")) || (currentLine.contains("M42 P0 S1") && currentLine.contains("SLICE LED On")) || (currentLine.contains("M42 P0 S0") && currentLine.contains("SLICE LED Off"))) 
 					{
-						currentLine.trim();
 						continue;
 					}
 				}else if(printerType == "Magna"){
 					if(currentLine.equals(";<Delay> 2000") || currentLine.equals(";<Delay> " + sliceExposureDelay) || currentLine.equals(";<Delay> " + bottomLayerExposureDelay) || (currentLine.contains("M42 P0 S1") && currentLine.contains("SLICE LED on")) || (currentLine.contains("M42 P0 S0") && currentLine.contains("SLICE LED off")))
 					{
-						currentLine.trim();
 						continue;
 					}
 				}
