@@ -148,54 +148,40 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 		String printerName = printer.getName();
 		String printerType = "";
 		
-		if (printerName.equals("Photocentric Magna")){
-			printerType = "Magna";
-		}else if (printerName.equals("LC Dental")){
-			printerType = "Dental";
-		}
-		
 		//GCode formatting to remove led controll and delays for pngview/show_image
+		File inputFile = new File(gCodeFile.getPath());
+		File tempFile = File.createTempFile("tempGCodeFile",".txt");
+		BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+		BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
 		try {
-			File inputFile = new File(gCodeFile.getPath());
-			File tempFile = new File("/tmp/tempGCodeFile.txt");
-			BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-			BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
-
 			String currentLine;
 
 			while((currentLine = reader.readLine()) != null) {
-				Matcher matcher = slicePattern.matcher(currentLine);
-				matcher = bottomDelay.matcher(currentLine);
+				Matcher matcher = bottomDelay.matcher(currentLine);
 				if (matcher.matches()) {
 					Integer foundBottomDelay = Integer.parseInt(matcher.group(1));
-					logger.info("Found: Bottom Layer Delay of:{}", foundBottomDelay);
 					bottomLayerExposureDelay = foundBottomDelay;
-					//continue;
 				}
 
 				matcher = exposureDelay.matcher(currentLine);
 				if (matcher.matches()) {
 					Integer foundExposureDelay = Integer.parseInt(matcher.group(1));
-					logger.info("Found: Layer Exposure Delay of:{}", foundExposureDelay);
 					sliceExposureDelay = foundExposureDelay;
-					//continue;
 				}
 				
 				matcher = bottomLayerNumber.matcher(currentLine);
 				if (matcher.matches()) {
 					Integer foundBottomLayers = Integer.parseInt(matcher.group(1));
-					logger.info("Found: Number of Bottom Layers:{}", foundBottomLayers);
 					numberOfBottomLayers = foundBottomLayers;
-					//continue;
 				}
 
 				//trim line for specific printer
-				if(printerType == "Dental"){
+				if(printerName.contains("Dental")){
 					if((currentLine.contains("G4") && currentLine.contains("SLICE Exposure Delay")) || (currentLine.contains("M42 P0 S1") && currentLine.contains("SLICE LED On")) || (currentLine.contains("M42 P0 S0") && currentLine.contains("SLICE LED Off"))) 
 					{
 						continue;
 					}
-				}else if(printerType == "Magna"){
+				}else if(printerName.contains("Magna")){
 					if(currentLine.equals(";<Delay> 2000") || currentLine.equals(";<Delay> " + sliceExposureDelay) || currentLine.equals(";<Delay> " + bottomLayerExposureDelay) || (currentLine.contains("M42 P0 S1") && currentLine.contains("SLICE LED on")) || (currentLine.contains("M42 P0 S0") && currentLine.contains("SLICE LED off")))
 					{
 						continue;
@@ -204,11 +190,13 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 
 				writer.write(currentLine + System.getProperty("line.separator"));
 			}
-			writer.close(); 
-			reader.close(); 
+			
 			boolean successful = tempFile.renameTo(inputFile);
 		} catch (Exception e) {
 			System.out.println(e.getClass());
+		} finally {
+			writer.close(); 
+			reader.close(); 
 		}
 		
 		BufferedReader stream = null;
@@ -292,7 +280,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 					String slicePath = "/" + FilePath + imageFilename;
 					logger.info("Slice = {}", slicePath );
 					//String cmd = "/home/pi/raspidmx/pngview_with_gpio_vsync/pngview -d 5 -t " + sliceIndex + " -p " + printerType + " -e "+ sliceExposureDelay +" -b " + numberOfBottomLayers + " -x " + bottomLayerExposureDelay + " " + slicePath;
-					Process showingSlice = Runtime.getRuntime().exec(new String[]{"/home/pi/raspidmx/pngview_with_gpio_vsync/pngview", "-d", "5", "-t", Integer.toString(sliceIndex), "-p", printerType, "-e", Integer.toString(sliceExposureDelay), "-b", Integer.toString(numberOfBottomLayers), "-x", Integer.toString(bottomLayerExposureDelay), slicePath});
+					Process showingSlice = Runtime.getRuntime().exec(new String[]{"/home/pi/raspidmx/pngview_with_gpio_vsync/pngview", "-d", "5", "-t", Integer.toString(sliceIndex), "-p", printerName, "-e", Integer.toString(sliceExposureDelay), "-b", Integer.toString(numberOfBottomLayers), "-x", Integer.toString(bottomLayerExposureDelay), slicePath});
 					//Process showingSlice = Runtime.getRuntime().exec(new String[]{"/home/pi/raspidmx/demo_mask_overlay_with_args/show_image", "-d", "5", "-t", Integer.toString(sliceIndex), "-p", printerType, "-e", Integer.toString(sliceExposureDelay), "-b", Integer.toString(numberOfBottomLayers), "-x", Integer.toString(bottomLayerExposureDelay), "-m", "/home/pi/raspidmx/demo_mask_overlay_with_args/demo-mask.png", slicePath});
 					showingSlice.waitFor();
 
