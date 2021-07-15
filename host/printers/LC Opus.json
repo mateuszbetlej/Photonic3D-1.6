@@ -1,6 +1,6 @@
 {  
    "configuration":{  
-      "name":"Photocentric Dental",
+      "name":"LC Opus",
       "machineConfig":{  
          "FileVersion":0,
          "PlatformXSize":309.31,
@@ -86,7 +86,7 @@
             }
          ]
       },
-      "MachineConfigurationName":"Photocentric Magna",
+      "MachineConfigurationName":"LC Opus",
       "SlicingProfileName":"Hard daylight red 0.1",
       "AutoStart":true
    },
