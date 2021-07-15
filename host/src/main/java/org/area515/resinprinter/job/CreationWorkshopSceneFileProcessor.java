@@ -1,5 +1,8 @@
 package org.area515.resinprinter.job;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -56,6 +59,11 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 	public boolean acceptsFile(File processingFile) {
 		//TODO: we shouldn't except all zip files only those that have embedded gif/jpg/png information.
 		if (processingFile.getName().toLowerCase().endsWith(".zip") || processingFile.getName().toLowerCase().endsWith(".cws")) {
+			
+			
+			
+			
+
 			if (zipHasGCode(processingFile)) {
 				// if the zip has gcode, treat it as a CW scene
 				logger.info("Accepting new printable {} as a {}", processingFile.getName(), this.getFriendlyName());
@@ -78,7 +86,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 		for (File file : files) {
 			images.put(file.getName(), file);
 		}
-		
+
 		return images;
 	}
 
@@ -120,20 +128,86 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 	@Override
 	public JobStatus processFile(final PrintJob printJob) throws Exception {
 		File gCodeFile = findGcodeFile(printJob.getJobFile());
+		String FilepathAsString = gCodeFile.getAbsolutePath();
+		String FilePath = FilenameUtils.getPath(FilepathAsString);
 		DataAid aid = initializeJobCacheWithDataAid(printJob);
 		
+		int numberOfBottomLayers = 0;
+		int sliceExposureDelay = 0;
+		int bottomLayerExposureDelay = 0;
+
+		Pattern slicePattern = Pattern.compile("\\s*;\\s*<\\s*Slice\\s*>\\s*(\\d+|blank)\\s*", Pattern.CASE_INSENSITIVE);
+		Pattern liftSpeedPattern = Pattern.compile(   "\\s*;\\s*\\(?\\s*Z\\s*Lift\\s*Feed\\s*Rate\\s*=\\s*([\\d\\.]+)\\s*(?:[Mm]{2}?/[Ss])?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
+		Pattern liftDistancePattern = Pattern.compile("\\s*;\\s*\\(?\\s*Lift\\s*Distance\\s*=\\s*([\\d\\.]+)\\s*(?:[Mm]{2})?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
+		Pattern sliceCountPattern = Pattern.compile("\\s*;\\s*Number\\s*of\\s*Slices\\s*=\\s*(\\d+)\\s*", Pattern.CASE_INSENSITIVE);
+		Pattern bottomDelay = Pattern.compile("\\s*;\\s*\\(?\\s*Bottom\\s*Layers\\s*Time\\s*=\\s*([\\d\\.]+)\\s*(?:ms)?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
+		Pattern exposureDelay = Pattern.compile("\\s*;\\s*\\(?\\s*Layer\\s*Time\\s*=\\s*([\\d\\.]+)\\s*(?:ms)?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
+		Pattern bottomLayerNumber = Pattern.compile("\\s*;\\s*\\(?\\s*Number\\s*of\\s*Bottom\\s*Layers\\s*=\\s*([\\d\\.]+)\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
+		
 		Printer printer = printJob.getPrinter();
+		String printerName = printer.getName();
+		String printerType = "";
+		
+		//GCode formatting to remove led controll and delays for pngview/show_image
+		File inputFile = new File(gCodeFile.getPath());
+		File tempFile = File.createTempFile("tempGCodeFile",".txt");
+		BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+		BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+		try {
+			String currentLine;
+
+			while((currentLine = reader.readLine()) != null) {
+				Matcher matcher = bottomDelay.matcher(currentLine);
+				if (matcher.matches()) {
+					Integer foundBottomDelay = Integer.parseInt(matcher.group(1));
+					bottomLayerExposureDelay = foundBottomDelay;
+				}
+
+				matcher = exposureDelay.matcher(currentLine);
+				if (matcher.matches()) {
+					Integer foundExposureDelay = Integer.parseInt(matcher.group(1));
+					sliceExposureDelay = foundExposureDelay;
+				}
+				
+				matcher = bottomLayerNumber.matcher(currentLine);
+				if (matcher.matches()) {
+					Integer foundBottomLayers = Integer.parseInt(matcher.group(1));
+					numberOfBottomLayers = foundBottomLayers;
+				}
+
+				//trim line for specific printer
+				if(printerName.contains("Dental")){
+					if((currentLine.contains("G4") && currentLine.contains("SLICE Exposure Delay")) || (currentLine.contains("M42 P0 S1") && currentLine.contains("SLICE LED On")) || (currentLine.contains("M42 P0 S0") && currentLine.contains("SLICE LED Off"))) 
+					{
+						continue;
+					}
+				}else if(printerName.contains("Magna")){
+					if(currentLine.equals(";<Delay> 2000") || currentLine.equals(";<Delay> " + sliceExposureDelay) || currentLine.equals(";<Delay> " + bottomLayerExposureDelay) || (currentLine.contains("M42 P0 S1") && currentLine.contains("SLICE LED on")) || (currentLine.contains("M42 P0 S0") && currentLine.contains("SLICE LED off")))
+					{
+						continue;
+					}
+				}
+
+				writer.write(currentLine + System.getProperty("line.separator"));
+			}
+			
+			boolean successful = tempFile.renameTo(inputFile);
+		} catch (Exception e) {
+			System.out.println(e.getClass());
+		} finally {
+			writer.close(); 
+			reader.close(); 
+		}
+		
 		BufferedReader stream = null;
 		long startOfLastImageDisplay = -1;
 		try {
 			logger.info("Parsing file:{}", gCodeFile);
+
 			stream = new BufferedReader(new FileReader(gCodeFile));
 			String currentLine;
 			Integer sliceCount = null;
-			Pattern slicePattern = Pattern.compile("\\s*;\\s*<\\s*Slice\\s*>\\s*(\\d+|blank)\\s*", Pattern.CASE_INSENSITIVE);
-			Pattern liftSpeedPattern = Pattern.compile(   "\\s*;\\s*\\(?\\s*Z\\s*Lift\\s*Feed\\s*Rate\\s*=\\s*([\\d\\.]+)\\s*(?:[Mm]{2}?/[Ss])?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
-			Pattern liftDistancePattern = Pattern.compile("\\s*;\\s*\\(?\\s*Lift\\s*Distance\\s*=\\s*([\\d\\.]+)\\s*(?:[Mm]{2})?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
-			Pattern sliceCountPattern = Pattern.compile("\\s*;\\s*Number\\s*of\\s*Slices\\s*=\\s*(\\d+)\\s*", Pattern.CASE_INSENSITIVE);
+
 			// Transform unary operator on buffered image, to pass to cache thread.
 			UnaryOperator<BufferedImage> imageTransformOp = image -> {
 				BufferedImage transformedImage = null;
@@ -148,9 +222,9 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 			// Image cache object, automatically pre-loading and transforming images.
 			String baseFilename = FilenameUtils.removeExtension(gCodeFile.getName());
 			int padLength = determinePadLength(gCodeFile);
-			//imageCache = new CreationWorkshopImageCache(gCodeFile.getParentFile(), baseFilename, padLength, imageTransformOp);
+			imageCache = new CreationWorkshopImageCache(gCodeFile.getParentFile(), baseFilename, padLength, imageTransformOp);
 			// Start image caching thread.
-			//imageCache.start();
+			imageCache.start();
 
 			//We can't set these values, that means they aren't set to helpful values when this job starts
 			//data.printJob.setExposureTime(data.inkConfiguration.getExposureTime());
@@ -158,52 +232,63 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 			//data.printJob.setZLiftSpeed(data.slicingProfile.getLiftDistance());
 			ImageIO.setUseCache(false);
 			while ((currentLine = stream.readLine()) != null && printer.isPrintActive()) {
-					Matcher matcher = slicePattern.matcher(currentLine);
-					if (matcher.matches()) {
-						if (sliceCount == null) {
-							throw new IllegalArgumentException("No 'Number of Slices' line in gcode file");
-						}
-
-						if (matcher.group(1).toUpperCase().equals("BLANK")) {
-							logger.info("Show Blank");
-							//printer.showBlankImage();
-							
-							//This is the perfect time to wait for a pause if one is required.
-							printer.waitForPauseIfRequired();
-						} else {
-							if (startOfLastImageDisplay > -1) {
-					//printJob.setCurrentSliceTime(System.currentTimeMillis() - startOfLastImageDisplay);
-								printJob.addNewSlice(System.currentTimeMillis() - startOfLastImageDisplay, null);
-							}
-							startOfLastImageDisplay = System.currentTimeMillis();
-							
-							//RenderedData data = aid.cache.getOrCreateIfMissing(Boolean.TRUE);
-							//BufferedImage oldImage = data.getPrintableImage();
-							int sliceIndex = Integer.parseInt(matcher.group(1));
-							//printJob.setCurrentSlice(sliceIndex);
-							String imageNumber = String.format("%0" + padLength + "d", sliceIndex);
-							String imageFilename = FilenameUtils.removeExtension(gCodeFile.getName()) + imageNumber + ".png";
-
-							//logger.info("Load cached picture from file: {}", imageFilename);
-							//BufferedImage newImage = imageCache.getCachedOrLoadImage(sliceIndex);
-							// applyBulbMask(aid, (Graphics2D)newImage.getGraphics(), newImage.getWidth(), newImage.getHeight());
-							//data.setPrintableImage(newImage);
-							// Notify the client that the printJob has increased the currentSlice
-							
-							NotificationManager.jobChanged(printer, printJob);
-
-							// Call display driver.
-							logger.info("Display picture on screen: {}", imageFilename);
-							//printer.showImage(data.getPrintableImage(), true);
-							Process showingSlice = Runtime.getRuntime().exec("/home/pi/raspidmx/pngview_with_gpio_vsync/pngview -d 5 /tmp/printdir/block_test_1.cws/"+imageFilename);
-							showingSlice.waitFor();
-
-							// if (oldImage != null) {
-							// 	oldImage.flush();
-							// }
-						}
-						continue;
+				Matcher matcher = slicePattern.matcher(currentLine);
+				logger.info("Printer is: {}", printerName);
+				logger.info("Printer type is: {}", printerType);
+				if (matcher.matches()) {
+					if (sliceCount == null) {
+						throw new IllegalArgumentException("No 'Number of Slices' line in gcode file");
 					}
+
+					if (matcher.group(1).toUpperCase().equals("BLANK")) {
+						logger.info("Show Blank");
+						//printer.showBlankImage();
+						
+						//This is the perfect time to wait for a pause if one is required.
+						printer.waitForPauseIfRequired();
+				} else {
+					if (startOfLastImageDisplay > -1) {
+					//printJob.setCurrentSliceTime(System.currentTimeMillis() - startOfLastImageDisplay);
+						printJob.addNewSlice(System.currentTimeMillis() - startOfLastImageDisplay, null);
+					}
+					startOfLastImageDisplay = System.currentTimeMillis();
+					
+					RenderedData data = aid.cache.getOrCreateIfMissing(Boolean.TRUE);
+					BufferedImage oldImage = data.getPrintableImage();
+					int sliceIndex = Integer.parseInt(matcher.group(1));
+					//printJob.setCurrentSlice(sliceIndex);
+					String imageNumber = String.format("%0" + padLength + "d", sliceIndex);
+					String imageFilename = FilenameUtils.removeExtension(gCodeFile.getName()) + imageNumber + ".png";
+
+					//logger.info("Load cached picture from file: {}", imageFilename);
+					BufferedImage newImage = imageCache.getCachedOrLoadImage(sliceIndex);
+					// applyBulbMask(aid, (Graphics2D)newImage.getGraphics(), newImage.getWidth(), newImage.getHeight());
+					data.setPrintableImage(newImage);
+					// Notify the client that the printJob has increased the currentSlice
+					
+					NotificationManager.jobChanged(printer, printJob);
+
+					
+					logger.info("Found: Bottom Layer Delay of:{}", bottomLayerExposureDelay);
+					logger.info("Found: Layer Exposure Delay of:{}", sliceExposureDelay);
+					logger.info("Found: Number of Bottom Layers:{}", numberOfBottomLayers);
+					// Call display driver.
+					logger.info("Display picture on screen: {}", imageFilename);
+					//printer.showImage(data.getPrintableImage(), true);
+					//"-p \""+ printerName+ "\
+					//logger.info("Slice = /{}{}", FilePath.replace(" ", "\\ "), imageFilename );
+					String slicePath = "/" + FilePath + imageFilename;
+					logger.info("Slice = {}", slicePath );
+					//String cmd = "/home/pi/raspidmx/pngview_with_gpio_vsync/pngview -d 5 -t " + sliceIndex + " -p " + printerType + " -e "+ sliceExposureDelay +" -b " + numberOfBottomLayers + " -x " + bottomLayerExposureDelay + " " + slicePath;
+					//Process showingSlice = Runtime.getRuntime().exec(new String[]{"/home/pi/raspidmx/pngview_with_gpio_vsync/pngview", "-d", "5", "-t", Integer.toString(sliceIndex), "-p", printerName, "-e", Integer.toString(sliceExposureDelay), "-b", Integer.toString(numberOfBottomLayers), "-x", Integer.toString(bottomLayerExposureDelay), slicePath});
+					Process showingSlice = Runtime.getRuntime().exec(new String[]{"/home/pi/raspidmx/demo_mask_overlay_with_args/show_image", "-d", "5", "-t", Integer.toString(sliceIndex), "-p", printerName, "-e", Integer.toString(sliceExposureDelay), "-b", Integer.toString(numberOfBottomLayers), "-x", Integer.toString(bottomLayerExposureDelay), "-m", "/home/pi/mask/mask.png", slicePath});
+					showingSlice.waitFor();
+
+					if (oldImage != null) {
+							oldImage.flush();
+					}
+				}continue;
+			}
 					
 					/*matcher = delayPattern.matcher(currentLine);
 					if (matcher.matches()) {
@@ -254,7 +339,30 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 						}
 						continue;
 					}
+					matcher = bottomDelay.matcher(currentLine);
+					if (matcher.matches()) {
+						Integer foundBottomDelay = Integer.parseInt(matcher.group(1));
+						logger.info("Found: Bottom Layer Delay of:{}", foundBottomDelay);
+						bottomLayerExposureDelay = foundBottomDelay;
+						continue;
+					}
+
+					matcher = exposureDelay.matcher(currentLine);
+					if (matcher.matches()) {
+						Integer foundExposureDelay = Integer.parseInt(matcher.group(1));
+						logger.info("Found: Layer Exposure Delay of:{}", foundExposureDelay);
+						sliceExposureDelay = foundExposureDelay;
+						continue;
+					}
 					
+					matcher = bottomLayerNumber.matcher(currentLine);
+					if (matcher.matches()) {
+						Integer foundBottomLayers = Integer.parseInt(matcher.group(1));
+						logger.info("Found: Number of Bottom Layers:{}", foundBottomLayers);
+						numberOfBottomLayers = foundBottomLayers;
+						continue;
+					}
+
 					/*matcher = gCodePattern.matcher(currentLine);
 					if (matcher.matches()) {
 						String gCode = matcher.group(1).trim();

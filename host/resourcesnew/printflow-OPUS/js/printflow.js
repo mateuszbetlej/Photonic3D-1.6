@@ -60,8 +60,8 @@ function startpage() {
                 //wifi updating
                 wifiupdate();
         }, 3000);
-		
-		if(typeof Cookies.get('firstInit') == "undefined") {
+        
+        if(typeof Cookies.get('firstInit') == "undefined") {
                 // Set first initialisation Cookie
                 Cookies.set('firstInit', true);
                 // turn the printer on 
@@ -74,6 +74,7 @@ function startpage() {
                         });   
                 },1000)  
         }
+   
 }
 
 function startpage_printdialogue() {
