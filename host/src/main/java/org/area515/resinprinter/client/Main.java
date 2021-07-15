@@ -66,7 +66,7 @@ public class Main {
 	public static final String PRINTERS_DIRECTORY = "printers";
 	public static final String BRANCH = "master";
 	//public static String REPO = "area515/Photonic3D"; <<<<<<<<<
-	public static String REPO = "mateuszbetlej/Photonic3DTestingV1";
+	public static String REPO = "mateuszbetlej/Photonic3D-1.6";
 	
 	private static Set<PrintableDevice> foundDevices = new HashSet<PrintableDevice>();
 	private static long maxLengthToWait = 5000;
