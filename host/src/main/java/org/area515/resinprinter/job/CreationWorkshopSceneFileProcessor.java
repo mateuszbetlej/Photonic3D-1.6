@@ -141,9 +141,9 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 		Pattern liftDistancePattern = Pattern.compile("\\s*;\\s*\\(?\\s*Lift\\s*Distance\\s*=\\s*([\\d\\.]+)\\s*(?:[Mm]{2})?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
 		Pattern sliceCountPattern = Pattern.compile("\\s*;\\s*Number\\s*of\\s*Slices\\s*=\\s*(\\d+)\\s*", Pattern.CASE_INSENSITIVE);
 		Pattern bottomDelay = Pattern.compile("\\s*;\\s*\\(?\\s*Bottom\\s*Layers\\s*Time\\s*=\\s*([\\d\\.]+)\\s*(?:ms)?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
-		//Pattern exposureDelay = Pattern.compile("\\s*;\\s*\\(?\\s*Layer\\s*Time\\s*=\\s*([\\d\\.]+)\\s*(?:ms)?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
+		Pattern exposureDelay = Pattern.compile("\\s*;\\s*\\(?\\s*Layer\\s*Time\\s*=\\s*([\\d\\.]+)\\s*(?:ms)?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
 		Pattern bottomLayerNumber = Pattern.compile("\\s*;\\s*\\(?\\s*Number\\s*of\\s*Bottom\\s*Layers\\s*=\\s*([\\d\\.]+)\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
-		Pattern exposureDelay = Pattern.compile("\\s*\\s*\\s*G4\\s*P.*;SLICE\\s*Exposure\\s*Delay\\s*", Pattern.CASE_INSENSITIVE);
+		//Pattern exposureDelay = Pattern.compile("\\s*\\s*\\s*G4\\s*P.*;SLICE\\s*Exposure\\s*Delay\\s*", Pattern.CASE_INSENSITIVE);
 
 		Printer printer = printJob.getPrinter();
 		String printerName = printer.getName();
@@ -166,8 +166,10 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 
 				matcher = exposureDelay.matcher(currentLine);
 				if (matcher.matches()) {
+					logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!{}", matcher.group(1));
 					Integer foundExposureDelay = Integer.parseInt(matcher.group(1));
 					sliceExposureDelay = foundExposureDelay;
+					logger.info("IIIIIIIIIIIII Slice Exposure Delay: {}", sliceExposureDelay);
 				}
 				
 				matcher = bottomLayerNumber.matcher(currentLine);
