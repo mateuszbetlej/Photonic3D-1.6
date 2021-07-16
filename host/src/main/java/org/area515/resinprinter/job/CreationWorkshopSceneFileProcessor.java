@@ -143,7 +143,8 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 		Pattern bottomDelay = Pattern.compile("\\s*;\\s*\\(?\\s*Bottom\\s*Layers\\s*Time\\s*=\\s*([\\d\\.]+)\\s*(?:ms)?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
 		Pattern exposureDelay = Pattern.compile("\\s*;\\s*\\(?\\s*Layer\\s*Time\\s*=\\s*([\\d\\.]+)\\s*(?:ms)?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
 		Pattern bottomLayerNumber = Pattern.compile("\\s*;\\s*\\(?\\s*Number\\s*of\\s*Bottom\\s*Layers\\s*=\\s*([\\d\\.]+)\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
-		
+		//Pattern exposureDelay = Pattern.compile("\\s*\\s*\\s*G4\\s*P.*;SLICE\\s*Exposure\\s*Delay\\s*", Pattern.CASE_INSENSITIVE);
+
 		Printer printer = printJob.getPrinter();
 		String printerName = printer.getName();
 		String printerType = "";
@@ -165,8 +166,10 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 
 				matcher = exposureDelay.matcher(currentLine);
 				if (matcher.matches()) {
+					logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!{}", matcher.group(1));
 					Integer foundExposureDelay = Integer.parseInt(matcher.group(1));
 					sliceExposureDelay = foundExposureDelay;
+					logger.info("IIIIIIIIIIIII Slice Exposure Delay: {}", sliceExposureDelay);
 				}
 				
 				matcher = bottomLayerNumber.matcher(currentLine);
@@ -183,6 +186,11 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 					}
 				}else if(printerName.contains("Magna")){
 					if(currentLine.equals(";<Delay> 2000") || currentLine.equals(";<Delay> " + sliceExposureDelay) || currentLine.equals(";<Delay> " + bottomLayerExposureDelay) || (currentLine.contains("M42 P0 S1") && currentLine.contains("SLICE LED on")) || (currentLine.contains("M42 P0 S0") && currentLine.contains("SLICE LED off")))
+					{
+						continue;
+					}
+				}else if(printerName.contains("Opus")){
+					if((currentLine.contains("G4") && currentLine.contains("SLICE Exposure Delay")) || (currentLine.contains("M42 P0 S1") && currentLine.contains("SLICE LED On")) || (currentLine.contains("M42 P0 S0") && currentLine.contains("SLICE LED Off"))) 
 					{
 						continue;
 					}

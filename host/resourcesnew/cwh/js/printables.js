@@ -89,7 +89,15 @@
 		this.refreshPrintables = function refreshPrintables() {
 	  		$http.get("services/printables/list").success(
 	  			function (data) {
-	  				controller.printables = data;
+					var newdata=[];
+					for (var i=0; i<data.length;i++){
+						var thisdata= data[i];
+						if (("display_test_to_be_hidden" !== thisdata.name) && ("display_cure_to_be_hidden" !== thisdata.name)) {
+							newdata.push(thisdata);
+						  }
+					}
+					controller.printables = newdata;
+					
 	  			})
 		};
 		
