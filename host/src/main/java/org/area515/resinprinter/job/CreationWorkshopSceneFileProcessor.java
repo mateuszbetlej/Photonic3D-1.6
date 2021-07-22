@@ -161,10 +161,8 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 
 				matcher = exposureDelay.matcher(currentLine);
 				if (matcher.matches()) {
-					logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!{}", matcher.group(1));
 					Integer foundExposureDelay = Integer.parseInt(matcher.group(1));
 					sliceExposureDelay = foundExposureDelay;
-					logger.info("IIIIIIIIIIIII Slice Exposure Delay: {}", sliceExposureDelay);
 				}
 				
 				matcher = bottomLayerNumber.matcher(currentLine);
