@@ -515,7 +515,7 @@
 			$("#togglebutton").show();
 			$("#whitecure").show();
 			$("#LedOn").show();
-			$("#homeZ").show();
+			$("#homez").show();
 			$("#testdisplaybtn").show();
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
 			$.getJSON('../services/printers/showBlankScreen/Photocentric%20Magna');
@@ -557,7 +557,7 @@
 			$("#togglebutton").hide();
 			$("#whitecure").hide();
 			$("#LedOn").hide();
-			$("#homeZ").hide();
+			$("#homez").hide();
 			$("#pump").hide();
 			$("#testdisplaybtn").hide();
 			$.getJSON('../services/customizers/projectCustomizerOnPrinter/display_test_to_be_hidden.zip.Photocentric%20Magna')
@@ -572,7 +572,7 @@
 				$("#togglebutton").show();
 				$("#whitecure").show();
 				$("#LedOn").show();
-				$("#homeZ").show();
+				$("#homez").show();
 				$("#pump").show();
 				$("#testdisplaybtn").show();
 				$('#warning').hide();
@@ -587,6 +587,7 @@
 			$('#layover_7').show(0).delay(80).hide(0);
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M408 S3', function (result) {
 				var tem = result["message"];
+				console.log(tem);
 				var messtripped = tem.substr(0, tem.length - 3); // to strip off end chars "msgBox.mode\":-1}\n\nok\n"
 				var messObj = JSON.parse(messtripped);
 				if (messObj.endstops === 0 || messObj.endstops === 4) {
@@ -611,7 +612,7 @@
 			$('#warning').show();
 			$("#togglebutton").hide();
 			$("#homebutton").hide();
-			$("#homeZ").hide();
+			$("#homez").hide();
 			$("#pump").hide();
 			$("#calibrate").hide();
 			$("#whitecure").hide();
@@ -624,7 +625,7 @@
 					$('#warning').hide();
 					$("#togglebutton").show();
 					$("#homebutton").show();
-					$("#homeZ").show();
+					$("#homez").show();
 					$("#calibrate").show();
 					$("#whitecure").show();
 					$("#LedOn").show();
@@ -642,7 +643,7 @@
 		function whitecurescr() {
 			$('#warning').html("Curing layer. . .");
 			$('#warning').show();
-			$("#homeZ").hide();
+			$("#homez").hide();
 			$("#togglebutton").hide();
 			$("#testdisplaybtn").hide();
 			$("#calibrate").hide();
@@ -661,7 +662,7 @@
 				$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
 				$.getJSON('../services/printers/showBlankScreen/Photocentric%20Magna')
 					.done(function (data) {
-						$("#homeZ").show();
+						$("#homez").show();
 						$("#togglebutton").show();
 						$("#testdisplaybtn").show();
 						$("#calibrate").show();
@@ -671,11 +672,11 @@
 						$("#pump").show();
 						$('#warning').html("Layer ready, please remove it from the Vat.");
 					});
-			}, 15000);
+			}, 20000);
 			setTimeout(function () {
 				$('#warning').hide();
 				$("#whitecure").show();
-			}, 20000);
+			}, 25000);
 			clearTimeout(LT1);
 			clearTimeout(LT2);
 			clearTimeout(LT3);
@@ -743,7 +744,7 @@
 					onclick="lightoff();" />
 				<img name="calibrate" id="calibrate" class="calibrate" src="images/menumainbuttonANIM.png"
 					onClick="calibutton();" />
-				<img name="homeZ" id="homeZ" class="homeZ" src="images/menumainbuttonANIM.png"
+				<img name="homez" id="homez" class="homez" src="images/menumainbuttonANIM.png"
 					onclick="Doliftcheck();" />
 				<img name="pump" id="pump" class="pump" src="images/menumainbuttonANIM.png" onClick="pbutton();" />
 			</map>
