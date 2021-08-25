@@ -206,7 +206,9 @@ public class CustomizerService {
 			AbstractPrintFileProcessor<?,?> previewableProcessor = (AbstractPrintFileProcessor<?,?>)aid.printJob.getPrintFileProcessor();
 			BufferedImage img = previewableProcessor.buildPreviewSlice(customizer, dataAidsByCustomizer.get(customizer));
 			printer.setStatus(printer.getStatus());//This is to make sure the slicenumber is reset.
-			printer.showImage(img, true);
+			// printer.showImage(img, true);
+			Process showingSlice = Runtime.getRuntime().exec(new String[]{"nice", "-n", "-2", "/home/pi/raspidmx/demo_mask_overlay_with_args/show_image", "-d", "5", "-t", "10", "-p", printerName, "-e", "20000", "-b", "5", "-x", "50000", "-m", "/home/pi/mask/mask.png", "/tmp/printdir/display_test_to_be_hidden.zip/display_test_to_be_hidden.png"});
+			showingSlice.waitFor();
 		} catch (ExecutionException e) {
 			throw new IllegalArgumentException("Couldn't build data aid", e);
 		}
