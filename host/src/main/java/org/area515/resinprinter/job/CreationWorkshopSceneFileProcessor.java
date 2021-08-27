@@ -234,8 +234,8 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 			ImageIO.setUseCache(false);
 			while ((currentLine = stream.readLine()) != null && printer.isPrintActive()) {
 				Matcher matcher = slicePattern.matcher(currentLine);
-				logger.info("Printer is: {}", printerName);
-				logger.info("Printer type is: {}", printerType);
+				// logger.info("Printer is: {}", printerName);
+				// logger.info("Printer type is: {}", printerType);
 				if (matcher.matches()) {
 					if (sliceCount == null) {
 						throw new IllegalArgumentException("No 'Number of Slices' line in gcode file");
@@ -270,16 +270,16 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 					NotificationManager.jobChanged(printer, printJob);
 
 					
-					logger.info("Found: Bottom Layer Delay of:{}", bottomLayerExposureDelay);
-					logger.info("Found: Layer Exposure Delay of:{}", sliceExposureDelay);
-					logger.info("Found: Number of Bottom Layers:{}", numberOfBottomLayers);
+					logger.info("BOTTOM Layer Delay:{}", bottomLayerExposureDelay);
+					logger.info("LAYER Exposure Delay:{}", sliceExposureDelay);
+					logger.info("Number of Bottom Layers:{}", numberOfBottomLayers);
 					// Call display driver.
 					logger.info("Display picture on screen: {}", imageFilename);
 					//printer.showImage(data.getPrintableImage(), true);
 					//"-p \""+ printerName+ "\
 					//logger.info("Slice = /{}{}", FilePath.replace(" ", "\\ "), imageFilename );
 					String slicePath = "/" + FilePath + imageFilename;
-					logger.info("Slice = {}", slicePath );
+					// logger.info("Slice = {}", slicePath );
 					//String cmd = "/home/pi/raspidmx/pngview_with_gpio_vsync/pngview -d 5 -t " + sliceIndex + " -p " + printerType + " -e "+ sliceExposureDelay +" -b " + numberOfBottomLayers + " -x " + bottomLayerExposureDelay + " " + slicePath;
 					//Process showingSlice = Runtime.getRuntime().exec(new String[]{"/home/pi/raspidmx/pngview_with_gpio_vsync/pngview", "-d", "5", "-t", Integer.toString(sliceIndex), "-p", printerName, "-e", Integer.toString(sliceExposureDelay), "-b", Integer.toString(numberOfBottomLayers), "-x", Integer.toString(bottomLayerExposureDelay), slicePath});
 					Process showingSlice = Runtime.getRuntime().exec(new String[]{"nice", "-n", "-2", "/home/pi/raspidmx/demo_mask_overlay_with_args/show_image", "-d", "5", "-t", Integer.toString(sliceIndex), "-p", printerName, "-e", Integer.toString(sliceExposureDelay), "-b", Integer.toString(numberOfBottomLayers), "-x", Integer.toString(bottomLayerExposureDelay), "-m", "/home/pi/mask/mask.png", slicePath});
