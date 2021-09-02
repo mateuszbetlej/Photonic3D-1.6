@@ -138,13 +138,12 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 		Pattern bottomDelay = Pattern.compile("\\s*;\\s*\\(?\\s*Bottom\\s*Layers\\s*Time\\s*=\\s*([\\d\\.]+)\\s*(?:ms)?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
 		Pattern exposureDelay = Pattern.compile("\\s*;\\s*\\(?\\s*Layer\\s*Time\\s*=\\s*([\\d\\.]+)\\s*(?:ms)?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
 		Pattern bottomLayerNumber = Pattern.compile("\\s*;\\s*\\(?\\s*Number\\s*of\\s*Bottom\\s*Layers\\s*=\\s*([\\d\\.]+)\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
-		//Pattern exposureDelay = Pattern.compile("\\s*\\s*\\s*G4\\s*P.*;SLICE\\s*Exposure\\s*Delay\\s*", Pattern.CASE_INSENSITIVE);
 
 		Printer printer = printJob.getPrinter();
 		String printerName = printer.getName();
 		String printerType = "";
 		
-		//GCode formatting to remove led controll and delays for pngview/show_image
+		//GCode formatting to remove led control and delays for pngview/show_image
 		File inputFile = new File(gCodeFile.getPath());
 		File tempFile = File.createTempFile("tempGCodeFile",".txt");
 		BufferedReader reader = new BufferedReader(new FileReader(inputFile));
@@ -234,8 +233,6 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 			ImageIO.setUseCache(false);
 			while ((currentLine = stream.readLine()) != null && printer.isPrintActive()) {
 				Matcher matcher = slicePattern.matcher(currentLine);
-				// logger.info("Printer is: {}", printerName);
-				// logger.info("Printer type is: {}", printerType);
 				if (matcher.matches()) {
 					if (sliceCount == null) {
 						throw new IllegalArgumentException("No 'Number of Slices' line in gcode file");
@@ -273,11 +270,9 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 					logger.info("BOTTOM Layer Delay:{}", bottomLayerExposureDelay);
 					logger.info("LAYER Exposure Delay:{}", sliceExposureDelay);
 					logger.info("Number of Bottom Layers:{}", numberOfBottomLayers);
-					// Call display driver.
+					// Call show image.
 					logger.info("Display picture on screen: {}", imageFilename);
 					//printer.showImage(data.getPrintableImage(), true);
-					//"-p \""+ printerName+ "\
-					//logger.info("Slice = /{}{}", FilePath.replace(" ", "\\ "), imageFilename );
 					String slicePath = "/" + FilePath + imageFilename;
 					// logger.info("Slice = {}", slicePath );
 					//String cmd = "/home/pi/raspidmx/pngview_with_gpio_vsync/pngview -d 5 -t " + sliceIndex + " -p " + printerType + " -e "+ sliceExposureDelay +" -b " + numberOfBottomLayers + " -x " + bottomLayerExposureDelay + " " + slicePath;
@@ -291,98 +286,98 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 				}continue;
 			}
 					
-					/*matcher = delayPattern.matcher(currentLine);
-					if (matcher.matches()) {
-						try {
-							int sleepTime = Integer.parseInt(matcher.group(1));
-							if (printJob.isExposureTimeOverriden()) {
-								sleepTime = printJob.getExposureTime();
-							} else {
-								printJob.setExposureTime(sleepTime);
-							}
-							logger.info("Sleep:{}", sleepTime);
-							Thread.sleep(sleepTime);
-							logger.info("Sleep complete");
-						} catch (InterruptedException e) {
-							logger.error("Interrupted while waiting for exposure to complete.", e);
-						}
-						continue;
-					}*/
-					
-					matcher = sliceCountPattern.matcher(currentLine);
-					if (matcher.matches()) {
-						sliceCount = Integer.parseInt(matcher.group(1));
-						printJob.setTotalSlices(sliceCount);
-						logger.info("Found:{} slices", sliceCount);
-						continue;
-					}
-					
-					matcher = liftSpeedPattern.matcher(currentLine);
-					if (matcher.matches()) {
-						double foundLiftSpeed = Double.parseDouble(matcher.group(1));
-						if (printJob.isZLiftSpeedOverriden()) {
-							logger.info("Override: LiftDistance:{} overrided to:{}" , String.format("%1.3f", foundLiftSpeed), String.format("%1.3f", printJob.getZLiftSpeed()));
+				/*matcher = delayPattern.matcher(currentLine);
+				if (matcher.matches()) {
+					try {
+						int sleepTime = Integer.parseInt(matcher.group(1));
+						if (printJob.isExposureTimeOverriden()) {
+							sleepTime = printJob.getExposureTime();
 						} else {
-							printJob.setZLiftSpeed(foundLiftSpeed);
-							logger.info("Found: LiftSpeed of:" + String.format("%1.3f", foundLiftSpeed));
+							printJob.setExposureTime(sleepTime);
 						}
-						continue;
+						logger.info("Sleep:{}", sleepTime);
+						Thread.sleep(sleepTime);
+						logger.info("Sleep complete");
+					} catch (InterruptedException e) {
+						logger.error("Interrupted while waiting for exposure to complete.", e);
 					}
-					
-					matcher = liftDistancePattern.matcher(currentLine);
-					if (matcher.matches()) {
-						double foundLiftDistance = Double.parseDouble(matcher.group(1));
-						if (printJob.isZLiftDistanceOverriden()) {
-							logger.info("Override: LiftDistance:{} overrided to:{}", String.format("%1.3f", foundLiftDistance), String.format("%1.3f", printJob.getZLiftDistance()));
-						} else {
-							printJob.setZLiftDistance(foundLiftDistance);
-							logger.info("Found: LiftDistance of:{}", String.format("%1.3f", foundLiftDistance));
+					continue;
+				}*/
+				
+				matcher = sliceCountPattern.matcher(currentLine);
+				if (matcher.matches()) {
+					sliceCount = Integer.parseInt(matcher.group(1));
+					printJob.setTotalSlices(sliceCount);
+					logger.info("Found:{} slices", sliceCount);
+					continue;
+				}
+				
+				matcher = liftSpeedPattern.matcher(currentLine);
+				if (matcher.matches()) {
+					double foundLiftSpeed = Double.parseDouble(matcher.group(1));
+					if (printJob.isZLiftSpeedOverriden()) {
+						logger.info("Override: LiftDistance:{} overrided to:{}" , String.format("%1.3f", foundLiftSpeed), String.format("%1.3f", printJob.getZLiftSpeed()));
+					} else {
+						printJob.setZLiftSpeed(foundLiftSpeed);
+						logger.info("Found: LiftSpeed of:" + String.format("%1.3f", foundLiftSpeed));
+					}
+					continue;
+				}
+				
+				matcher = liftDistancePattern.matcher(currentLine);
+				if (matcher.matches()) {
+					double foundLiftDistance = Double.parseDouble(matcher.group(1));
+					if (printJob.isZLiftDistanceOverriden()) {
+						logger.info("Override: LiftDistance:{} overrided to:{}", String.format("%1.3f", foundLiftDistance), String.format("%1.3f", printJob.getZLiftDistance()));
+					} else {
+						printJob.setZLiftDistance(foundLiftDistance);
+						logger.info("Found: LiftDistance of:{}", String.format("%1.3f", foundLiftDistance));
+					}
+					continue;
+				}
+				matcher = bottomDelay.matcher(currentLine);
+				if (matcher.matches()) {
+					Integer foundBottomDelay = Integer.parseInt(matcher.group(1));
+					logger.info("Found: Bottom Layer Delay of:{}", foundBottomDelay);
+					bottomLayerExposureDelay = foundBottomDelay;
+					continue;
+				}
+
+				matcher = exposureDelay.matcher(currentLine);
+				if (matcher.matches()) {
+					Integer foundExposureDelay = Integer.parseInt(matcher.group(1));
+					logger.info("Found: Layer Exposure Delay of:{}", foundExposureDelay);
+					sliceExposureDelay = foundExposureDelay;
+					continue;
+				}
+				
+				matcher = bottomLayerNumber.matcher(currentLine);
+				if (matcher.matches()) {
+					Integer foundBottomLayers = Integer.parseInt(matcher.group(1));
+					logger.info("Found: Number of Bottom Layers:{}", foundBottomLayers);
+					numberOfBottomLayers = foundBottomLayers;
+					continue;
+				}
+
+				/*matcher = gCodePattern.matcher(currentLine);
+				if (matcher.matches()) {
+					String gCode = matcher.group(1).trim();
+					logger.info("Send GCode:{}", gCode);
+
+					for (int t = 0; t < 3; t++) {
+						gCode = printer.getGCodeControl().sendGcodeAndRespectPrinter(printJob, gCode);
+						if (gCode != null) {
+							break;
 						}
-						continue;
+						logger.info("Printer timed out:{}", t);
 					}
-					matcher = bottomDelay.matcher(currentLine);
-					if (matcher.matches()) {
-						Integer foundBottomDelay = Integer.parseInt(matcher.group(1));
-						logger.info("Found: Bottom Layer Delay of:{}", foundBottomDelay);
-						bottomLayerExposureDelay = foundBottomDelay;
-						continue;
-					}
-
-					matcher = exposureDelay.matcher(currentLine);
-					if (matcher.matches()) {
-						Integer foundExposureDelay = Integer.parseInt(matcher.group(1));
-						logger.info("Found: Layer Exposure Delay of:{}", foundExposureDelay);
-						sliceExposureDelay = foundExposureDelay;
-						continue;
-					}
-					
-					matcher = bottomLayerNumber.matcher(currentLine);
-					if (matcher.matches()) {
-						Integer foundBottomLayers = Integer.parseInt(matcher.group(1));
-						logger.info("Found: Number of Bottom Layers:{}", foundBottomLayers);
-						numberOfBottomLayers = foundBottomLayers;
-						continue;
-					}
-
-					/*matcher = gCodePattern.matcher(currentLine);
-					if (matcher.matches()) {
-						String gCode = matcher.group(1).trim();
-						logger.info("Send GCode:{}", gCode);
-
-						for (int t = 0; t < 3; t++) {
-							gCode = printer.getGCodeControl().sendGcodeAndRespectPrinter(printJob, gCode);
-							if (gCode != null) {
-								break;
-							}
-							logger.info("Printer timed out:{}", t);
-						}
-						logger.info("Printer Response:{}", gCode);
-						continue;
-					}*/
-					
-					// print out comments
-					//logger.info("Ignored line:{}", currentLine);
-					printer.getGCodeControl().executeGCodeWithTemplating(printJob, currentLine, true);
+					logger.info("Printer Response:{}", gCode);
+					continue;
+				}*/
+				
+				// print out comments
+				//logger.info("Ignored line:{}", currentLine);
+				printer.getGCodeControl().executeGCodeWithTemplating(printJob, currentLine, true);
 			}
 			
 			return printer.isPrintActive()?JobStatus.Completed:printer.getStatus();
