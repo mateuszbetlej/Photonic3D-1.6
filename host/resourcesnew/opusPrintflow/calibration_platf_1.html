@@ -161,7 +161,7 @@
 							$("#home").hide();
 							$('#warning').html("Platform homing. Please wait.");
 							$('#warning').show();
-							$.getJSON('../services/printers/executeGCode/' + printerName + '/G28')
+							$.getJSON('../services/printers/executeGCode/' + printerName + '/G28 X0 Z0')
 								.done(function (data) {
 									location.href = 'calibration_platf_2.html';
 								});

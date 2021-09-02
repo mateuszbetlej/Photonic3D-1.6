@@ -139,7 +139,7 @@
 					if (messObj.endstops === 2 || messObj.endstops === 3 || messObj.endstops === 6 || messObj.endstops === 7) {
 						$('#home').hide();
 						$('#start').hide();
-						$.getJSON('../services/printers/executeGCode/' + printerName + '/G28')
+						$.getJSON('../services/printers/executeGCode/' + printerName + '/G28 X0 Z0')
 							.done(function (data) {
 								location.href = 'calibration_vat_2.html';
 							});
