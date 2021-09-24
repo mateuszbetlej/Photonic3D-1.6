@@ -1,6 +1,6 @@
 {  
    "configuration":{  
-      "name":"Photocentric Magna",
+      "name":"LC Nano",
       "machineConfig":{  
          "FileVersion":0,
          "PlatformXSize":68.04,
@@ -86,7 +86,7 @@
             }
          ]
       },
-      "MachineConfigurationName":"Photocentric Magna",
+      "MachineConfigurationName":"LC Nano",
       "SlicingProfileName":"Hard daylight red 0.1",
       "AutoStart":true
    },
