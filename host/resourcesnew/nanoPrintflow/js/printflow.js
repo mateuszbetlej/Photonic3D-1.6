@@ -17,12 +17,12 @@ var dooropen = "images/open.png";
 var doorclosed = "images/closed.png";
 
 function startpage() {
-        if (typeof Cookies.get('interlockcheck') !== 'undefined') {
-                document.getElementById("interlockcheck").src = Cookies.get('interlockcheck');
-        }
-        if (typeof Cookies.get('doorcheck') !== 'undefined') {
-                document.getElementById("doorcheck").src = Cookies.get('doorcheck');
-        }
+        // if (typeof Cookies.get('interlockcheck') !== 'undefined') {
+        //         document.getElementById("interlockcheck").src = Cookies.get('interlockcheck');
+        // }
+        // if (typeof Cookies.get('doorcheck') !== 'undefined') {
+        //         document.getElementById("doorcheck").src = Cookies.get('doorcheck');
+        // }
         if (typeof Cookies.get('lastwifi') !== 'undefined') {
                 signalstrength = Cookies.get('lastwifi');
                 if (signalstrength > -45) {
@@ -106,30 +106,30 @@ function printerStatus() {
 }
 
 function doorupdate() {
-        $.getJSON('../services/printers/executeGCode/' + printerName + '/M408 S3', function (result) {
-                var tem = result["message"];
-                var messtripped = tem.substr(0, tem.length - 3); // to strip off end chars "msgBox.mode\":-1}\n\nok\n"
-                var messObj = JSON.parse(messtripped);
-                var HACKinterlockFlagArr = messObj.params.fanPercent;
-                var interlockSetTrue = HACKinterlockFlagArr[1] == 100;
-                var interlockSetFalse = HACKinterlockFlagArr[1] <= 99;
-                if (interlockSetTrue) {
-                        document.getElementById("interlockcheck").src = locked;
-                        Cookies.set('interlockcheck', locked);
-                }
-                if (interlockSetFalse) {
-                        document.getElementById("interlockcheck").src = unlocked;
-                        Cookies.set('interlockcheck', unlocked);
-                }
-                if (messObj.endstops === 2 || messObj.endstops === 6) {
-                        document.getElementById("doorcheck").src = dooropen;
-                        Cookies.set('doorcheck', dooropen);
-                }
-                if (messObj.endstops === 0 || messObj.endstops === 4) {
-                        document.getElementById("doorcheck").src = doorclosed;
-                        Cookies.set('doorcheck', doorclosed);
-                }
-        });
+        // $.getJSON('../services/printers/executeGCode/' + printerName + '/M408 S3', function (result) {
+        //         var tem = result["message"];
+        //         var messtripped = tem.substr(0, tem.length - 3); // to strip off end chars "msgBox.mode\":-1}\n\nok\n"
+        //         var messObj = JSON.parse(messtripped);
+        //         var HACKinterlockFlagArr = messObj.params.fanPercent;
+        //         var interlockSetTrue = HACKinterlockFlagArr[1] == 100;
+        //         var interlockSetFalse = HACKinterlockFlagArr[1] <= 99;
+        //         if (interlockSetTrue) {
+        //                 document.getElementById("interlockcheck").src = locked;
+        //                 Cookies.set('interlockcheck', locked);
+        //         }
+        //         if (interlockSetFalse) {
+        //                 document.getElementById("interlockcheck").src = unlocked;
+        //                 Cookies.set('interlockcheck', unlocked);
+        //         }
+        //         if (messObj.endstops === 2 || messObj.endstops === 6) {
+        //                 document.getElementById("doorcheck").src = dooropen;
+        //                 Cookies.set('doorcheck', dooropen);
+        //         }
+        //         if (messObj.endstops === 0 || messObj.endstops === 4) {
+        //                 document.getElementById("doorcheck").src = doorclosed;
+        //                 Cookies.set('doorcheck', doorclosed);
+        //         }
+        // });
 }
 
 function wifiupdate() {

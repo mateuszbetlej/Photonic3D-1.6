@@ -747,44 +747,44 @@
 
 		function DoEndstop() {
 			$('#layover_4').show(0).delay(80).hide(0);
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/M408 S3', function (result) {
-				var tem = result["message"];
-				var messtripped = tem.substr(0, tem.length - 3); // to strip off end chars "msgBox.mode\":-1}\n\nok\n"
-				var messObj = JSON.parse(messtripped);
-				if (messObj.endstops === 0 || messObj.endstops === 4) {
-					$.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Plock.g');
+			// $.getJSON('../services/printers/executeGCode/' + printerName + '/M408 S3', function (result) {
+			// 	var tem = result["message"];
+			// 	var messtripped = tem.substr(0, tem.length - 3); // to strip off end chars "msgBox.mode\":-1}\n\nok\n"
+			// 	var messObj = JSON.parse(messtripped);
+			// 	if (messObj.endstops === 0 || messObj.endstops === 4) {
+			// 		$.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Plock.g');
 					$.getJSON('../services/printers/executeGCode/' + printerName + '/M400');
 					$('#cancellabel').hide();
 					doResume();
-				}
-				else {
-					$('#warning').html("Please close the door and try again");
-					$('#warning').show();
-					setTimeout(function () {
-						$('#warning').hide();
-					}, 5000);
-				}
-			});
+			// 	}
+			// 	else {
+			// 		$('#warning').html("Please close the door and try again");
+			// 		$('#warning').show();
+			// 		setTimeout(function () {
+			// 			$('#warning').hide();
+			// 		}, 5000);
+			// 	}
+			// });
 		}
 
 		function Dodoorcheck() {
 			if (document.getElementById("pause").innerHTML == '<img src=\"images/resume.png\">') {
-				$.getJSON('../services/printers/executeGCode/' + printerName + '/M408 S3', function (result) {
-					var tem = result["message"];
-					var messtripped = tem.substr(0, tem.length - 3); // to strip off end chars "msgBox.mode\":-1}\n\nok\n"
-					var messObj = JSON.parse(messtripped);
-					if (messObj.endstops === 0 || messObj.endstops === 4) {
-						$.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Plock.g');
-						cancel();
-					}
-					else {
-						$('#warning').html("Please close the door and try again");
-						$('#warning').show();
-						setTimeout(function () {
-							$('#warning').hide();
-						}, 5000);
-					}
-				});
+			// 	$.getJSON('../services/printers/executeGCode/' + printerName + '/M408 S3', function (result) {
+			// 		var tem = result["message"];
+			// 		var messtripped = tem.substr(0, tem.length - 3); // to strip off end chars "msgBox.mode\":-1}\n\nok\n"
+			// 		var messObj = JSON.parse(messtripped);
+			// 		if (messObj.endstops === 0 || messObj.endstops === 4) {
+			// 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Plock.g');
+			 			cancel();
+			// 		}
+			// 		else {
+			// 			$('#warning').html("Please close the door and try again");
+			// 			$('#warning').show();
+			// 			setTimeout(function () {
+			// 				$('#warning').hide();
+			// 			}, 5000);
+			// 		}
+			// 	});
 			}
 			else {
 				cancel();
