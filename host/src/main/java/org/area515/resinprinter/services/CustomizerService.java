@@ -181,7 +181,7 @@ public class CustomizerService {
         @ApiResponse(code = 500, message = SwaggerMetadata.UNEXPECTED_ERROR)})
 	@GET
 	@Path("projectCustomizerCureLayer/{customizerName}")
-	public void projectImage(@PathParam("customizerName") String customizerName) throws SliceHandlingException, InappropriateDeviceException, NoPrinterFoundException {
+	public void projectCureLayerImage(@PathParam("customizerName") String customizerName) throws SliceHandlingException, InappropriateDeviceException, NoPrinterFoundException {
 		Customizer customizer = customizersByName.getIfPresent(customizerName);
 		if (customizer == null) {
 			throw new IllegalArgumentException("Customizer is missing");
@@ -225,7 +225,7 @@ public class CustomizerService {
         @ApiResponse(code = 500, message = SwaggerMetadata.UNEXPECTED_ERROR)})
 	@GET
 	@Path("projectCustomizerLogo/{customizerName}")
-	public void projectImage(@PathParam("customizerName") String customizerName) throws SliceHandlingException, InappropriateDeviceException, NoPrinterFoundException {
+	public void projectLogoImage(@PathParam("customizerName") String customizerName) throws SliceHandlingException, InappropriateDeviceException, NoPrinterFoundException {
 		Customizer customizer = customizersByName.getIfPresent(customizerName);
 		if (customizer == null) {
 			throw new IllegalArgumentException("Customizer is missing");
