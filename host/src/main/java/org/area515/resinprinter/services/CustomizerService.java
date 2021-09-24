@@ -175,93 +175,93 @@ public class CustomizerService {
 		customizersByName.invalidate(customizerName);
 	}
 
-	// @ApiOperation(value="Displays a blank slice to the printer light source")
-    // @ApiResponses(value = {
-    //     @ApiResponse(code = 200, message = SwaggerMetadata.SUCCESS),
-    //     @ApiResponse(code = 500, message = SwaggerMetadata.UNEXPECTED_ERROR)})
-	// @GET
-	// @Path("projectCustomizerCureLayer/{customizerName}")
-	// public void projectImage(@PathParam("customizerName") String customizerName) throws SliceHandlingException, InappropriateDeviceException, NoPrinterFoundException {
-	// 	Customizer customizer = customizersByName.getIfPresent(customizerName);
-	// 	if (customizer == null) {
-	// 		throw new IllegalArgumentException("Customizer is missing");
-	// 	}
+	@ApiOperation(value="Displays a blank slice to the printer light source")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = SwaggerMetadata.SUCCESS),
+        @ApiResponse(code = 500, message = SwaggerMetadata.UNEXPECTED_ERROR)})
+	@GET
+	@Path("projectCustomizerCureLayer/{customizerName}")
+	public void projectImage(@PathParam("customizerName") String customizerName) throws SliceHandlingException, InappropriateDeviceException, NoPrinterFoundException {
+		Customizer customizer = customizersByName.getIfPresent(customizerName);
+		if (customizer == null) {
+			throw new IllegalArgumentException("Customizer is missing");
+		}
 		
-	// 	String printerName = customizer.getPrinterName();
-	// 	if (printerName == null) {
-	// 		throw new IllegalArgumentException("No printer available.");
-	// 	}
+		String printerName = customizer.getPrinterName();
+		if (printerName == null) {
+			throw new IllegalArgumentException("No printer available.");
+		}
 		
-	// 	Printer printer = PrinterService.INSTANCE.getPrinter(printerName);
-	// 	if (!printer.isStarted()) {
-	// 		throw new IllegalArgumentException("Printer must be started");
-	// 	}
+		Printer printer = PrinterService.INSTANCE.getPrinter(printerName);
+		if (!printer.isStarted()) {
+			throw new IllegalArgumentException("Printer must be started");
+		}
 
-	// 	if (printer.isPrintInProgress()) {
-	// 		throw new IllegalArgumentException("Printer can't preview while print is active!");
-	// 	}
+		if (printer.isPrintInProgress()) {
+			throw new IllegalArgumentException("Printer can't preview while print is active!");
+		}
 
-	// 	try {
-	// 		DataAid aid = dataAidsByCustomizer.get(customizer);
-	// 		AbstractPrintFileProcessor<?,?> previewableProcessor = (AbstractPrintFileProcessor<?,?>)aid.printJob.getPrintFileProcessor();
-	// 		BufferedImage img = previewableProcessor.buildPreviewSlice(customizer, dataAidsByCustomizer.get(customizer));
-	// 		printer.setStatus(printer.getStatus());//This is to make sure the slicenumber is reset.
-	// 		// printer.showImage(img, true);
+		try {
+			DataAid aid = dataAidsByCustomizer.get(customizer);
+			AbstractPrintFileProcessor<?,?> previewableProcessor = (AbstractPrintFileProcessor<?,?>)aid.printJob.getPrintFileProcessor();
+			BufferedImage img = previewableProcessor.buildPreviewSlice(customizer, dataAidsByCustomizer.get(customizer));
+			printer.setStatus(printer.getStatus());//This is to make sure the slicenumber is reset.
+			// printer.showImage(img, true);
 			
-	// 		try {
-	// 			Process showingSlice = Runtime.getRuntime().exec(new String[]{"nice", "-n", "-2", "/home/pi/raspidmx/demo_mask_overlay_with_args/show_image", "-d", "5", "-t", "10", "-p", printerName, "-e", "15000", "-b", "5", "-x", "50000", "-m", "/home/pi/mask/mask.png", "/tmp/printdir/display_cure_to_be_hidden.zip/display_cure_to_be_hidden.png"});
-	// 			showingSlice.waitFor();
-	// 		} catch(Exception e) {
+			try {
+				Process showingSlice = Runtime.getRuntime().exec(new String[]{"nice", "-n", "-2", "/home/pi/raspidmx/demo_mask_overlay_with_args/show_image", "-d", "5", "-t", "10", "-p", printerName, "-e", "15000", "-b", "5", "-x", "50000", "-m", "/home/pi/mask/mask.png", "/tmp/printdir/display_cure_to_be_hidden.zip/display_cure_to_be_hidden.png"});
+				showingSlice.waitFor();
+			} catch(Exception e) {
 				
-	// 		}
-	// 	} catch (ExecutionException e) {
-	// 		throw new IllegalArgumentException("Couldn't build data aid", e);
-	// 	}
-	// }
+			}
+		} catch (ExecutionException e) {
+			throw new IllegalArgumentException("Couldn't build data aid", e);
+		}
+	}
 
-	// @ApiOperation(value="Displays a Photocentric Logo to a light source")
-    // @ApiResponses(value = {
-    //     @ApiResponse(code = 200, message = SwaggerMetadata.SUCCESS),
-    //     @ApiResponse(code = 500, message = SwaggerMetadata.UNEXPECTED_ERROR)})
-	// @GET
-	// @Path("projectCustomizerLogo/{customizerName}")
-	// public void projectImage(@PathParam("customizerName") String customizerName) throws SliceHandlingException, InappropriateDeviceException, NoPrinterFoundException {
-	// 	Customizer customizer = customizersByName.getIfPresent(customizerName);
-	// 	if (customizer == null) {
-	// 		throw new IllegalArgumentException("Customizer is missing");
-	// 	}
+	@ApiOperation(value="Displays a Photocentric Logo to a light source")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = SwaggerMetadata.SUCCESS),
+        @ApiResponse(code = 500, message = SwaggerMetadata.UNEXPECTED_ERROR)})
+	@GET
+	@Path("projectCustomizerLogo/{customizerName}")
+	public void projectImage(@PathParam("customizerName") String customizerName) throws SliceHandlingException, InappropriateDeviceException, NoPrinterFoundException {
+		Customizer customizer = customizersByName.getIfPresent(customizerName);
+		if (customizer == null) {
+			throw new IllegalArgumentException("Customizer is missing");
+		}
 		
-	// 	String printerName = customizer.getPrinterName();
-	// 	if (printerName == null) {
-	// 		throw new IllegalArgumentException("No printer available.");
-	// 	}
+		String printerName = customizer.getPrinterName();
+		if (printerName == null) {
+			throw new IllegalArgumentException("No printer available.");
+		}
 		
-	// 	Printer printer = PrinterService.INSTANCE.getPrinter(printerName);
-	// 	if (!printer.isStarted()) {
-	// 		throw new IllegalArgumentException("Printer must be started");
-	// 	}
+		Printer printer = PrinterService.INSTANCE.getPrinter(printerName);
+		if (!printer.isStarted()) {
+			throw new IllegalArgumentException("Printer must be started");
+		}
 
-	// 	if (printer.isPrintInProgress()) {
-	// 		throw new IllegalArgumentException("Printer can't preview while print is active!");
-	// 	}
+		if (printer.isPrintInProgress()) {
+			throw new IllegalArgumentException("Printer can't preview while print is active!");
+		}
 
-	// 	try {
-	// 		DataAid aid = dataAidsByCustomizer.get(customizer);
-	// 		AbstractPrintFileProcessor<?,?> previewableProcessor = (AbstractPrintFileProcessor<?,?>)aid.printJob.getPrintFileProcessor();
-	// 		BufferedImage img = previewableProcessor.buildPreviewSlice(customizer, dataAidsByCustomizer.get(customizer));
-	// 		printer.setStatus(printer.getStatus());//This is to make sure the slicenumber is reset.
-	// 		// printer.showImage(img, true);
+		try {
+			DataAid aid = dataAidsByCustomizer.get(customizer);
+			AbstractPrintFileProcessor<?,?> previewableProcessor = (AbstractPrintFileProcessor<?,?>)aid.printJob.getPrintFileProcessor();
+			BufferedImage img = previewableProcessor.buildPreviewSlice(customizer, dataAidsByCustomizer.get(customizer));
+			printer.setStatus(printer.getStatus());//This is to make sure the slicenumber is reset.
+			// printer.showImage(img, true);
 			
-	// 		try {
-	// 			Process showingSlice = Runtime.getRuntime().exec(new String[]{"nice", "-n", "-2", "/home/pi/raspidmx/demo_mask_overlay_with_args/show_image", "-d", "5", "-t", "10", "-p", printerName, "-e", "15000", "-b", "5", "-x", "50000", "-m", "/home/pi/mask/mask.png", "/tmp/printdir/display_test_to_be_hidden.zip/display_test_to_be_hidden.png"});
-	// 			showingSlice.waitFor();
-	// 		} catch(Exception e) {
+			try {
+				Process showingSlice = Runtime.getRuntime().exec(new String[]{"nice", "-n", "-2", "/home/pi/raspidmx/demo_mask_overlay_with_args/show_image", "-d", "5", "-t", "10", "-p", printerName, "-e", "15000", "-b", "5", "-x", "50000", "-m", "/home/pi/mask/mask.png", "/tmp/printdir/display_test_to_be_hidden.zip/display_test_to_be_hidden.png"});
+				showingSlice.waitFor();
+			} catch(Exception e) {
 				
-	// 		}
-	// 	} catch (ExecutionException e) {
-	// 		throw new IllegalArgumentException("Couldn't build data aid", e);
-	// 	}
-	// }
+			}
+		} catch (ExecutionException e) {
+			throw new IllegalArgumentException("Couldn't build data aid", e);
+		}
+	}
 
 	@ApiOperation(value="Displays a slice of a printable based on the Customizer to the printer light source")
     @ApiResponses(value = {
