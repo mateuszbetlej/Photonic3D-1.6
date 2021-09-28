@@ -493,9 +493,12 @@
 			$.getJSON('../services/printers/showBlankScreen/LC%20Nano');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S1');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S1');
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S1');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P1 S1');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P2 S1');
 			LT1 = setTimeout(function () {
 				$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
+				$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P1 S0');
+				$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P2 S0');
 				$("#togglebutton").show();
 				$('#warning').html("Backlight Auto OFF");
 				$("#whitecure").show();
@@ -518,6 +521,8 @@
 			$("#homez").show();
 			$("#testdisplaybtn").show();
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P1 S0');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P2 S0');
 			$.getJSON('../services/printers/showBlankScreen/LC%20Nano');
 			$("#togglebutton").show();
 			$("#whitecure").show();
@@ -535,7 +540,8 @@
 			$('#layover_1').show(0).delay(80).hide(0);
 			$.getJSON('../services/printers/showBlankScreen/LC%20Nano');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0')
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P1 S0');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P2 S0')
 				.done(function (data) {
 					location.href = "index.html";
 				});
@@ -544,7 +550,8 @@
 		function calibutton() {
 			$('#layover_4').show(0).delay(80).hide(0);
 			$.getJSON('../services/printers/showBlankScreen/LC%20Nano');
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P1 S0');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P2 S0');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0')
 				.done(function (data) {
 					location.href = "calibration_1.html";
@@ -611,6 +618,8 @@
 
 		function zbutton() {
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P1 S0');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P2 S0');
 			$('#warning').html("Platform homing. Please wait.");
 			$('#warning').show();
 			$("#togglebutton").hide();
@@ -721,7 +730,8 @@
 		function pbutton() {
 			$('#layover_8').show(0).delay(80).hide(0);
 			$.getJSON('../services/printers/showBlankScreen/LC%20Nano');
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P1 S0');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P2 S0');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0')
 				.done(function (data) {
 					location.href = "pump.html";
