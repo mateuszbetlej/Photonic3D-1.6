@@ -569,7 +569,9 @@
 				});
 			LT4 = setTimeout(function () {
 				//$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
-				$.getJSON('../services/printers/showBlankScreen/LC%20Nano');
+				//$.getJSON('../services/printers/showBlankScreen/LC%20Nano');
+				$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P1 S0');
+				$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P2 S0');
 				$("#togglebutton").show();
 				$("#whitecure").show();
 				$("#LedOn").show();
@@ -653,16 +655,19 @@
 			$("#LedOn").hide();
 			$("#pump").hide();
 			$("#whitecure").hide();
-			$.getJSON('../services/customizers/projectCustomizerOnPrinter/display_cure_to_be_hidden.zip.LC%20Nano')
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P1 S1')
 				.done(function (data) {
-					$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S1');
-					$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S1');
-					$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S1');
+					$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P2 S1');
+					$.getJSON('../services/customizers/projectCustomizerCureLayer/display_cure_to_be_hidden.zip.LC%20Nano')
+					//$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S1');
+					//$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S1');
 				});
 			setTimeout(function () {
-				$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
-				$.getJSON('../services/printers/showBlankScreen/LC%20Nano')
+				//$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
+				//$.getJSON('../services/printers/showBlankScreen/LC%20Nano')
+				$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P1 S0')
 					.done(function (data) {
+						$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P2 S0');
 						$("#homez").show();
 						$("#togglebutton").show();
 						$("#testdisplaybtn").show();
