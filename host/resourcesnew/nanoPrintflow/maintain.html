@@ -560,9 +560,10 @@
 			$("#homez").hide();
 			$("#pump").hide();
 			$("#testdisplaybtn").hide();
-			$.getJSON('../services/customizers/projectCustomizerOnPrinter/display_test_to_be_hidden.zip.LC%20Nano')
+			$.getJSON('../services/customizers/projectCustomizerLogo/display_test_to_be_hidden.zip.LC%20Nano')
 				.done(function (data) {
-					$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S1');
+					$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P1 S1');
+					$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P2 S1');
 					$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S1');
 					$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S1');
 				});
