@@ -179,7 +179,7 @@
 			-ms-user-select: none;
 		}
 
-		.homez {
+		.pump {
 			position: absolute;
 			top: 270px;
 			left: 250px;
@@ -246,7 +246,7 @@
 			-ms-user-select: none;
 		}
 
-		.pump {
+		.homez {
 			position: absolute;
 			top: 270px;
 			left: 72px;
@@ -536,6 +536,61 @@
 			clearTimeout(LT4);
 		}
 
+		function fanon() {
+			$('#layover_4').show(0).delay(80).hide(0);
+			$("#togglebutton").hide();
+			$("#whitecure").hide();
+			$("#LedOn").hide();
+			$('#warning').html("Fan ON");
+			$('#warning').show();
+			no();
+			$.getJSON('../services/printers/showBlankScreen/LC%20Nano');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P1 S1');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P2 S1');
+			LT1 = setTimeout(function () {
+				$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
+				$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P1 S0');
+				$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P2 S0');
+				$("#togglebutton").show();
+				$('#warning').html("Fan Auto OFF");
+				$("#whitecure").show();
+			}, 10000);
+			LT2 = setTimeout(function () {
+				$('#warning').hide();
+				$("#LedOn").show();
+			}, 15000);
+			clearTimeout(LT3);
+			clearTimeout(LT4);
+		}
+
+		function fanoff() {
+			$('#layover_7').show(0).delay(80).hide(0);
+			$('#warning').html("Fan OFF");
+			$('#warning').show();
+			$("#togglebutton").show();
+			$("#whitecure").show();
+			$("#LedOn").show();
+			$("#homez").show();
+			$("#testdisplaybtn").show();
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P1 S0');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P2 S0');
+			$.getJSON('../services/printers/showBlankScreen/LC%20Nano');
+			$("#togglebutton").show();
+			$("#whitecure").show();
+			$("#LedOn").show();
+			LT3 = setTimeout(function () {
+				$('#warning').hide();
+			}, 5000);
+			no();
+			clearTimeout(LT1);
+			clearTimeout(LT2);
+			clearTimeout(LT4);
+		}
+
+
+
 		function hbutton() {
 			$('#layover_1').show(0).delay(80).hide(0);
 			$.getJSON('../services/printers/showBlankScreen/LC%20Nano');
@@ -605,7 +660,7 @@
 		}
 
 		function Doliftcheck() {
-			$('#layover_7').show(0).delay(80).hide(0);
+			$('#layover_8').show(0).delay(80).hide(0);
 			// $.getJSON('../services/printers/executeGCode/' + printerName + '/M408 S3', function (result) {
 			// 	var tem = result["message"];
 			// 	console.log(tem);
@@ -749,32 +804,45 @@
 				});
 		}
 
+		function backbutton() {
+			$('#layover_1').show(0).delay(80).hide(0);
+			$.getJSON('../services/printers/showBlankScreen/LC%20Nano');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P1 S0');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P2 S0');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0')
+				.done(function (data) {
+					location.href = "maintain.html";
+				});
+		}
+
+
 	</script>
 	<div class="screen">
 		<div class="main">
-			<img class="uilayer" src="images/maintain.png" usemap="maintain" class="uilayer">
+			<img class="uilayer" src="images/devsettings.png" usemap="maintain" class="uilayer">
 			<map name="maintain">
 
-				<img name="layover_1" id="layover_1" class="layover_1 collapse" src="images/layovers/m_01.png" />
+				<img name="layover_1" id="layover_1" class="layover_1 collapse" src="images/layovers/m_12.png" />
 				<img name="layover_2" id="layover_2" class="layover_2 collapse" src="images/layovers/m_02.png" />
 				<img name="layover_3" id="layover_3" class="layover_3 collapse" src="images/layovers/m_03.png" />
-				<img name="layover_4" id="layover_4" class="layover_4 collapse" src="images/layovers/m_04.png" />
+				<img name="layover_4" id="layover_4" class="layover_4 collapse" src="images/layovers/m_11.png" />
 				<img name="layover_5" id="layover_5" class="layover_5 collapse" src="images/layovers/m_05.png" />
 				<img name="layover_6" id="layover_6" class="layover_6 collapse" src="images/layovers/m_06.png" />
-				<img name="layover_7" id="layover_7" class="layover_7 collapse" src="images/layovers/m_07.png" />
-				<img name="layover_8" id="layover_8" class="layover_8 collapse" src="images/layovers/m_09.png" />
+				<img name="layover_7" id="layover_7" class="layover_7 collapse" src="images/layovers/m_10.png" />
+				<img name="layover_8" id="layover_8" class="layover_8 collapse" src="images/layovers/m_07.png" />
 
 				<img name="homebutton" id="homebutton" class="homebutton" src="images/menumainbuttonANIM.png"
-					onclick="hbutton();" />
+					onclick="backbutton();" />
 				<img name="LedOn" id="LedOn" class="LedOn" src="images/menumainbuttonANIM.png" onClick="lighton();" />
 				<img name="LedOff" id="LedOff" class="LedOff" src="images/menumainbuttonANIM.png"
 					onclick="lightoff();" />
 				<img name="calibrate" id="calibrate" class="calibrate" src="images/menumainbuttonANIM.png"
-					onClick="calibutton();" />
+					onClick="fanon();" />
 				<img name="homez" id="homez" class="homez" src="images/menumainbuttonANIM.png"
 					onclick="Doliftcheck();" />
-				<img name="pump" id="pump" class="pump" src="images/menumainbuttonANIM.png" onClick="devsettings();" />
+				<img name="pump" id="pump" class="pump" src="images/menumainbuttonANIM.png" onClick="fanoff();" />
 			</map>
+
 			<img name="whitecure" id="whitecure" class="whitecure" src="images/menumainbuttonANIM.png"
 				onClick="dowhitecheck();">
 			<div name="whitecurecheck" id="whitecurecheck" class="whitecurecheck">
