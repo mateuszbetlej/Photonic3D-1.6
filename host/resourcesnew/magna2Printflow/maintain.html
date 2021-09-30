@@ -599,7 +599,7 @@
 		}
 
 		function calibutton() {
-			$('#layover_4').show(0).delay(80).hide(0);
+			$('#layover_8').show(0).delay(80).hide(0);
 			$.getJSON('../services/printers/showBlankScreen/Photocentric%20Magna');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0')
@@ -770,7 +770,7 @@
 		}
 
 		function pbutton() {
-			$('#layover_8').show(0).delay(80).hide(0);
+			$('#layover_6').show(0).delay(80).hide(0);
 			$.getJSON('../services/printers/showBlankScreen/Photocentric%20Magna');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0')
@@ -790,9 +790,9 @@
 				<img name="layover_3" id="layover_3" class="layover_3 collapse" src="images/layovers/m_03.png" />
 				<img name="layover_4" id="layover_4" class="layover_4 collapse" src="images/layovers/m_09.png" />
 				<img name="layover_5" id="layover_5" class="layover_5 collapse" src="images/layovers/m_05.png" />
-				<img name="layover_6" id="layover_6" class="layover_6 collapse" src="images/layovers/m_06.png" />
+				<img name="layover_6" id="layover_6" class="layover_6 collapse" src="images/layovers/m_08.png" />
 				<img name="layover_7" id="layover_7" class="layover_7 collapse" src="images/layovers/m_07.png" />
-				<img name="layover_8" id="layover_8" class="layover_8 collapse" src="images/layovers/m_08.png" />
+				<img name="layover_8" id="layover_8" class="layover_8 collapse" src="images/layovers/m_04.png" />
 
 				<img name="homebutton" id="homebutton" class="homebutton" src="images/menumainbuttonANIM.png"
 					onclick="hbutton();" />
@@ -800,10 +800,10 @@
 				<img name="LedOff" id="LedOff" class="LedOff" src="images/menumainbuttonANIM.png"
 					onclick="togglePrinter();" />
 				<img name="calibrate" id="calibrate" class="calibrate" src="images/menumainbuttonANIM.png"
-					onClick="calibutton();" />
+					onClick="pbutton();" />
 				<img name="homez" id="homez" class="homez" src="images/menumainbuttonANIM.png"
 					onclick="Doliftcheck();" />
-				<img name="pump" id="pump" class="pump" src="images/menumainbuttonANIM.png" onClick="pbutton();" />
+				<img name="pump" id="pump" class="pump" src="images/menumainbuttonANIM.png" onClick="calibutton();" />
 			</map>
 			<img name="whitecure" id="whitecure" class="whitecure" src="images/menumainbuttonANIM.png"
 				onClick="dowhitecheck();">
