@@ -69,7 +69,7 @@ fi
 
 #Copy the zip file from the current directory into the cwh directory for offline install
 mkdir -p ${installDirectory}
-mv ${downloadPrefix}.*.zip ${installDirectory}
+mv ${downloadPrefix}*.zip ${installDirectory}
 
 #install java if version is too old
 javaInstalled=`which java`
@@ -115,8 +115,8 @@ NETWORK_TAG=$(curl -L -s https://api.github.com/repos/${repo}/releases/latest | 
 echo Local Tag: ${LOCAL_TAG}
 echo Network Tag: ${NETWORK_TAG}
 
-if [ -f ${downloadPrefix}.*.zip ]; then
-	OFFLINE_FILE=$(ls ${downloadPrefix}.*.zip)
+if [ -f ${downloadPrefix}*.zip ]; then
+	OFFLINE_FILE=$(ls ${downloadPrefix}*.zip)
 	echo Performing offline install of ${OFFLINE_FILE}
 
 	mv ${OFFLINE_FILE} ~
