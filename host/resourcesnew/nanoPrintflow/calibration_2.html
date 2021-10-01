@@ -169,7 +169,7 @@
 			setTimeout(function () {
 				$.getJSON('../services/printers/executeGCode/' + printerName + '/G28 Z0')
 					.done(function (data) {
-						$.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Punlock.g');
+						//$.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Punlock.g');
 						location.href = 'calibration_1.html';
 					});
 			}, 3000);
@@ -182,64 +182,64 @@
 
 		function Dobackcheck() {
 			$('#layover_1').show(0).delay(80).hide(0);
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/M408 S3', function (result) {
-				var tem = result["message"];
-				var messtripped = tem.substr(0, tem.length - 3); // to strip off end chars "msgBox.mode\":-1}\n\nok\n"
-				var messObj = JSON.parse(messtripped);
-				if (messObj.endstops === 0 || messObj.endstops === 4) {
+			// $.getJSON('../services/printers/executeGCode/' + printerName + '/M408 S3', function (result) {
+			// 	var tem = result["message"];
+			// 	var messtripped = tem.substr(0, tem.length - 3); // to strip off end chars "msgBox.mode\":-1}\n\nok\n"
+			// 	var messObj = JSON.parse(messtripped);
+			// 	if (messObj.endstops === 0 || messObj.endstops === 4) {
 					$("#next").hide();
 					$("#back").hide();
-					$.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Plock.g')
-						.done(function (data) {
+					// $.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Plock.g')
+					// 	.done(function (data) {
 							goback();
-						});
-				}
+				// 		});
+				// }
 
-				else {
-					$('#warning').html("Please close the door and try again");
-					$('#warning').show();
-					setTimeout(function () {
-						$('#warning').hide();
-					}, 5000);
-				}
-			});
+			// 	else {
+			// 		$('#warning').html("Please close the door and try again");
+			// 		$('#warning').show();
+			// 		setTimeout(function () {
+			// 			$('#warning').hide();
+			// 		}, 5000);
+			// 	}
+			// });
 		}
 
 		function movedown() {
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/G1 Z-163 F500');
+			//$.getJSON('../services/printers/executeGCode/' + printerName + '/G1 Z-163 F500');
 			setTimeout(function () {
-				$.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Punlock.g');
+				// $.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Punlock.g');
 				location.href = 'calibration_3.html';
-			}, 20000);
-			$('#warning').html("Platform moving down. Please wait.");
-			$('#warning').show();
-			setTimeout(function () {
-				$('#warning').hide();
-			}, 5000);
+			}, 3000);
+			// $('#warning').html("Platform moving down. Please wait.");
+			// $('#warning').show();
+			// setTimeout(function () {
+			// 	$('#warning').hide();
+			// }, 5000);
 		}
 
-		function Doforwardheck() {
+		function Doforwardcheck() {
 			$('#layover_2').show(0).delay(80).hide(0);
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/M408 S3', function (result) {
-				var tem = result["message"];
-				var messtripped = tem.substr(0, tem.length - 3); // to strip off end chars "msgBox.mode\":-1}\n\nok\n"
-				var messObj = JSON.parse(messtripped);
-				if (messObj.endstops === 0 || messObj.endstops === 4) {
+			// $.getJSON('../services/printers/executeGCode/' + printerName + '/M408 S3', function (result) {
+			// 	var tem = result["message"];
+			// 	var messtripped = tem.substr(0, tem.length - 3); // to strip off end chars "msgBox.mode\":-1}\n\nok\n"
+			// 	var messObj = JSON.parse(messtripped);
+			// 	if (messObj.endstops === 0 || messObj.endstops === 4) {
 					$("#next").hide();
 					$("#back").hide();
-					$.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Plock.g')
-						.done(function (data) {
+					// $.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Plock.g')
+					// 	.done(function (data) {
 							movedown();
-						});
-				}
-				else {
-					$('#warning').html("Please close the door and try again");
-					$('#warning').show();
-					setTimeout(function () {
-						$('#warning').hide();
-					}, 5000);
-				}
-			});
+			// 			});
+			// 	}
+			// 	else {
+			// 		$('#warning').html("Please close the door and try again");
+			// 		$('#warning').show();
+			// 		setTimeout(function () {
+			// 			$('#warning').hide();
+			// 		}, 5000);
+			// 	}
+			// });
 		}
 
 	</script>
@@ -259,7 +259,7 @@
 			</div>
 			<div name="back" class="back" id="back" onClick="Dobackcheck();"><img src="images/menumainbuttonANIM.png">
 			</div>
-			<div name="next" class="next" id="next" onClick="Doforwardheck();"><img src="images/menumainbuttonANIM.png">
+			<div name="next" class="next" id="next" onClick="Doforwardcheck();"><img src="images/menumainbuttonANIM.png">
 			</div>
 			<div name="webinfo" id="webinfo" class="webinfo">
 				<div name="IP" id="IP" class="IP"><span id="IPaddress" class="details"></span></div>
