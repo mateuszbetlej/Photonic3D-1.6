@@ -201,51 +201,51 @@
 		}
 
 		function goback() {
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/G1 Z163 F600');
-			setTimeout(function () {
-				$.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Punlock.g');
+			// $.getJSON('../services/printers/executeGCode/' + printerName + '/G1 Z163 F600');
+			// setTimeout(function () {
+				// $.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Punlock.g');
 				$("#test").show();
 				$("#finish").show();
 				location.href = 'calibration_2.html';
-			}, 25000);
-			$('#warning').html("Platform moving up. Please wait.");
-			$('#warning').show();
-			setTimeout(function () {
-				$('#warning').hide();
-			}, 5000);
+			// }, 2000);
+			// $('#warning').html("Platform moving up. Please wait.");
+			// $('#warning').show();
+			// setTimeout(function () {
+			// 	$('#warning').hide();
+			// }, 5000);
 		}
 
 
-		function Dobackheck() {
+		function Dobackcheck() {
 			$('#layover_1').show(0).delay(80).hide(0);
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/M408 S3', function (result) {
-				var tem = result["message"];
-				var messtripped = tem.substr(0, tem.length - 3); // to strip off end chars "msgBox.mode\":-1}\n\nok\n"
-				var messObj = JSON.parse(messtripped);
-				if (messObj.endstops === 0 || messObj.endstops === 4) {
+			// $.getJSON('../services/printers/executeGCode/' + printerName + '/M408 S3', function (result) {
+			// 	var tem = result["message"];
+			// 	var messtripped = tem.substr(0, tem.length - 3); // to strip off end chars "msgBox.mode\":-1}\n\nok\n"
+			// 	var messObj = JSON.parse(messtripped);
+			// 	if (messObj.endstops === 0 || messObj.endstops === 4) {
 					$("#test").hide();
 					$("#finish").hide();
 					$("#back").hide();
-					$.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Plock.g')
-						.done(function (data) {
+					// $.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Plock.g')
+					// 	.done(function (data) {
 							goback();
-						});
-				}
-				else {
-					$('#warning').html("Please close the door and try again");
-					$('#warning').show();
-					setTimeout(function () {
-						$('#warning').hide();
-					}, 5000);
-				}
-			});
+			// 			});
+			// 	}
+			// 	else {
+			// 		$('#warning').html("Please close the door and try again");
+			// 		$('#warning').show();
+			// 		setTimeout(function () {
+			// 			$('#warning').hide();
+			// 		}, 5000);
+			// 	}
+			// });
 		}
 
 		function moveup() {
 			setTimeout(function () {
 				$.getJSON('../services/printers/executeGCode/' + printerName + '/G28 Z0')
 					.done(function (data) {
-						$.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Punlock.g');
+						// $.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Punlock.g');
 						$("#test").show();
 						$("#back").show();
 						location.href = 'index.html';
@@ -258,29 +258,29 @@
 			}, 5000);
 		}
 
-		function Doforwardheck() {
+		function Doforwardcheck() {
 			$('#layover_3').show(0).delay(80).hide(0);
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/M408 S3', function (result) {
-				var tem = result["message"];
-				var messtripped = tem.substr(0, tem.length - 3); // to strip off end chars "msgBox.mode\":-1}\n\nok\n"
-				var messObj = JSON.parse(messtripped);
-				if (messObj.endstops === 0 || messObj.endstops === 4) {
+			// $.getJSON('../services/printers/executeGCode/' + printerName + '/M408 S3', function (result) {
+			// 	var tem = result["message"];
+			// 	var messtripped = tem.substr(0, tem.length - 3); // to strip off end chars "msgBox.mode\":-1}\n\nok\n"
+			// 	var messObj = JSON.parse(messtripped);
+			// 	if (messObj.endstops === 0 || messObj.endstops === 4) {
 					$("#test").hide();
 					$("#finish").hide();
 					$("#back").hide();
-					$.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Plock.g')
-						.done(function (data) {
+					// $.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Plock.g')
+					// 	.done(function (data) {
 							moveup();
-						});
-				}
-				else {
-					$('#warning').html("Please close the door and try again");
-					$('#warning').show();
-					setTimeout(function () {
-						$('#warning').hide();
-					}, 5000);
-				}
-			});
+			// 			});
+			// 	}
+			// 	else {
+			// 		$('#warning').html("Please close the door and try again");
+			// 		$('#warning').show();
+			// 		setTimeout(function () {
+			// 			$('#warning').hide();
+			// 		}, 5000);
+			// 	}
+			// });
 		}
 
 		function moveupdown() {
@@ -291,41 +291,44 @@
 				$('#warning').hide();
 			}, 5000);
 			setTimeout(function () {
-				$.getJSON('../services/printers/executeGCode/' + printerName + '/G1 Z5 F300');
-				$.getJSON('../services/printers/executeGCode/' + printerName + '/G1 Z-5 F300');
-				$.getJSON('../services/printers/executeGCode/' + printerName + '/M400');
-				$.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Punlock.g')
+				$.getJSON('../services/printers/executeGCode/' + printerName + '/G1 Z5 F200')
+				.done(function (data) {
+					$.getJSON('../services/printers/executeGCode/' + printerName + '/G1 Z-5 F200')
 					.done(function (data) {
+					// $.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Punlock.g')
+						
 						$("#test").show();
 						$("#back").show();
 						$("#finish").show();
-					});
+					});	
+				});
+				
 			}, 3100);
 		}
 
 		function Doupdowncheck() {
 			$('#layover_2').show(0).delay(80).hide(0);
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/M408 S3', function (result) {
-				var tem = result["message"];
-				var messtripped = tem.substr(0, tem.length - 3); // to strip off end chars "msgBox.mode\":-1}\n\nok\n"
-				var messObj = JSON.parse(messtripped);
-				if (messObj.endstops === 0 || messObj.endstops === 4) {
+			// $.getJSON('../services/printers/executeGCode/' + printerName + '/M408 S3', function (result) {
+			// 	var tem = result["message"];
+			// 	var messtripped = tem.substr(0, tem.length - 3); // to strip off end chars "msgBox.mode\":-1}\n\nok\n"
+			// 	var messObj = JSON.parse(messtripped);
+			// 	if (messObj.endstops === 0 || messObj.endstops === 4) {
 					$("#test").hide();
 					$("#back").hide();
 					$("#finish").hide();
-					$.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Plock.g')
-						.done(function (data) {
+					// $.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Plock.g')
+					// 	.done(function (data) {
 							moveupdown();
-						});
-				}
-				else {
-					$('#warning').html("Please close the door and try again");
-					$('#warning').show();
-					setTimeout(function () {
-						$('#warning').hide();
-					}, 5000);
-				}
-			});
+			// 			});
+			// 	}
+			// 	else {
+			// 		$('#warning').html("Please close the door and try again");
+			// 		$('#warning').show();
+			// 		setTimeout(function () {
+			// 			$('#warning').hide();
+			// 		}, 5000);
+			// 	}
+			// });
 		}
 
 	</script>
@@ -343,11 +346,11 @@
 			<div name="printwarn" id="warn" class="warn">
 				<div id="warning" role="alert" class="alert alert-danger collapse"></div>
 			</div>
-			<div name="back" class="back" id="back" onClick="Dobackheck();"><img src="images/menumainbuttonANIM.png">
+			<div name="back" class="back" id="back" onClick="Dobackcheck();"><img src="images/menumainbuttonANIM.png">
 			</div>
 			<div name="test" class="test" id="test" onClick="Doupdowncheck();"><img src="images/menumainbuttonANIM.png">
 			</div>
-			<div name="finish" class="finish" id="finish" onClick="Doforwardheck();"><img
+			<div name="finish" class="finish" id="finish" onClick="Doforwardcheck();"><img
 					src="images/menumainbuttonANIM.png"></div>
 			<div name="webinfo" id="webinfo" class="webinfo">
 				<div name="IP" id="IP" class="IP"><span id="IPaddress" class="details"></span></div>

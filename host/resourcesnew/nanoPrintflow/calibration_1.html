@@ -173,12 +173,14 @@
 			setTimeout(function () {
 				$.getJSON('../services/printers/executeGCode/' + printerName + '/G28 Z0')
 					.done(function (data) {
-						$.getJSON('../services/printers/executeGCode/' + printerName + '/G1 Z-85 F600')
-						$.getJSON('../services/printers/executeGCode/' + printerName + '/G1 Z-20 F100')
+						$.getJSON('../services/printers/executeGCode/' + printerName + '/G1 Z-85 F1000').done(function(){
+							$.getJSON('../services/printers/executeGCode/' + printerName + '/G1 Z-20 F200')
+						});
+						
 						setTimeout(function () {
 							// $.getJSON('../services/printers/executeGCode/' + printerName + '/M98 Punlock.g');
 							location.href = 'calibration_2.html';
-						}, 26000)
+						}, 17000)
 					});
 			}, 3000);
 			$('#warning').html("Platform moving down. Please wait.");
