@@ -98,8 +98,8 @@
 
 		.settings {
 			position: absolute;
-			top: 230px;
-			left: 525px;
+			top: 260px;
+			left: 320px;
 			height: 150px;
 			width: 150px;
 			z-index: 5;
@@ -113,8 +113,8 @@
 
 		.network {
 			position: absolute;
-			top: 260px;
-			left: 320px;
+			top: 230px;
+			left: 525px;
 			height: 150px;
 			width: 150px;
 			z-index: 5;
@@ -222,15 +222,15 @@
 			setTimeout(function () {
 				location.href = "wifisettings.html"
 			}, 150);
-			$('#layover_3').show(0).delay(80).hide(0);
+			$('#layover_4').show(0).delay(80).hide(0);
 		}
 
-		function main_4() {
-			setTimeout(function () {
-				location.href = "settings.html";
-			}, 150);
-			$('#layover_4').show(0).delay(80).hide(0);
-		}	
+		// function main_4() {
+		// 	setTimeout(function () {
+		// 		location.href = "settings.html";
+		// 	}, 150);
+		// 	$('#layover_4').show(0).delay(80).hide(0);
+		// }	
 	</script>
 
 	<div class="screen">
@@ -244,12 +244,12 @@
 			<img name="maintain" id="maintain" class="maintain" src="images/menumainbuttonANIM.png"
 				onClick="main_2();" />
 			<img name="network" id="network" class="network" src="images/menumainbuttonANIM.png" onClick="main_3();" />
-			<img name="settings" id="settings" class="settings" src="images/menumainbuttonANIM.png"
-				onClick="main_4();" />
+			<!-- <img name="settings" id="settings" class="settings" src="images/menumainbuttonANIM.png"
+				onClick="main_4();" /> -->
 			<img name="layover_1" id="layover_1" class="layover_1 collapse" src="images/layovers/main_1.png" />
 			<img name="layover_2" id="layover_2" class="layover_2 collapse" src="images/layovers/main_2.png" />
-			<img name="layover_3" id="layover_3" class="layover_3 collapse" src="images/layovers/main_3.png" />
-			<img name="layover_4" id="layover_4" class="layover_4 collapse" src="images/layovers/main_4.png" />
+			<!-- <img name="layover_3" id="layover_3" class="layover_3 collapse" src="images/layovers/main_3.png" /> -->
+			<img name="layover_4" id="layover_4" class="layover_4 collapse" src="images/layovers/main_3.png" />
 			<div onmousedown="event.preventDefault ? event.preventDefault() : event.returnValue = false">
 				<div name="webinfo" id="webinfo" class="webinfo">
 					<div name="IP" id="IP" class="IP"><span id="IPaddress" class="details"></span></div>
