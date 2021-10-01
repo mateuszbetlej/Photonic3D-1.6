@@ -462,12 +462,16 @@
 					if (data.started) { // turn the printer off
 						
 						$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0');
-						$.getJSON('/services/printers/stop/' + printerName).done(function () {
+
+						setTimeout(function () {
+							$.getJSON('/services/printers/stop/' + printerName).done(function () {
 							
-							document.getElementById("togglebutton").innerHTML = PRINTERONTEXT;
-							document.getElementById("printerstatus").src = PRINTEROFFIMAGE;
-							Cookies.set('printerstatus', PRINTEROFFIMAGE);
-						});
+								document.getElementById("togglebutton").innerHTML = PRINTERONTEXT;
+								document.getElementById("printerstatus").src = PRINTEROFFIMAGE;
+								Cookies.set('printerstatus', PRINTEROFFIMAGE);
+							});
+						}, 1000);
+						
 
 					}
 					else { // turn the printer on
