@@ -182,6 +182,8 @@ if [ -f "eachStart.sh" ]; then
 	./eachStart.sh
 fi
 
+sudo chmod 755 /opt/cwh/os/Linux/armv6l/show_image
+
 if [ "$2" == "debug" ]; then
 	pkill -9 -f "org.area515.resinprinter.server.Main"
 	echo "Starting printer host server($2)"
