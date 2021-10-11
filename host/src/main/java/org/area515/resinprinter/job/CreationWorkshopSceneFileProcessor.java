@@ -266,7 +266,13 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 					
 					NotificationManager.jobChanged(printer, printJob);
 
-					
+					String printJobPathAsString = gCodeFile.getAbsolutePath();
+					String printJobType = "print";
+					if(printJobPathAsString.contains("LOCSPCT1-15")){
+						printJobType = "Chemistry Test 1";
+					}else if(printJobPathAsString.contains("LOCSPCT16-30")){
+						printJobType = "Chemistry Test 2";
+					}
 					logger.info("BOTTOM Layer Delay:{}", bottomLayerExposureDelay);
 					logger.info("LAYER Exposure Delay:{}", sliceExposureDelay);
 					logger.info("Number of Bottom Layers:{}", numberOfBottomLayers);
@@ -277,7 +283,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 					// logger.info("Slice = {}", slicePath );
 					//String cmd = "/home/pi/raspidmx/pngview_with_gpio_vsync/pngview -d 5 -t " + sliceIndex + " -p " + printerType + " -e "+ sliceExposureDelay +" -b " + numberOfBottomLayers + " -x " + bottomLayerExposureDelay + " " + slicePath;
 					//Process showingSlice = Runtime.getRuntime().exec(new String[]{"/home/pi/raspidmx/pngview_with_gpio_vsync/pngview", "-d", "5", "-t", Integer.toString(sliceIndex), "-p", printerName, "-e", Integer.toString(sliceExposureDelay), "-b", Integer.toString(numberOfBottomLayers), "-x", Integer.toString(bottomLayerExposureDelay), slicePath});
-					Process showingSlice = Runtime.getRuntime().exec(new String[]{"nice", "-n", "-2", "/opt/cwh/os/Linux/armv61/show_image", "-d", "5", "-t", Integer.toString(sliceIndex), "-p", printerName, "-e", Integer.toString(sliceExposureDelay), "-b", Integer.toString(numberOfBottomLayers), "-x", Integer.toString(bottomLayerExposureDelay), "-m", "/home/pi/mask/mask.png", slicePath});
+					Process showingSlice = Runtime.getRuntime().exec(new String[]{"nice", "-n", "-2", "/opt/cwh/os/Linux/armv61/show_image", "-d", "5", "-t", Integer.toString(sliceIndex), "-p", printerName, "-e", Integer.toString(sliceExposureDelay), "-b", Integer.toString(numberOfBottomLayers), "-x", Integer.toString(bottomLayerExposureDelay), "-c", printJobType, "-m", "/home/pi/mask/mask.png", slicePath});
 					showingSlice.waitFor();
 
 					if (oldImage != null) {
