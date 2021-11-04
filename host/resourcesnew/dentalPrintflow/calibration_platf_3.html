@@ -131,10 +131,18 @@
 				setInterval(updateNetworkInfo(), 10000);
 			}
 			function movedown() {
-				$.getJSON('../services/printers/executeGCode/' + printerName + '/M119', function (result) {
-					var text = JSON.stringify(result);
-					axisPos = text.indexOf("Y: at min stop");
-					if (axisPos > -1) {
+				$.getJSON('../services/printers/executeGCode/' + printerName + '/M408 S3', function (result) {
+					var tem = result["message"];
+					var messtripped = tem.substr(0, tem.length - 3); // to strip off end chars "msgBox.mode\":-1}\n\nok\n"
+					var messObj = JSON.parse(messtripped);
+					if (messObj.endstops === 0 || messObj.endstops === 1 || messObj.endstops === 4 || messObj.endstops === 5) {
+						$('#warning').html("Please close the hood and try again");
+						$('#warning').show();
+						setTimeout(function () {
+							$('#warning').hide();
+						}, 5000);
+					}
+					if (messObj.endstops === 2 || messObj.endstops === 3 || messObj.endstops === 6 || messObj.endstops === 7) {
 						$('#home').hide();
 						$('#start').hide();
 						$.getJSON('../services/printers/executeGCode/' + printerName + '/G1 Z-250 F600');
@@ -144,14 +152,7 @@
 						$('#warning').html("Platform moving down. Please wait.");
 						$('#warning').show();
 					}
-					else {
-						$('#warning').html("Please close the hood and try again");
-						$('#warning').show();
-						setTimeout(function () {
-							$('#warning').hide();
-						}, 5000);
-					}
-				});
+        		});
 			}
 			function updateNetworkInfo() {
 				$.getJSON('/services/machine/getNetworkHostConfiguration')
