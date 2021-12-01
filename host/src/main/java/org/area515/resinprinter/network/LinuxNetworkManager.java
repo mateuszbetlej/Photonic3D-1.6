@@ -12,6 +12,7 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.translate.AggregateTranslator;
 import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
 import org.apache.commons.lang3.text.translate.EntityArrays;
@@ -25,7 +26,7 @@ import org.area515.util.IOUtilities.ParseAction;
 import org.area515.util.IOUtilities.SearchStyle;
 
 public class LinuxNetworkManager implements NetworkManager {
-	public static final String WIFI_REGEX = "\\s*([A-Fa-f0-9:]+)\\s+(-?\\d+)\\s+(-?\\d+)\\s+([\\[\\]\\+\\-\\w]+)\\t(.+)";
+	public static final String WIFI_REGEX = "\\s*([A-Fa-f0-9:]+)\\s+(-?\\d+)\\s+(-?\\d+)\\s+([\\[\\]\\+\\-\\w]+)(\\t|\\s*)(.+)";
     private static final Logger logger = LogManager.getLogger();
 	
     public static final CharSequenceTranslator UNESCAPE_UNIX = 
@@ -60,13 +61,13 @@ public class LinuxNetworkManager implements NetworkManager {
 		boolean foundAssociatedSSID = false;
 		List<String[]> output = IOUtilities.communicateWithNativeCommand(parseActions, "^>|\n", true, null, nicName);
 		for (String[] lines : output) {
-			if (lines == null) {
+			if (lines == null || StringUtils.isBlank(lines[5])) {
 				continue;
 			}
 			
 			WirelessNetwork currentWireless = new WirelessNetwork();
 			netFace.getWirelessNetworks().add(currentWireless);
-			currentWireless.setSsid(UNESCAPE_UNIX.translate(lines[4]));
+			currentWireless.setSsid(UNESCAPE_UNIX.translate(lines[5]));
 			if (currentWireless.getSsid().startsWith("\u0000")) {
 				currentWireless.setHidden(true);
 			}
