@@ -60,25 +60,30 @@ public class LinuxNetworkManager implements NetworkManager {
 		
 		boolean foundAssociatedSSID = false;
 		List<String[]> output = IOUtilities.communicateWithNativeCommand(parseActions, "^>|\n", true, null, nicName);
-		
-		List<String[]> sortedOutput = output;
 
 		for (int i = 0; i < output.size(); i++){
 			for (int j = 0; j < output.size(); j++){ 
-				String ssidIs = output.get(j)[4];
-				String ssid2Is = output.get(i)[4];
+				if (i == j || output.get(i) == null || output.get(j) == null){
+					continue;
+				}
+
+				String networkBSSID = output.get(j)[4];
+				String networkASSID = output.get(i)[4];
+				Integer networkBSignalStrength = Integer.parseInt(output.get(j)[2]);
+				Integer networkASignalStrength = Integer.parseInt(output.get(i)[2]);
+
 				//else start comparing is the network exists 
-				if(output.get(j)[4].equals(output.get(i)[4])){
+				if(networkBSSID.equals(networkASSID)){
 					//if network exists compare signal strenght
-					if(Integer.parseInt(output.get(j)[2]) > Integer.parseInt(output.get(i)[2])){
+					if(networkBSignalStrength >= networkASignalStrength){
 						//if the signal strenght of the existing network is stronger then remove the current network from the output list and break to move on to the next network compare
-						sortedOutput.get(i)[4] = "    ";
+						output.set(i, null);
 					}
 				}
 			}
 		}
 
-		for (String[] lines : sortedOutput) {
+		for (String[] lines : output) {
 			if (lines == null || StringUtils.isBlank(lines[4])) {
 				continue;
 			}
