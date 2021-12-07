@@ -208,11 +208,10 @@
 					})) 
 				});
 
-				setInterval(function () {
-					select.options.length = 0;
-					
+				setInterval(function () {					
 					$.getJSON('/services/machine/wirelessNetworks/list')
 					.done(function(data){
+						select.options.length = 0;
 						console.log(data);
 						var i = 0;
 						$.each(data, function (key, val) {
