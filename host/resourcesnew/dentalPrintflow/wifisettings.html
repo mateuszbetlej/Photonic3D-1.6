@@ -155,11 +155,8 @@
 				
 				var select = document.getElementById("wifiselect");
 				// length should be 0 but for some really odd reason some elements can be left. If so, we do it again.
-				while (select.options.length > 0){
-					for (var i = 0; i < select.options.length; i++) {
-						select.options[i] = null;
-					}
-				}
+				select.options.length = 0;
+				
 				$.getJSON('/services/machine/wirelessNetworks/list')
 				.done(function(data){
 					console.log(data);
@@ -176,6 +173,26 @@
 					return a.text == b.text ? 0 : a.text.toLowerCase() < b.text.toLowerCase() ? -1 : 1
 					})) 
 				});
+
+				setInterval(function () {					
+					$.getJSON('/services/machine/wirelessNetworks/list')
+					.done(function(data){
+						select.options.length = 0;
+						console.log(data);
+						var i = 0;
+						$.each(data, function (key, val) {
+							console.log(i + ": "+key+" "+val);
+							option = document.createElement('option');
+							option.id = option.text = option.value = val.ssid;
+							option.style = "background: url(images/wifi-tiny.png) no-repeat; padding-top: 2px; padding-right: 10px;";
+							select.add( option );
+							i = i+1;
+						});
+						$("#wifiselect").html($("#wifiselect option").sort(function (a, b) {
+						return a.text == b.text ? 0 : a.text.toLowerCase() < b.text.toLowerCase() ? -1 : 1
+						})) 
+					});
+        		}, 15000);
 			}
 			
 			function setupWifi(){
