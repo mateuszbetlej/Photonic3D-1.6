@@ -60,20 +60,17 @@ public class LinuxNetworkManager implements NetworkManager {
 		
 		boolean foundAssociatedSSID = false;
 		List<String[]> output = IOUtilities.communicateWithNativeCommand(parseActions, "^>|\n", true, null, nicName);
-
-		List<String[]> duplicateCheckOutput = output;
 		
 		List<String[]> sortedOutput = output;
 
 		for (int i = 0; i < output.size(); i++){
-			// if duplicateCheckOutput empty then add the first network 
-			for (int j = 0; j < duplicateCheckOutput.size(); j++){ 
-				String ssidIs = duplicateCheckOutput.get(j)[4];
+			for (int j = 0; j < output.size(); j++){ 
+				String ssidIs = output.get(j)[4];
 				String ssid2Is = output.get(i)[4];
 				//else start comparing is the network exists 
-				if(duplicateCheckOutput.get(j)[4].equals(output.get(i)[4])){
+				if(output.get(j)[4].equals(output.get(i)[4])){
 					//if network exists compare signal strenght
-					if(Integer.parseInt(duplicateCheckOutput.get(j)[2]) > Integer.parseInt(output.get(i)[2])){
+					if(Integer.parseInt(output.get(j)[2]) > Integer.parseInt(output.get(i)[2])){
 						//if the signal strenght of the existing network is stronger then remove the current network from the output list and break to move on to the next network compare
 						sortedOutput.get(i)[4] = "    ";
 					}
@@ -97,30 +94,7 @@ public class LinuxNetworkManager implements NetworkManager {
 			}
 			currentWireless.setParentInterfaceName(netFace.getName());
 			currentWireless.setSignalStrength(lines[2]);
-
-			// if (netFace.getWirelessNetworks().isEmpty()){
-			// 	netFace.getWirelessNetworks().add(currentWireless);
-			// } 
-			// else{
-			// 	boolean isIn = false;
-			// 	for (WirelessNetwork wirelessNetwork : netFace.getWirelessNetworks()){
-			// 		if(wirelessNetwork.getSsid().equals(currentWireless.getSsid())){
-			// 			isIn = true;
-			// 			if (Integer.parseInt(currentWireless.getSignalStrength()) >= Integer.parseInt(wirelessNetwork.getSignalStrength())){
-			// 				String signal = "Current signal: " + currentWireless.getSignalStrength() + " Existing signal: " + wirelessNetwork.getSignalStrength();
-			// 				boolean isSignalGreater = true;
-			// 				netFace.getWirelessNetworks().add(currentWireless);	
-			// 				//remove wirelessNetwork from netFace
-			// 			}
-			// 			else{
-			// 				continue;
-			// 			}
-			// 		}else if (!wirelessNetwork.getSsid().equals(currentWireless.getSsid())){
-			// 			netFace.getWirelessNetworks().add(currentWireless);	
-			// 		}
-			// 	}
-			// }
-				
+		
 			netFace.getWirelessNetworks().add(currentWireless);
 			Matcher matcher = networkEncryptionClass.matcher(lines[3]);
 			while (matcher.find()) {
