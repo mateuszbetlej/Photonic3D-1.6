@@ -60,13 +60,35 @@ public class LinuxNetworkManager implements NetworkManager {
 		
 		boolean foundAssociatedSSID = false;
 		List<String[]> output = IOUtilities.communicateWithNativeCommand(parseActions, "^>|\n", true, null, nicName);
+
+		for (int i = 0; i < output.size(); i++){
+			for (int j = 0; j < output.size(); j++){ 
+				if (i == j || output.get(i) == null || output.get(j) == null){
+					continue;
+				}
+
+				String networkBSSID = output.get(j)[4];
+				String networkASSID = output.get(i)[4];
+				Integer networkBSignalStrength = Integer.parseInt(output.get(j)[2]);
+				Integer networkASignalStrength = Integer.parseInt(output.get(i)[2]);
+
+				//else start comparing is the network exists 
+				if(networkBSSID.equals(networkASSID)){
+					//if network exists compare signal strenght
+					if(networkBSignalStrength >= networkASignalStrength){
+						//if the signal strenght of the existing network is stronger then remove the current network from the output list and break to move on to the next network compare
+						output.set(i, null);
+					}
+				}
+			}
+		}
+
 		for (String[] lines : output) {
 			if (lines == null || StringUtils.isBlank(lines[4])) {
 				continue;
 			}
 			
 			WirelessNetwork currentWireless = new WirelessNetwork();
-			netFace.getWirelessNetworks().add(currentWireless);
 			currentWireless.setSsid(UNESCAPE_UNIX.translate(lines[4]));
 			if (currentWireless.getSsid().startsWith("\u0000")) {
 				currentWireless.setHidden(true);
@@ -77,6 +99,8 @@ public class LinuxNetworkManager implements NetworkManager {
 			}
 			currentWireless.setParentInterfaceName(netFace.getName());
 			currentWireless.setSignalStrength(lines[2]);
+		
+			netFace.getWirelessNetworks().add(currentWireless);
 			Matcher matcher = networkEncryptionClass.matcher(lines[3]);
 			while (matcher.find()) {
 				StringTokenizer tokenizer = new StringTokenizer(matcher.group(1), "+-");
@@ -102,6 +126,8 @@ public class LinuxNetworkManager implements NetworkManager {
 					//TODO:
 				}
 			}
+
+			
 		}
 
 		if (!foundAssociatedSSID && connectedSSID != null) {
