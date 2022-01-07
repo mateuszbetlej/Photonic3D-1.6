@@ -499,8 +499,14 @@
 		}
 
 		.canvas {
-			width: 350px;
-			height: 206px;
+			width: 206px;
+			height: 350px;
+			-webkit-transform:rotate(90deg);
+			margin-left: auto;
+			margin-right: auto;
+			margin-top: -72px;
+			padding: 0;
+			display: block;
 		}
 
 		@keyframes pauseglyph {
@@ -587,6 +593,11 @@
 				$('#cancellabel').show();
 			}, 8000);
 			setInterval(updateNetworkInfo(), 10000);
+			var canvas = document.getElementById('canvas'),
+			context = canvas.getContext('2d');
+
+			// Rotates the canvas 90 degrees
+			context.rotate(90 * (Math.PI / 180));
 			$.getJSON('../services/printJobs/getByPrinterName/' + printerName)
 				.done(function (data) {
 					temp = data;
@@ -900,7 +911,7 @@
 			</div>
 
 			<div class="printlayer" id="printlayer">
-				<canvas id="canvas" class="canvas" width="350" height="206"></canvas>
+				<canvas id="canvas" class="canvas" width="206" height="350"></canvas>
 			</div>
 			<img name="windowframe" id="windowframe" class="windowframe">
 			<div name="pauseglyph" class="pauseglyph" id="pauseglyph"></div>

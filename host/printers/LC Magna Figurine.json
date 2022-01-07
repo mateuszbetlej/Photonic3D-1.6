@@ -1,6 +1,6 @@
 {  
    "configuration":{  
-      "name":"Accumulo",
+      "name":"LC Magna Figurine",
       "machineConfig":{  
          "FileVersion":0,
          "PlatformXSize":68.04,
@@ -86,8 +86,8 @@
             }
          ]
       },
-      "MachineConfigurationName":"Accumulo",
-      "SlicingProfileName":"Accumulo Slicing",
+      "MachineConfigurationName":"LC Magna Figurine",
+      "SlicingProfileName":"LC Magna Figurine Slicing",
       "AutoStart":true
    },
    "started":true,
