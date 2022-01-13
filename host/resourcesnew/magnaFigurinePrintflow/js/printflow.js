@@ -218,7 +218,7 @@ function renderSlicePreview() {
                                         img.src = currentSliceImage64;
                                 }
                                 if (blobOut.size < 2999) { 
-									var canvas = document.getElementById("canvas");
+					var canvas = document.getElementById("canvas");
                                         var ctx = canvas.getContext("2d");
                                         img = new Image();
 
