@@ -190,6 +190,7 @@ public class IOUtilities {
 		long start = System.currentTimeMillis();
 		while (System.currentTimeMillis() - start < timeoutMillis) {
 			byte[] data = currentIdentifier.read();
+			logger.info("Bytes: {}", data);
 			if (data == null) {
 				Thread.sleep(cpuLimitingDelay);
 			} else {

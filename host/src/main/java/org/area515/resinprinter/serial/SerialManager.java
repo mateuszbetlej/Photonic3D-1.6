@@ -121,27 +121,32 @@ public class SerialManager {
 	public boolean is3dFirmware(SerialCommunicationsPort currentIdentifier, ComPortSettings newComPortSettings) {
 		try {
 			logger.debug("Attempting 3dprinter firmware detection on:{}", newComPortSettings);
-			currentIdentifier.open(AUTO_DETECT_3D_FIRMWARE, OPEN_TIME_OUT, newComPortSettings);
 			
+			currentIdentifier.open(AUTO_DETECT_3D_FIRMWARE, OPEN_TIME_OUT, newComPortSettings);
 			//Marlin and other firmware sends garbage on a new connect.
 			String chitChat = IOUtilities.readWithTimeout(currentIdentifier, READ_CHITCHAT_TIME_OUT, CPU_LIMITING_DELAY);
 			logger.debug("Chitchat was:{} from:{}", chitChat, newComPortSettings);
 			
-			//Send an absolute positioning gcode and determine if the other end responds with an ok. If so, it's probably 3dFirmware.
-			currentIdentifier.write("G91\r\n".getBytes());
+			//Send an absolute positioning gcode and determine if the other end responds with an ok. If so, it's probably 3dFirmware
+			currentIdentifier.write("M42 P0 S1\r\n".getBytes());
 			
 			String detection = IOUtilities.readWithTimeout(currentIdentifier, READ_TIME_OUT, CPU_LIMITING_DELAY);
 			String lines[] = detection.split("\n");
 			if (lines.length == 0) {
 				logger.debug("No data received from:{}", newComPortSettings);
+				currentIdentifier.write("M42 P0 S0\r\n".getBytes());
 				return false;
 			}
 			if (lines[lines.length - 1].matches("(?s:[Oo][Kk].*)")) {
 				logger.debug("3dprinter firmware found on:{}", newComPortSettings);
+				logger.debug("Data:{} received on:{}", ()->{return Arrays.toString(lines);}, ()->{return newComPortSettings;});
+				logger.info("Detection:  {}",detection);
+				currentIdentifier.write("M42 P0 S0\r\n".getBytes());
 				return true;
 			}
-			
+			logger.info("Detection:  {}",detection);
 			logger.debug("Unknown data:{} received on:{}", ()->{return Arrays.toString(lines);}, ()->{return newComPortSettings;});
+			currentIdentifier.write("M42 P0 S0\r\n".getBytes());
 			return false;
 		} catch (InterruptedException | AlreadyAssignedException | InappropriateDeviceException | IOException e) {
 			logger.debug("3dprinter firmware not found because:{}", e);
@@ -151,6 +156,7 @@ public class SerialManager {
 				currentIdentifier.close();
 			}
 		}
+		
 	}
 	
 	private DetectedResources detectResourcesAndAssignPort(Printer printer, SerialCommunicationsPort identifier, ComPortSettings printerOverriddenComPortSettings, ComPortReservation reservationStyle) throws AlreadyAssignedException, InappropriateDeviceException {

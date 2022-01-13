@@ -75,19 +75,19 @@ function startpage() {
                 renderSlicePreview();
         }, 20000);
 		
-		if(typeof Cookies.get('firstInit') == "undefined") {
-                // Set first initialisation Cookie
-                Cookies.set('firstInit', true);
-                // turn the printer on 
-                setTimeout(function (){
-                        $.getJSON("/services/printers/get/" + encodeURI(printerName)).done(function (data) {				
-                                $.getJSON('/services/printers/start/' + printerName).done(function () {
-                                        document.getElementById("printerstatus").src = PRINTERONIMAGE;
-                                        Cookies.set('printerstatus', PRINTERONIMAGE);
-                                });
-                        });   
-                },1000)  
-        }
+	// 	if(typeof Cookies.get('firstInit') == "undefined") {
+        //         // Set first initialisation Cookie
+        //         Cookies.set('firstInit', true);
+        //         // turn the printer on 
+        //         setTimeout(function (){
+        //                 $.getJSON("/services/printers/get/" + encodeURI(printerName)).done(function (data) {				
+        //                         $.getJSON('/services/printers/start/' + printerName).done(function () {
+        //                                 document.getElementById("printerstatus").src = PRINTERONIMAGE;
+        //                                 Cookies.set('printerstatus', PRINTERONIMAGE);
+        //                         });
+        //                 });   
+        //         },1000)  
+        // }
 }
 
 function printerStatus() {
