@@ -596,7 +596,7 @@
 			$('#layover_1').show(0).delay(80).hide(0);
 			$.getJSON('../services/printers/showBlankScreen/LC%20Nano');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P5 S0');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P5 S0')
 				.done(function (data) {
 					location.href = "index.html";
 				});
