@@ -197,7 +197,7 @@ public abstract class GCodeControl {
         return sendGcode("G28 Z\r\n");
     }
     public String executeHomeAll() {
-        return sendGcode("G28\r\n");
+        return sendGcode("G28 Z0 X0\r\n");
     }
     
     private void parseCommentCommand(String comment) {

@@ -11,6 +11,6 @@ public class PhotocentricGCodeControl extends GCodeControl {
     }
 
     public String executeZHome() {
-        return sendGcode("G28\r\n");
+        return sendGcode("G28 Z0\r\n");
     }
 }
