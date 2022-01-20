@@ -209,7 +209,7 @@ public class CustomizerService {
 			// printer.showImage(img, true);
 			
 			try {
-				Process showingSlice = Runtime.getRuntime().exec(new String[]{"nice", "-n", "-2", "/opt/cwh/os/Linux/armv61/show_image", "-d", "5", "-t", "10", "-p", printerName, "-e", "10000", "-b", "5", "-x", "50000", "-m", "/home/pi/mask/mask.png", "/home/pi/display_cure_to_be_hidden.png"});
+				Process showingSlice = Runtime.getRuntime().exec(new String[]{"nice", "-n", "-2", "/opt/cwh/os/Linux/armv61/show_image", "-d", "5", "-t", "10", "-p", printerName, "-e", "10000", "-b", "5", "-x", "50000", "-m", "/home/pi/mask/mask.png", "/home/pi/mask/display_cure_to_be_hidden.png"});
 				showingSlice.waitFor();
 			} catch(Exception e) {
 				
@@ -253,7 +253,7 @@ public class CustomizerService {
 			// printer.showImage(img, true);
 			
 			try {
-				Process showingSlice = Runtime.getRuntime().exec(new String[]{"nice", "-n", "-2", "/opt/cwh/os/Linux/armv61/show_image", "-d", "5", "-t", "10", "-p", printerName, "-e", "15000", "-b", "5", "-x", "50000", "-m", "/home/pi/mask/mask.png", "/home/pi/display_test_to_be_hidden.png"});
+				Process showingSlice = Runtime.getRuntime().exec(new String[]{"nice", "-n", "-2", "/opt/cwh/os/Linux/armv61/show_image", "-d", "5", "-t", "10", "-p", printerName, "-e", "15000", "-b", "5", "-x", "50000", "-m", "/home/pi/mask/mask.png", "/home/pi/mask/display_test_to_be_hidden.png"});
 				showingSlice.waitFor();
 			} catch(Exception e) {
 				
