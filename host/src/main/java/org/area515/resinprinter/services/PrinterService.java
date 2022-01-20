@@ -589,6 +589,40 @@ public class PrinterService {
 			return new MachineResponse("blankscreenshown", false, e.getMessage());
 		}
 	}
+
+	@ApiOperation(value="Shows a blank Layer on the Printer with the specified printername.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, response=MachineResponse.class, message = SwaggerMetadata.MACHINE_RESPONSE),
+            @ApiResponse(code = 500, message = SwaggerMetadata.UNEXPECTED_ERROR)})
+	@GET
+	@Path("cureLayer/{printername}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public MachineResponse cureLayer(@PathParam("printername") String printerName) {
+		try {
+			Printer currentPrinter = PrinterManager.Instance().getPrinter(printerName);
+			if (currentPrinter == null) {
+				throw new InappropriateDeviceException("Printer:" + printerName + " not started");
+			}
+			
+			if (currentPrinter.isDisplayBusy()) {
+				throw new InappropriateDeviceException("Printer:" + printerName + " display is busy, try again later.");
+			}
+
+			try {
+				Process showingSlice = Runtime.getRuntime().exec(new String[]{"nice", "-n", "-2", "/opt/cwh/os/Linux/armv61/show_image", "-d", "5", "-t", "10", "-p", printerName, "-e", "15000", "-b", "5", "-x", "50000", "-m", "/home/pi/mask/mask.png", "/home/pi/mask/display_cure_to_be_hidden.png"});
+				showingSlice.waitFor();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+				
+			
+			return new MachineResponse("curedlayer", true, "Cured Layer on:" + printerName);
+		} catch (InappropriateDeviceException e) {
+		    logger.error("Error curing layer on printer:" + printerName, e);
+			return new MachineResponse("curedlayer", false, e.getMessage());
+		}
+	}
 	
     @ApiOperation(value="Executes the specified device dependent code(generally gcode) on the Printer given by the printername.")
     @ApiResponses(value = {
