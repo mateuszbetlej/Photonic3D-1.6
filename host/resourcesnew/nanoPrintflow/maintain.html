@@ -365,83 +365,91 @@
 		}
 
 		function loadcustomizer() {
-			var url = "http://localhost:9091/services/customizers/upsert";
-			var xhr = new XMLHttpRequest();
-			var data = {
-				"name": "display_cure_to_be_hidden.zip.LC Nano",
-				"printerName": "LC Nano",
-				"printableName": "display_cure_to_be_hidden",
-				"printableExtension": "zip",
-				"supportsAffineTransformSettings": true,
-				"affineTransformSettings": {
-					"rotation": 0,
-					"affineTransformScriptCalculator": null,
-					"xscale": 1,
-					"yscale": 1,
-					"xflip": false,
-					"yflip": false,
-					"xshear": 0,
-					"yshear": 0,
-					"ytranslate": 0,
-					"xtranslate": 0
-				},
-				"externalImageAffectingState": "2019",
-				"cacheId": "245fdeea902fdbfc7790034cdd5fd110838c0e21",
-				"nextSlice": 0,
-				"nextStep": "PerformHeader",
-				"imageManipulationCalculator": null,
-				"zscale": 1
-			}
-			xhr.open("POST", url, true);
-			//Send the proper header information along with the request
-			xhr.setRequestHeader("Content-Type", "application/json");
-			xhr.setRequestHeader("Accept", "application/json");
-			xhr.onreadystatechange = function () { // Call a function when the state changes.
-				if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-					// Request finished. Do processing here.
+			$.getJSON('../services/machine/getNetworkHostConfiguration', function (result) {
+			}).done(function (data){
+				var ip = data.IPs.wlan0
+				var url = "http://"+ip+":9091/services/customizers/upsert";
+				var xhr = new XMLHttpRequest();
+				var data = {
+					"name": "display_cure_to_be_hidden.zip.LC Nano",
+					"printerName": "LC Nano",
+					"printableName": "display_cure_to_be_hidden",
+					"printableExtension": "zip",
+					"supportsAffineTransformSettings": true,
+					"affineTransformSettings": {
+						"rotation": 0,
+						"affineTransformScriptCalculator": null,
+						"xscale": 1,
+						"yscale": 1,
+						"xflip": false,
+						"yflip": false,
+						"xshear": 0,
+						"yshear": 0,
+						"ytranslate": 0,
+						"xtranslate": 0
+					},
+					"externalImageAffectingState": "2019",
+					"cacheId": "245fdeea902fdbfc7790034cdd5fd110838c0e21",
+					"nextSlice": 0,
+					"nextStep": "PerformHeader",
+					"imageManipulationCalculator": null,
+					"zscale": 1
 				}
-			}
-			xhr.send(JSON.stringify(data));;
+				xhr.open("POST", url, true);
+				//Send the proper header information along with the request
+				xhr.setRequestHeader("Content-Type", "application/json");
+				xhr.setRequestHeader("Accept", "application/json");
+				xhr.onreadystatechange = function () { // Call a function when the state changes.
+					if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+						// Request finished. Do processing here.
+					}
+				}
+				xhr.send(JSON.stringify(data));;
+			})
 		}
 
 		function loadcustomizer2() {
-			var url = "http://localhost:9091/services/customizers/upsert";
-			var xhr = new XMLHttpRequest();
-			var data = {
-				"name": "display_test_to_be_hidden.zip.LC Nano",
-				"printerName": "LC Nano",
-				"printableName": "display_test_to_be_hidden",
-				"printableExtension": "zip",
-				"supportsAffineTransformSettings": true,
-				"affineTransformSettings": {
-					"rotation": 0,
-					"affineTransformScriptCalculator": null,
-					"xscale": 1,
-					"yscale": 1,
-					"xflip": false,
-					"yflip": false,
-					"xshear": 0,
-					"yshear": 0,
-					"ytranslate": 0,
-					"xtranslate": 0
-				},
-				"externalImageAffectingState": "2019",
-				"cacheId": "245fdeea902fdbfc7790034cdd5fd110838c0e21",
-				"nextSlice": 0,
-				"nextStep": "PerformHeader",
-				"imageManipulationCalculator": null,
-				"zscale": 1
-			}
-			xhr.open("POST", url, true);
-			//Send the proper header information along with the request
-			xhr.setRequestHeader("Content-Type", "application/json");
-			xhr.setRequestHeader("Accept", "application/json");
-			xhr.onreadystatechange = function () { // Call a function when the state changes.
-				if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-					// Request finished. Do processing here.
+			$.getJSON('../services/machine/getNetworkHostConfiguration', function (result) {				
+			}).done(function (data){
+				var ip = data.IPs.wlan0
+				var url = "http://"+ip+":9091/services/customizers/upsert";
+				var xhr = new XMLHttpRequest();
+				var data = {
+					"name": "display_test_to_be_hidden.zip.LC Nano",
+					"printerName": "LC Nano",
+					"printableName": "display_test_to_be_hidden",
+					"printableExtension": "zip",
+					"supportsAffineTransformSettings": true,
+					"affineTransformSettings": {
+						"rotation": 0,
+						"affineTransformScriptCalculator": null,
+						"xscale": 1,
+						"yscale": 1,
+						"xflip": false,
+						"yflip": false,
+						"xshear": 0,
+						"yshear": 0,
+						"ytranslate": 0,
+						"xtranslate": 0
+					},
+					"externalImageAffectingState": "2019",
+					"cacheId": "245fdeea902fdbfc7790034cdd5fd110838c0e21",
+					"nextSlice": 0,
+					"nextStep": "PerformHeader",
+					"imageManipulationCalculator": null,
+					"zscale": 1
 				}
-			}
-			xhr.send(JSON.stringify(data));;
+				xhr.open("POST", url, true);
+				//Send the proper header information along with the request
+				xhr.setRequestHeader("Content-Type", "application/json");
+				xhr.setRequestHeader("Accept", "application/json");
+				xhr.onreadystatechange = function () { // Call a function when the state changes.
+					if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+						// Request finished. Do processing here.
+					}
+				}
+				xhr.send(JSON.stringify(data));;
+			})
 		}
 
 		function togglePrinter() {
