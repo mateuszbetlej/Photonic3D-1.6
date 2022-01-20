@@ -216,7 +216,7 @@ public class Main {
 		List<PrinterConfiguration> configurations = HostProperties.Instance().getPrinterConfigurations();
 		for (PrinterConfiguration configuration : configurations) {
 			if (configuration.isAutoStart()) {
-				Thread.sleep(20000);
+				Thread.sleep(30000);
 				PrinterService.INSTANCE.startPrinter(configuration.getName());
 			}
 		}
