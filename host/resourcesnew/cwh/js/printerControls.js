@@ -107,7 +107,9 @@
 			$http.get("services/printers/showBlankScreen/" + printerName).then(gCodeSuccess, errorFunction)
 		}
 		this.cureLayer = function cureLayer() {
+			$http.get("services/printers/executeGCode/" + printerName + "/" + "M106%20P5%S255").then(gCodeSuccess, errorFunction)
 			$http.get("services/printers/cureLayer/" + printerName).then(gCodeSuccess, errorFunction)
+			$http.get("services/printers/executeGCode/" + printerName + "/" + "M106%20P5%S200").then(gCodeSuccess, errorFunction)
 		}
         this.overrideExposureTime = function overrideExposureTime() {
 			$http.get("services/printJobs/overrideExposuretime/" + controller.currentPrintJob.id + "/" + controller.currentPrintJob.exposureTime).then(gCodeSuccess, errorFunction)
