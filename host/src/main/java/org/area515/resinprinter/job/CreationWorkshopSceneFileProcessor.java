@@ -44,6 +44,9 @@ import org.area515.resinprinter.server.HostProperties;
 import org.area515.resinprinter.twodim.SimpleImageRenderer;
 import org.area515.util.IOUtilities;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import se.sawano.java.text.AlphanumericComparator;
 
 public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcessor<Object,Object> implements Previewable {
@@ -142,6 +145,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 		Printer printer = printJob.getPrinter();
 		String printerName = printer.getName();
 		String printerType = "";
+		Map<String, String> slicesMap = new HashMap<String, String>();
 		
 		//GCode formatting to remove led control and delays for pngview/show_image
 		File inputFile = new File(gCodeFile.getPath());
@@ -150,7 +154,8 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 		BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
 		try {
 			String currentLine;
-
+			String sliceNumber = "0";
+			boolean sliceFound = false;
 			while((currentLine = reader.readLine()) != null) {
 				Matcher matcher = bottomDelay.matcher(currentLine);
 				if (matcher.matches()) {
@@ -170,6 +175,31 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 					numberOfBottomLayers = foundBottomLayers;
 				}
 
+				//if slice was found previusly
+				if(sliceFound){
+					slicesMap.put(sliceNumber, currentLine.replaceAll("\\D+",""));
+					sliceFound = false;
+					logger.info("Slice: {} Exposuer: {}", sliceNumber, slicesMap.get(sliceNumber));
+				}
+				//build map of slices and their exposure
+				if(currentLine.contains("<Slice>")){
+					// Creating array of string length
+					char[] chars = new char[currentLine.length()];
+  
+					// Copy character by character into array
+					for (int i = 0; i < currentLine.length(); i++) {
+						chars[i] = currentLine.charAt(i);
+					}
+
+					for(char c :  chars){
+							if(Character.isDigit(c)){
+							sliceNumber = currentLine.replaceAll("\\D+","");
+							//setting slice found flag
+							sliceFound = true;
+						}
+					}
+				}
+				
 				//trim line for specific printer
 				if(printerName.contains("Dental")){
 					if((currentLine.contains("G4") && currentLine.contains("SLICE Exposure Delay")) || (currentLine.contains("M42 P0 S1") && currentLine.contains("SLICE LED On")) || (currentLine.contains("M42 P0 S0") && currentLine.contains("SLICE LED Off"))) 
@@ -266,9 +296,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 					
 					NotificationManager.jobChanged(printer, printJob);
 
-					
-					logger.info("BOTTOM Layer Delay:{}", bottomLayerExposureDelay);
-					logger.info("LAYER Exposure Delay:{}", sliceExposureDelay);
+					logger.info("LAYER Exposure Delay:{}", slicesMap.get(Integer.toString(sliceIndex)));
 					logger.info("Number of Bottom Layers:{}", numberOfBottomLayers);
 					// Call show image.
 					logger.info("Display picture on screen: {}", imageFilename);
@@ -277,7 +305,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 					// logger.info("Slice = {}", slicePath );
 					//String cmd = "/home/pi/raspidmx/pngview_with_gpio_vsync/pngview -d 5 -t " + sliceIndex + " -p " + printerType + " -e "+ sliceExposureDelay +" -b " + numberOfBottomLayers + " -x " + bottomLayerExposureDelay + " " + slicePath;
 					//Process showingSlice = Runtime.getRuntime().exec(new String[]{"/home/pi/raspidmx/pngview_with_gpio_vsync/pngview", "-d", "5", "-t", Integer.toString(sliceIndex), "-p", printerName, "-e", Integer.toString(sliceExposureDelay), "-b", Integer.toString(numberOfBottomLayers), "-x", Integer.toString(bottomLayerExposureDelay), slicePath});
-					Process showingSlice = Runtime.getRuntime().exec(new String[]{"nice", "-n", "-2", "/opt/cwh/os/Linux/armv61/show_image", "-d", "5", "-t", Integer.toString(sliceIndex), "-p", printerName, "-e", Integer.toString(sliceExposureDelay), "-b", Integer.toString(numberOfBottomLayers), "-x", Integer.toString(bottomLayerExposureDelay), "-m", "/home/pi/mask/mask.png", slicePath});
+					Process showingSlice = Runtime.getRuntime().exec(new String[]{"nice", "-n", "-2", "/opt/cwh/os/Linux/armv61/show_image", "-d", "5", "-p", printerName, "-e", slicesMap.get(Integer.toString(sliceIndex)), "-m", "/home/pi/mask/mask.png", slicePath});
 					showingSlice.waitFor();
 
 					if (oldImage != null) {
