@@ -319,7 +319,7 @@ public class PrinterService {
 		configuration.getSlicingProfile().setgCodeHeader(
 			 "G21 ;Set units to be mm\n" +
 			 "G91 ;Relative Positioning\n" +
-			 "G28 ; Home Printer\n" +
+			 "G28 Z0 ; Home Printer\n" +
 			 "M650 D$ZLiftDist S$ZLiftRate P0; CWH Template Preferences\n" + //mUVe 1 Prefs\n" +
 			 "M17 ;Enable motors");
 		configuration.getSlicingProfile().setgCodeFooter(

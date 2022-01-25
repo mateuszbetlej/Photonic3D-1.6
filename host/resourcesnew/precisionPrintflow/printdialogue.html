@@ -300,7 +300,7 @@
 			function cancel(){
 				$.getJSON("../services/printJobs/stopJob/"+jobId)
 				$.getJSON('../services/printers/executeGCode/'+printerName+'/M107')
-				$.getJSON('../services/printers/executeGCode/'+printerName+'/G28')
+				$.getJSON('../services/printers/executeGCode/'+printerName+'/G28%20Z0')
 				.always(function(){
 				location.href="index.html";
 				});

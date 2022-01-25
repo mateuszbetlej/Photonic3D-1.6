@@ -43,7 +43,7 @@
 		<script>
 	<script>
 			function done(){
-				$.getJSON('../services/printers/executeGCode/'+printerName+'/G28')
+				$.getJSON('../services/printers/executeGCode/'+printerName+'/G28%20Z0')
 				.always(function(){
 				location.href="calibration_4.html";
 				});

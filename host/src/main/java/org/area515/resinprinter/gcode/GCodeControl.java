@@ -188,16 +188,16 @@ public abstract class GCodeControl {
     	return sendGcode("M18\r\n");
     }
     public String executeXHome() {
-        return sendGcode("G28 X\r\n");
+        return sendGcode("G28 X0\r\n");
     }
     public String executeYHome() {
-        return sendGcode("G28 Y\r\n");
+        return sendGcode("G28 Y0\r\n");
     }
     public String executeZHome() {
-        return sendGcode("G28 Z\r\n");
+        return sendGcode("G28 Z0\r\n");
     }
     public String executeHomeAll() {
-        return sendGcode("G28\r\n");
+        return sendGcode("G28 Z0 Y0\r\n");
     }
     
     private void parseCommentCommand(String comment) {
