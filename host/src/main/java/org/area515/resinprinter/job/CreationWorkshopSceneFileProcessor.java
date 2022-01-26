@@ -177,7 +177,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 						continue;
 					}
 				}else if(printerName.contains("Magna")){
-					if(currentLine.equals(";<Delay> 2000") || currentLine.equals(";<Delay> " + sliceExposureDelay) || currentLine.equals(";<Delay> " + bottomLayerExposureDelay) || (currentLine.contains("M42 P0 S1") && currentLine.contains("SLICE LED on")) || (currentLine.contains("M42 P0 S0") && currentLine.contains("SLICE LED off")))
+					if(currentLine.contains(";<Delay> 2000") || currentLine.contains(";<Delay> " + sliceExposureDelay) || currentLine.contains(";<Delay> " + bottomLayerExposureDelay) || (currentLine.contains("M42 P0 S1") && currentLine.contains("SLICE LED on")) || (currentLine.contains("M42 P0 S0") && currentLine.contains("SLICE LED off")))
 					{
 						continue;
 					}
