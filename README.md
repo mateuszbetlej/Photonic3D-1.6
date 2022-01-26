@@ -1,4 +1,4 @@
-![Photonic3D](https://raw.githubusercontent.com/jmkao/Creation-Workshop-Host/master/host/resourcesnew/cwh/img/photonic3d-icon-sign-black.png)
+![Photonic3D](https://raw.githubusercontent.com/jmkao/Creation-Workshop-Host/master/host/resources/cwh/img/photonic3d-icon-sign-black.png)
 ======================
 
 Photonic3D is a control server for DLP resin 3D printers with a web-based user interface. It has been designed to run well on a Raspberry Pi, but is cross-platform and the install distribution will also run on Linux, Windows, and MacOS.

@@ -6,7 +6,7 @@
 <InstallType>NoInstall</InstallType>
 <App>
   <Name>Photonic3D</Name>
-  <LogoPNG>C:\Users\wgilster\git\Creation-Workshop-Host\host\resourcesnew\favicon\android-icon-48x48.png</LogoPNG>
+  <LogoPNG>C:\Users\wgilster\git\Creation-Workshop-Host\host\resources\favicon\android-icon-48x48.png</LogoPNG>
   <MainClass>org.area515.resinprinter.client.Main</MainClass>
   <Param>-w</Param>
   <Param>PhotonicSplash.png</Param>

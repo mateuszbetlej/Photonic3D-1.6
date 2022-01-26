@@ -103,7 +103,7 @@ public class DispManXLoadImage {
 	
 	//sudo vi DispManXLoadImage.java
 	//sudo javac -cp lib/*:. DispManXLoadImage.java
-	//sudo java -cp lib/*:. DispManXLoadImage 2 10 resourcesnew/favicon/apple-icon-144x144.png
+	//sudo java -cp lib/*:. DispManXLoadImage 2 10 resources/favicon/apple-icon-144x144.png
 	public static void main(String[] args) throws IOException, InterruptedException {
 		DispManX dispMan = DispManX.INSTANCE;
 		System.out.println("BCM Initialized:" + dispMan.bcm_host_init());

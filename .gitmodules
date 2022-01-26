@@ -1,3 +1,3 @@
-[submodule "host/resourcesnew/slacer"]
-	path = host/resourcesnew/slacer
+[submodule "host/resources/slacer"]
+	path = host/resources/slacer
 	url = https://github.com/Kudo3D/SLAcer.js
