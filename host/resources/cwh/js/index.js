@@ -3,9 +3,25 @@
 		var firstCacheId = new Date().toDateString();
 		cwhApp.filter('secondsToDateTime', [function() {
 		    return function(milliseconds) {
-		        return new Date(1970, 0, 1).setMilliseconds(milliseconds);
+				var daysString = " days "
+				ms =milliseconds
+				
+				const days = Math.floor(ms / (24*60*60*1000));
+				const daysms = ms % (24*60*60*1000);
+				const hours = Math.floor(daysms / (60*60*1000));
+				const hoursms = ms % (60*60*1000);
+				const minutes = Math.floor(hoursms / (60*1000));
+				const minutesms = ms % (60*1000);
+				const sec = Math.floor(minutesms / 1000);
+
+				if (days == 1){
+					daysString = " day "
+				}
+				
+				return days + daysString + hours.toString().padStart(2, '0') + ":" + minutes.toString().padStart(2, '0') + ":" + sec.toString().padStart(2, '0');
 		    };
 		}]);
+		
 		
 		cwhApp.directive('onEnter', function () {
 		    return function (scope, element, attrs) {

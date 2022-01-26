@@ -40,7 +40,7 @@
 								</div>
 								<div class="list-group-item-text" ng-hide="printJob.printInProgress">
 									<span class="pull-left">Complete: {{printJob.startTime + printJob.elapsedTime | date:'yyyy-MM-dd HH:mm:ss'}}</span>
-									<span class="pull-right">Time: {{printJob.elapsedTime | secondsToDateTime | date:'HH:mm:ss'}}</span>
+									<span class="pull-right">Time: {{printJob.elapsedTime | secondsToDateTime }}</span>
 								</div>
 								<div class="list-group-item-text" ng-show="printJob.printInProgress && printJob.totalSlices > printJob.currentSlice">
 									Progress: {{printJob.currentSlice}} of {{printJob.totalSlices}} ({{printJob.currentSlice/printJob.totalSlices * 100 | number : 1}}%)
@@ -49,8 +49,8 @@
 									Slice #{{printJob.currentSlice}}
 								</div>
 								<div class="list-group-item-text" ng-show="printJob.printInProgress && printJob.totalSlices > printJob.currentSlice">
-									<span class="pull-left">Time To Completion: {{printJob.averageSliceTime * (printJob.totalSlices - printJob.currentSlice) | secondsToDateTime | date:'HH:mm:ss'}}</span>
-									<span class="pull-right">Elapsed Time: {{printJob.elapsedTime | secondsToDateTime | date:'HH:mm:ss'}}</span>
+									<span class="pull-left">Time To Completion: {{printJob.averageSliceTime * (printJob.totalSlices - printJob.currentSlice) | secondsToDateTime }}</span>
+									<span class="pull-right">Elapsed Time: {{printJob.elapsedTime | secondsToDateTime }}</span>
 								</div>
 								<div class="list-group-item-text">
 									<span class="pull-left">Average Slice Time: {{printJob.averageSliceTime | number}}ms</span>
