@@ -4,7 +4,7 @@
 		cwhApp.filter('secondsToDateTime', [function() {
 		    return function(milliseconds) {
 				var daysString = " days "
-				ms =milliseconds
+				ms = milliseconds
 				
 				const days = Math.floor(ms / (24*60*60*1000));
 				const daysms = ms % (24*60*60*1000);
@@ -14,7 +14,10 @@
 				const minutesms = ms % (60*1000);
 				const sec = Math.floor(minutesms / 1000);
 
-				if (days == 1){
+				if (days == 0){
+					return hours.toString().padStart(2, '0') + ":" + minutes.toString().padStart(2, '0') + ":" + sec.toString().padStart(2, '0');
+				}
+				else if (days == 1){
 					daysString = " day "
 				}
 				
