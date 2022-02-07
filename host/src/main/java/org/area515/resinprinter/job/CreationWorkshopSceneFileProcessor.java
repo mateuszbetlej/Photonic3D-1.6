@@ -273,6 +273,12 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 					}else if(printJobPathAsString.contains("LOCSPCT16-30")){
 						printJobType = "Chemistry Test 2";
 					}
+					else if(printJobPathAsString.contains("LOCSPCT31-45")){
+						printJobType = "Chemistry Test 3";
+					}
+					else if(printJobPathAsString.contains("LOCSPCT46-60")){
+						printJobType = "Chemistry Test 4";
+					}
 					logger.info("BOTTOM Layer Delay:{}", bottomLayerExposureDelay);
 					logger.info("LAYER Exposure Delay:{}", sliceExposureDelay);
 					logger.info("Number of Bottom Layers:{}", numberOfBottomLayers);
