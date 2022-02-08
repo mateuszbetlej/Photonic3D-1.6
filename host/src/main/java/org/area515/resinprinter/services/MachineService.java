@@ -539,8 +539,8 @@ public class MachineService {
     @GET
     @Path("serialNumber")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<String> getSerialNumber() {
-		List<String> serialNumber = new ArrayList<String>();
+    public String getSerialNumber() {
+		String serialNumber = new String();
 		String fileOutput = new String();
 		BufferedReader stream = null;
 		File lcprinterProductSerial = new File("/etc/lcprinter-product-serial");
@@ -556,7 +556,7 @@ public class MachineService {
 			fileOutput = null;
 		}
 
-		serialNumber.add(fileOutput);
+		serialNumber = fileOutput;
 		return serialNumber;
     }
 	 
