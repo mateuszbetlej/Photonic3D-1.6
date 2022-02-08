@@ -94,28 +94,31 @@ if [ "$javaMinorVersion" -lt 8 -a "$javaMajorVersion" -le 1 ]; then
 fi
 
 #Determine if a new install is available
+cd ${installDirectory}
+if [ -f ${downloadPrefix}*.zip ]; then
+	OFFLINE_FILE=$(ls ${downloadPrefix}*.zip)
+	echo Performing offline install of ${OFFLINE_FILE}
+
+	mv ${OFFLINE_FILE} ~
+	rm -r ${installDirectory}
+	mkdir -p ${installDirectory}
+	cd ${installDirectory}
+	mv ~/${OFFLINE_FILE} .
+	unzip ${OFFLINE_FILE}
+	chmod 777 *.sh
+	rm ${OFFLINE_FILE}
+fi
+
 if [ ! -z "$repo" ]; then
 	echo Checking for new version from Github Repo: ${repo}
-	cd ${installDirectory}
 	LOCAL_TAG=$(grep repo.version build.number | cut -d = -f 2 | tr -d '\r')
 	NETWORK_TAG=$(curl -L -s https://api.github.com/repos/${repo}/releases/latest | grep 'tag_name' | cut -d\" -f4)
 
 	echo Local Tag: ${LOCAL_TAG}
 	echo Network Tag: ${NETWORK_TAG}
 
-	if [ -f ${downloadPrefix}*.zip ]; then
-		OFFLINE_FILE=$(ls ${downloadPrefix}*.zip)
-		echo Performing offline install of ${OFFLINE_FILE}
-
-		mv ${OFFLINE_FILE} ~
-		rm -r ${installDirectory}
-		mkdir -p ${installDirectory}
-		cd ${installDirectory}
-		mv ~/${OFFLINE_FILE} .
-		unzip ${OFFLINE_FILE}
-		chmod 777 *.sh
-		rm ${OFFLINE_FILE}
-	elif [ -z "${NETWORK_TAG}" ]; then
+	
+	if [ -z "${NETWORK_TAG}" ]; then
 		echo "Couldn't fetch version from GitHub, launching existing install."
 	elif [ "${NETWORK_TAG}" != "${LOCAL_TAG}" -o "$2" == "force" ]; then
 		echo Installing latest version of ${downloadPrefix}: ${NETWORK_TAG}
@@ -124,7 +127,7 @@ if [ ! -z "$repo" ]; then
 		DL_FILE=${DL_URL##*/}
 		rm -f "/tmp/${DL_FILE}"
 		wget -P /tmp "${DL_URL}"
-	if [ $? -ne 0 ]; then
+		if [ $? -ne 0 ]; then
 			echo "wget of ${DL_FILE} failed. Aborting update."
 			exit 1
 		fi
