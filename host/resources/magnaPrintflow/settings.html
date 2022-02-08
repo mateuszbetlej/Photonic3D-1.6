@@ -114,6 +114,16 @@
 			font-size: 20px;
 			overflow: hidden;
 		}
+
+		.serialNumber {
+			position: absolute;
+			top: 465px;
+			left: 495px;
+			width: 300px;
+			color: white;
+			font-size: 10px;
+			text-align: right;
+		}
 	</style>
 
 	<!-- Latest compiled and minified CSS -->
@@ -143,6 +153,7 @@
 		function init() {
 			startpage();
 			setInterval(updateNetworkInfo(), 10000);
+			getSerialNumber();
 		}
 
 		function home_btn() {
@@ -157,6 +168,18 @@
 				location.href = "syslog.html";
 			}, 150);
 			$('#layover_2').show(0).delay(80).hide(0);
+		}
+
+		function getSerialNumber(){
+				$.getJSON('/services/machine/serialNumber')
+					.done(function (data) {
+						var serialNumber = "";
+						serialNumber = data;
+						document.getElementById("serialNumber").innerHTML = serialNumber;
+					})
+					.fail(function () {
+						document.getElementById("serialNumber").innerHTML = "Unable to find the Serial Number.";
+					});
 		}
 
 	</script>
@@ -177,6 +200,7 @@
 			<img name="layover_2" id="layover_2" class="layover_2 collapse" src="images/layovers/sys.png" />
 			<div name="warn" id="warn" class="warn"></div>
 
+			<div name="serialNumber" id="serialNumber" class="serialNumber"></div>
 			<img name="homehighlight" id="homehighlight" class="homehighlight" src=""
 				onClick="location.href='index.html';">
 			<img name="bigbuttonhighlight" id="bigbuttonhighlight" class="bigbuttonhighlight" src=""
