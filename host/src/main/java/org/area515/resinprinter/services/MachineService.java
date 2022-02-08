@@ -83,6 +83,8 @@ import org.area515.resinprinter.util.security.PhotonicUser;
 import org.area515.util.IOUtilities;
 import org.area515.util.MailUtilities;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 import com.sun.mail.smtp.SMTPSendFailedException;
 
@@ -528,6 +530,34 @@ public class MachineService {
 		 }
 		 
 		 return identifierStrings;
+    }
+
+	@ApiOperation(value = "Returns the machines serial number if it exists.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = SwaggerMetadata.SUCCESS),
+            @ApiResponse(code = 500, message = SwaggerMetadata.UNEXPECTED_ERROR)})
+    @GET
+    @Path("serialNumber")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<String> getSerialNumber() {
+		List<String> serialNumber = new ArrayList<String>();
+		String fileOutput = new String();
+		BufferedReader stream = null;
+		File lcprinterProductSerial = new File("/etc/lcprinter-product-serial");
+		if(lcprinterProductSerial.exists() && !lcprinterProductSerial.isDirectory()) { 
+			try{
+				stream = new BufferedReader(new FileReader(lcprinterProductSerial));
+				fileOutput = stream.readLine();
+				stream.close();
+			}catch(Exception e){
+				fileOutput = null;
+			}
+		}else{
+			fileOutput = null;
+		}
+
+		serialNumber.add(fileOutput);
+		return serialNumber;
     }
 	 
     @ApiOperation(value = "Enumerates the list of graphics displays that are available on the Photonic 3D host.")
