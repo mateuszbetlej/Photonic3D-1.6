@@ -12,26 +12,13 @@ if [ -z "$HOME" ] || [ "$HOME" == "/" ]; then
   HOME=~root
 fi
 
-DEFAULT_REPO="area515/Creation-Workshop-Host"
 CONFIG_PROPS="${HOME}/3dPrinters/config.properties"
-
 echo "Local Config: $CONFIG_PROPS"
 
-if [ -f ${CONFIG_PROPS} ]; then
-  CONFIG_REPO=$(grep '^updateRepo' "${CONFIG_PROPS}" | cut -d= -f 2 | awk '$1=$1')
-  if [[ ${CONFIG_REPO} ]]; then
-    DEFAULT_REPO="${CONFIG_REPO}"
-  fi
-fi
-
-if [ -z "$1" ]; then
-	repo=${DEFAULT_REPO}
-else
-	if [[ $1 =~ .*Creation-Workshop-Host.* ]] || [[ $1 =~ .*Photonic3D-1.6.* ]]; then
+if [ ! -z "$1" ]; then
+	if [[ $1 =~ .*Photonic3D-1.6.* ]]; then
 		repo=$1
-	else
-		repo="$1/Creation-Workshop-Host"
-	fi;
+	fi
 fi;
 
 if [ "$2" == "TestKit" ]; then
@@ -107,14 +94,7 @@ if [ "$javaMinorVersion" -lt 8 -a "$javaMajorVersion" -le 1 ]; then
 fi
 
 #Determine if a new install is available
-echo Checking for new version from Github Repo: ${repo}
 cd ${installDirectory}
-LOCAL_TAG=$(grep repo.version build.number | cut -d = -f 2 | tr -d '\r')
-NETWORK_TAG=$(curl -L -s https://api.github.com/repos/${repo}/releases/latest | grep 'tag_name' | cut -d\" -f4)
-
-echo Local Tag: ${LOCAL_TAG}
-echo Network Tag: ${NETWORK_TAG}
-
 if [ -f ${downloadPrefix}*.zip ]; then
 	OFFLINE_FILE=$(ls ${downloadPrefix}*.zip)
 	echo Performing offline install of ${OFFLINE_FILE}
@@ -127,37 +107,48 @@ if [ -f ${downloadPrefix}*.zip ]; then
 	unzip ${OFFLINE_FILE}
 	chmod 777 *.sh
 	rm ${OFFLINE_FILE}
-elif [ -z "${NETWORK_TAG}" ]; then
-	echo "Couldn't fetch version from GitHub, launching existing install."
-elif [ "${NETWORK_TAG}" != "${LOCAL_TAG}" -o "$2" == "force" ]; then
-	echo Installing latest version of ${downloadPrefix}: ${NETWORK_TAG}
+fi
 
-	DL_URL=$(curl -L -s https://api.github.com/repos/${repo}/releases/latest | grep 'browser_' | cut -d\" -f4 | grep -- -${NETWORK_TAG})
-	DL_FILE=${DL_URL##*/}
-	rm -f "/tmp/${DL_FILE}"
-	wget -P /tmp "${DL_URL}"
-  if [ $? -ne 0 ]; then
-		echo "wget of ${DL_FILE} failed. Aborting update."
-		exit 1
+if [ ! -z "$repo" ]; then
+	echo Checking for new version from Github Repo: ${repo}
+	LOCAL_TAG=$(grep repo.version build.number | cut -d = -f 2 | tr -d '\r')
+	NETWORK_TAG=$(curl -L -s https://api.github.com/repos/${repo}/releases/latest | grep 'tag_name' | cut -d\" -f4)
+
+	echo Local Tag: ${LOCAL_TAG}
+	echo Network Tag: ${NETWORK_TAG}
+
+	
+	if [ -z "${NETWORK_TAG}" ]; then
+		echo "Couldn't fetch version from GitHub, launching existing install."
+	elif [ "${NETWORK_TAG}" != "${LOCAL_TAG}" -o "$2" == "force" ]; then
+		echo Installing latest version of ${downloadPrefix}: ${NETWORK_TAG}
+
+		DL_URL=$(curl -L -s https://api.github.com/repos/${repo}/releases/latest | grep 'browser_' | cut -d\" -f4 | grep -- -${NETWORK_TAG})
+		DL_FILE=${DL_URL##*/}
+		rm -f "/tmp/${DL_FILE}"
+		wget -P /tmp "${DL_URL}"
+		if [ $? -ne 0 ]; then
+			echo "wget of ${DL_FILE} failed. Aborting update."
+			exit 1
+		fi
+
+		rm -r ${installDirectory}
+		mkdir -p ${installDirectory}
+		cd ${installDirectory}
+		mv "/tmp/${DL_FILE}" .
+
+		unzip ${DL_FILE}
+		chmod 777 *.sh
+		#grab dos2unix from the package manager if not installed
+		command -v dos2unix >/dev/null 2>&1 || { apt-get install --yes --force-yes dos2unix >&2; }
+		grep -lU $'\x0D' *.sh | xargs dos2unix
+		#ensure the cwhservice always is linux format and executable
+		grep -lU $'\x0D' /etc/init.d/cwhservice | xargs dos2unix
+		chmod +x /etc/init.d/cwhservice
+		rm ${DL_FILE}
+	else
+		echo No install required
 	fi
-
-	rm -r ${installDirectory}
-	mkdir -p ${installDirectory}
-	cd ${installDirectory}
-	mv "/tmp/${DL_FILE}" .
-
-	unzip ${DL_FILE}
-	chmod 777 *.sh
-	#grab dos2unix from the package manager if not installed
-	command -v dos2unix >/dev/null 2>&1 || { apt-get install --yes --force-yes dos2unix >&2; }
-	grep -lU $'\x0D' *.sh | xargs dos2unix
-	#ensure the cwhservice always is linux format and executable
-	grep -lU $'\x0D' /etc/init.d/cwhservice | xargs dos2unix
-	chmod +x /etc/init.d/cwhservice
-	rm ${DL_FILE}
-else
-	echo No install required
-
 fi
 
 echo Turning off screen saver and power saving
