@@ -138,7 +138,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 		Pattern bottomDelay = Pattern.compile("\\s*;\\s*\\(?\\s*Bottom\\s*Layers\\s*Time\\s*=\\s*([\\d\\.]+)\\s*(?:ms)?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
 		Pattern exposureDelay = Pattern.compile("\\s*;\\s*\\(?\\s*Layer\\s*Time\\s*=\\s*([\\d\\.]+)\\s*(?:ms)?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
 		Pattern bottomLayerNumber = Pattern.compile("\\s*;\\s*\\(?\\s*Number\\s*of\\s*Bottom\\s*Layers\\s*=\\s*([\\d\\.]+)\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
-
+		
 		Printer printer = printJob.getPrinter();
 		String printerName = printer.getName();
 		String printerType = "";
@@ -231,8 +231,30 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 			//data.printJob.setZLiftDistance(data.slicingProfile.getLiftFeedRate());
 			//data.printJob.setZLiftSpeed(data.slicingProfile.getLiftDistance());
 			ImageIO.setUseCache(false);
+			Integer sliceExposureTime = sliceExposureDelay;
+			Integer ledWarmupTime = null;
 			while ((currentLine = stream.readLine()) != null && printer.isPrintActive()) {
-				Matcher matcher = slicePattern.matcher(currentLine);
+				//Slice Parameters 
+				Pattern sliceParameters = Pattern.compile("\\s*;\\s*<\\s*NextSliceExposure\\s*>(\\s*[a-zA-Z]=\\d+\\s*)+", Pattern.CASE_INSENSITIVE);
+				Matcher matcher = sliceParameters.matcher(currentLine);
+				if (matcher.matches()) {
+					logger.info("Parameters Found: {}", currentLine);
+					String[] splited = currentLine.split("\\s+");
+					for(String parameter:splited){
+						logger.info("Splited: {}", parameter);
+						if(parameter.contains("e=")){
+							logger.info("Slice exposure found: {}", parameter);
+							sliceExposureTime = Integer.parseInt(parameter.replaceAll("[^\\d.]", ""));
+							logger.info("Slice exposure set to: {}", sliceExposureTime);
+						}else if(parameter.contains("d=")){
+							logger.info("LED Warmup found: {}", parameter);
+							ledWarmupTime = Integer.parseInt(parameter.replaceAll("[^\\d.]", ""));
+							logger.info("LED Warmup set to: {}", ledWarmupTime);
+						}
+					}
+				}
+
+				matcher = slicePattern.matcher(currentLine);
 				if (matcher.matches()) {
 					if (sliceCount == null) {
 						throw new IllegalArgumentException("No 'Number of Slices' line in gcode file");
@@ -266,19 +288,21 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 					
 					NotificationManager.jobChanged(printer, printJob);
 
-					
 					logger.info("BOTTOM Layer Delay:{}", bottomLayerExposureDelay);
-					logger.info("LAYER Exposure Delay:{}", sliceExposureDelay);
-					logger.info("Number of Bottom Layers:{}", numberOfBottomLayers);
+					logger.info("LAYER Exposure Delay:{}", sliceExposureTime);
 					// Call show image.
 					logger.info("Display picture on screen: {}", imageFilename);
 					//printer.showImage(data.getPrintableImage(), true);
 					String slicePath = "/" + FilePath + imageFilename;
+					
+
 					// logger.info("Slice = {}", slicePath );
 					//String cmd = "/home/pi/raspidmx/pngview_with_gpio_vsync/pngview -d 5 -t " + sliceIndex + " -p " + printerType + " -e "+ sliceExposureDelay +" -b " + numberOfBottomLayers + " -x " + bottomLayerExposureDelay + " " + slicePath;
 					//Process showingSlice = Runtime.getRuntime().exec(new String[]{"/home/pi/raspidmx/pngview_with_gpio_vsync/pngview", "-d", "5", "-t", Integer.toString(sliceIndex), "-p", printerName, "-e", Integer.toString(sliceExposureDelay), "-b", Integer.toString(numberOfBottomLayers), "-x", Integer.toString(bottomLayerExposureDelay), slicePath});
-					Process showingSlice = Runtime.getRuntime().exec(new String[]{"nice", "-n", "-2", "/opt/cwh/os/Linux/armv61/show_image", "-d", "5", "-t", Integer.toString(sliceIndex), "-p", printerName, "-e", Integer.toString(sliceExposureDelay), "-b", Integer.toString(numberOfBottomLayers), "-x", Integer.toString(bottomLayerExposureDelay), "-m", "/home/pi/mask/mask.png", slicePath});
+					Process showingSlice = Runtime.getRuntime().exec(new String[]{"nice", "-n", "-2", "/opt/cwh/os/Linux/armv61/show_image", "-d", "5", "-p", printerName, "-e", Integer.toString(sliceExposureTime), "-b", Integer.toString(ledWarmupTime) "-m", "/home/pi/mask/mask.png", slicePath});
 					showingSlice.waitFor();
+					//reset exposure time 
+					sliceExposureTime = sliceExposureDelay;
 
 					if (oldImage != null) {
 							oldImage.flush();
