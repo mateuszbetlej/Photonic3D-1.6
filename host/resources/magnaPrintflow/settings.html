@@ -171,16 +171,18 @@
 		}
 
 		function getSerialNumber(){
+				document.getElementById("serialNumber").innerHTML = "----------"
+
 				$.getJSON('/services/machine/serialNumber')
-					.done(function (data) {
-						var serialNumber = "";
-						serialNumber = data;
-						document.getElementById("serialNumber").innerHTML = serialNumber;
+					.done(function (serialNumber) {
+						if (serialNumber != null){
+							document.getElementById("serialNumber").innerHTML = serialNumber;
+						}
 					})
 					.fail(function () {
-						document.getElementById("serialNumber").innerHTML = "Coulden't find Serial Number";
+						console.error("Failed to get serial number.")
 					});
-		}
+			}
 
 	</script>
 	<div class="screen">

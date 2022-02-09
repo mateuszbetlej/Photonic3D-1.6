@@ -114,6 +114,16 @@
 			font-size: 20px;
 			overflow: hidden;
 		}
+
+		.serialNumber {
+			position: absolute;
+			top: 465px;
+			left: 495px;
+			width: 300px;
+			color: white;
+			font-size: 10px;
+			text-align: right;
+		}
 	</style>
 
 	<!-- Latest compiled and minified CSS -->
@@ -159,6 +169,20 @@
 			$('#layover_2').show(0).delay(80).hide(0);
 		}
 
+		function getSerialNumber(){
+				document.getElementById("serialNumber").innerHTML = "----------"
+
+				$.getJSON('/services/machine/serialNumber')
+					.done(function (serialNumber) {
+						if (serialNumber != null){
+							document.getElementById("serialNumber").innerHTML = serialNumber;
+						}
+					})
+					.fail(function () {
+						console.error("Failed to get serial number.")
+					});
+			}
+
 	</script>
 	<div class="screen">
 		<div class="main">
@@ -177,6 +201,7 @@
 			<img name="layover_2" id="layover_2" class="layover_2 collapse" src="images/layovers/sys.png" />
 			<div name="warn" id="warn" class="warn"></div>
 
+			<div name="serialNumber" id="serialNumber" class="serialNumber"></div>
 			<img name="homehighlight" id="homehighlight" class="homehighlight" src=""
 				onClick="location.href='index.html';">
 			<img name="bigbuttonhighlight" id="bigbuttonhighlight" class="bigbuttonhighlight" src=""

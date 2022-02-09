@@ -540,24 +540,25 @@ public class MachineService {
     @Path("serialNumber")
     @Produces(MediaType.APPLICATION_JSON)
     public String getSerialNumber() {
-		String serialNumber = new String();
-		String fileOutput = new String();
+		String serialNumber = null;
+
 		BufferedReader stream = null;
 		File lcprinterProductSerial = new File("/etc/lcprinter-product-serial");
 		if(lcprinterProductSerial.exists() && !lcprinterProductSerial.isDirectory()) { 
 			try{
 				stream = new BufferedReader(new FileReader(lcprinterProductSerial));
-				fileOutput = stream.readLine();
+				serialNumber = stream.readLine();
 				stream.close();
 			}catch(Exception e){
-				fileOutput = null;
+				serialNumber = null;
 			}
-		}else{
-			fileOutput = null;
 		}
 
-		serialNumber=fileOutput;
-		return "\"" + new String(serialNumber)+ "\"";
+		if (serialNumber == null){
+			return "null";
+		}
+
+		return "\"" +serialNumber+ "\"";
     }
 	 
     @ApiOperation(value = "Enumerates the list of graphics displays that are available on the Photonic 3D host.")
