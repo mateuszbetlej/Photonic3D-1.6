@@ -556,8 +556,8 @@ public class MachineService {
 			fileOutput = null;
 		}
 
-		serialNumber = fileOutput;
-		return serialNumber;
+		serialNumber=fileOutput;
+		return "\"" + new String(serialNumber)+ "\"";
     }
 	 
     @ApiOperation(value = "Enumerates the list of graphics displays that are available on the Photonic 3D host.")
