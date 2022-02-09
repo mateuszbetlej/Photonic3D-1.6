@@ -128,7 +128,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 		DataAid aid = initializeJobCacheWithDataAid(printJob);
 		
 		int numberOfBottomLayers = 0;
-		int sliceExposureDelay = 0;
+		int headerSliceExposureTime = 0;
 		int bottomLayerExposureDelay = 0;
 
 		Pattern slicePattern = Pattern.compile("\\s*;\\s*<\\s*Slice\\s*>\\s*(\\d+|blank)\\s*", Pattern.CASE_INSENSITIVE);
@@ -141,7 +141,6 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 		
 		Printer printer = printJob.getPrinter();
 		String printerName = printer.getName();
-		String printerType = "";
 		
 		//GCode formatting to remove led control and delays for pngview/show_image
 		File inputFile = new File(gCodeFile.getPath());
@@ -161,7 +160,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 				matcher = exposureDelay.matcher(currentLine);
 				if (matcher.matches()) {
 					Integer foundExposureDelay = Integer.parseInt(matcher.group(1));
-					sliceExposureDelay = foundExposureDelay;
+					headerSliceExposureTime = foundExposureDelay;
 				}
 				
 				matcher = bottomLayerNumber.matcher(currentLine);
@@ -177,7 +176,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 						continue;
 					}
 				}else if(printerName.contains("Magna")){
-					if(currentLine.contains(";<Delay> 2000") || currentLine.contains(";<Delay> " + sliceExposureDelay) || currentLine.contains(";<Delay> " + bottomLayerExposureDelay) || (currentLine.contains("M42 P0 S1") && currentLine.contains("SLICE LED on")) || (currentLine.contains("M42 P0 S0") && currentLine.contains("SLICE LED off")))
+					if(currentLine.contains(";<Delay> 2000") || currentLine.contains(";<Delay> " + headerSliceExposureTime) || currentLine.contains(";<Delay> " + bottomLayerExposureDelay) || (currentLine.contains("M42 P0 S1") && currentLine.contains("SLICE LED on")) || (currentLine.contains("M42 P0 S0") && currentLine.contains("SLICE LED off")))
 					{
 						continue;
 					}
@@ -231,25 +230,39 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 			//data.printJob.setZLiftDistance(data.slicingProfile.getLiftFeedRate());
 			//data.printJob.setZLiftSpeed(data.slicingProfile.getLiftDistance());
 			ImageIO.setUseCache(false);
-			Integer sliceExposureTime = sliceExposureDelay;
-			Integer ledWarmupTime = null;
+
+			String printerWarmUpDelay = null;
+			printerName = printerName.replaceAll("\\s+", "\\%20");
+			if (printerName.equals("Photocentric%20Magna")){
+				printerWarmUpDelay = "1700";
+			} else if (printerName.equals("LC%20Opus")){
+				printerWarmUpDelay = "200";
+			} else if (printerName.equals("LC%20Dental")){
+				printerWarmUpDelay = "200";
+			} else if (printerName.equals("LC%20Nano")){
+				printerWarmUpDelay = "0";
+			}
+
+			String currentSliceExposureTime = Integer.toString(headerSliceExposureTime);
+			String currentSliceLedWarmupTime = printerWarmUpDelay;
+
 			while ((currentLine = stream.readLine()) != null && printer.isPrintActive()) {
 				//Slice Parameters 
 				Pattern sliceParameters = Pattern.compile("\\s*;\\s*<\\s*NextSliceExposure\\s*>(\\s*[a-zA-Z]=\\d+\\s*)+", Pattern.CASE_INSENSITIVE);
 				Matcher matcher = sliceParameters.matcher(currentLine);
 				if (matcher.matches()) {
 					logger.info("Parameters Found: {}", currentLine);
-					String[] splited = currentLine.split("\\s+");
-					for(String parameter:splited){
-						logger.info("Splited: {}", parameter);
+					String[] splittedParams = currentLine.split("\\s+");
+					for(String parameter:splittedParams){
+						logger.info("Splitted: {}", parameter);
 						if(parameter.contains("e=")){
 							logger.info("Slice exposure found: {}", parameter);
-							sliceExposureTime = Integer.parseInt(parameter.replaceAll("[^\\d.]", ""));
-							logger.info("Slice exposure set to: {}", sliceExposureTime);
+							currentSliceExposureTime = parameter.replaceAll("[^\\d.]", "");
+							logger.info("Slice exposure set to: {}", currentSliceExposureTime);
 						}else if(parameter.contains("d=")){
 							logger.info("LED Warmup found: {}", parameter);
-							ledWarmupTime = Integer.parseInt(parameter.replaceAll("[^\\d.]", ""));
-							logger.info("LED Warmup set to: {}", ledWarmupTime);
+							currentSliceLedWarmupTime = parameter.replaceAll("[^\\d.]", "");
+							logger.info("LED Warmup set to: {}", currentSliceLedWarmupTime);
 						}
 					}
 				}
@@ -266,68 +279,62 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 						
 						//This is the perfect time to wait for a pause if one is required.
 						printer.waitForPauseIfRequired();
-				} else {
-					if (startOfLastImageDisplay > -1) {
-					//printJob.setCurrentSliceTime(System.currentTimeMillis() - startOfLastImageDisplay);
-						printJob.addNewSlice(System.currentTimeMillis() - startOfLastImageDisplay, null);
-					}
-					startOfLastImageDisplay = System.currentTimeMillis();
-					
-					RenderedData data = aid.cache.getOrCreateIfMissing(Boolean.TRUE);
-					BufferedImage oldImage = data.getPrintableImage();
-					int sliceIndex = Integer.parseInt(matcher.group(1));
-					//printJob.setCurrentSlice(sliceIndex);
-					String imageNumber = String.format("%0" + padLength + "d", sliceIndex);
-					String imageFilename = FilenameUtils.removeExtension(gCodeFile.getName()) + imageNumber + ".png";
-
-					//logger.info("Load cached picture from file: {}", imageFilename);
-					BufferedImage newImage = imageCache.getCachedOrLoadImage(sliceIndex);
-					// applyBulbMask(aid, (Graphics2D)newImage.getGraphics(), newImage.getWidth(), newImage.getHeight());
-					data.setPrintableImage(newImage);
-					// Notify the client that the printJob has increased the currentSlice
-					
-					NotificationManager.jobChanged(printer, printJob);
-
-					logger.info("BOTTOM Layer Delay:{}", bottomLayerExposureDelay);
-					logger.info("LAYER Exposure Delay:{}", sliceExposureTime);
-					// Call show image.
-					logger.info("Display picture on screen: {}", imageFilename);
-					//printer.showImage(data.getPrintableImage(), true);
-					String slicePath = "/" + FilePath + imageFilename;
-					
-
-					// logger.info("Slice = {}", slicePath );
-					//String cmd = "/home/pi/raspidmx/pngview_with_gpio_vsync/pngview -d 5 -t " + sliceIndex + " -p " + printerType + " -e "+ sliceExposureDelay +" -b " + numberOfBottomLayers + " -x " + bottomLayerExposureDelay + " " + slicePath;
-					//Process showingSlice = Runtime.getRuntime().exec(new String[]{"/home/pi/raspidmx/pngview_with_gpio_vsync/pngview", "-d", "5", "-t", Integer.toString(sliceIndex), "-p", printerName, "-e", Integer.toString(sliceExposureDelay), "-b", Integer.toString(numberOfBottomLayers), "-x", Integer.toString(bottomLayerExposureDelay), slicePath});
-					Process showingSlice = Runtime.getRuntime().exec(new String[]{"nice", "-n", "-2", "/opt/cwh/os/Linux/armv61/show_image", "-d", "5", "-p", printerName, "-e", Integer.toString(sliceExposureTime), "-b", Integer.toString(ledWarmupTime) "-m", "/home/pi/mask/mask.png", slicePath});
-					showingSlice.waitFor();
-					//reset exposure time 
-					sliceExposureTime = sliceExposureDelay;
-
-					if (oldImage != null) {
-							oldImage.flush();
-					}
-				}continue;
-			}
-					
-				/*matcher = delayPattern.matcher(currentLine);
-				if (matcher.matches()) {
-					try {
-						int sleepTime = Integer.parseInt(matcher.group(1));
-						if (printJob.isExposureTimeOverriden()) {
-							sleepTime = printJob.getExposureTime();
-						} else {
-							printJob.setExposureTime(sleepTime);
+					} else {
+						if (startOfLastImageDisplay > -1) {
+						//printJob.setCurrentSliceTime(System.currentTimeMillis() - startOfLastImageDisplay);
+							printJob.addNewSlice(System.currentTimeMillis() - startOfLastImageDisplay, null);
 						}
-						logger.info("Sleep:{}", sleepTime);
-						Thread.sleep(sleepTime);
-						logger.info("Sleep complete");
-					} catch (InterruptedException e) {
-						logger.error("Interrupted while waiting for exposure to complete.", e);
-					}
-					continue;
-				}*/
-				
+						startOfLastImageDisplay = System.currentTimeMillis();
+						
+						RenderedData data = aid.cache.getOrCreateIfMissing(Boolean.TRUE);
+						BufferedImage oldImage = data.getPrintableImage();
+						int sliceIndex = Integer.parseInt(matcher.group(1));
+						//printJob.setCurrentSlice(sliceIndex);
+						String imageNumber = String.format("%0" + padLength + "d", sliceIndex);
+						String imageFilename = FilenameUtils.removeExtension(gCodeFile.getName()) + imageNumber + ".png";
+
+						//logger.info("Load cached picture from file: {}", imageFilename);
+						BufferedImage newImage = imageCache.getCachedOrLoadImage(sliceIndex);
+						// applyBulbMask(aid, (Graphics2D)newImage.getGraphics(), newImage.getWidth(), newImage.getHeight());
+						data.setPrintableImage(newImage);
+						// Notify the client that the printJob has increased the currentSlice
+						
+						NotificationManager.jobChanged(printer, printJob);
+
+						logger.info("BOTTOM Layer Delay:{}", bottomLayerExposureDelay);
+						logger.info("LAYER Exposure Delay:{}", currentSliceExposureTime);
+						// Call show image.
+						logger.info("Display picture on screen: {}", imageFilename);
+						//printer.showImage(data.getPrintableImage(), true);
+						String slicePath = "/" + FilePath + imageFilename;		
+						logger.info("LED Warmup: {}", currentSliceLedWarmupTime);
+						logger.info("Printer: {}", printerName);
+						
+						String[] args = new String[]{
+							"nice",
+							"-n", "-2",
+							"/opt/cwh/os/Linux/armv61/show_image",
+							"-d", "5",
+							"-p", printerName,
+							"-e", currentSliceExposureTime,
+							"-b", currentSliceLedWarmupTime,
+							"-m", "/home/pi/mask/mask.png",
+							slicePath
+						};
+						logger.info("Args: {}", String.join(",", args));
+						Process showingSlice = Runtime.getRuntime().exec(args);
+						showingSlice.waitFor();
+
+						//reseting slice params 
+						currentSliceExposureTime = Integer.toString(headerSliceExposureTime);
+						currentSliceLedWarmupTime = printerWarmUpDelay;
+
+						if (oldImage != null) {
+								oldImage.flush();
+						}
+					}continue;
+				}
+								
 				matcher = sliceCountPattern.matcher(currentLine);
 				if (matcher.matches()) {
 					sliceCount = Integer.parseInt(matcher.group(1));
@@ -371,7 +378,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 				if (matcher.matches()) {
 					Integer foundExposureDelay = Integer.parseInt(matcher.group(1));
 					logger.info("Found: Layer Exposure Delay of:{}", foundExposureDelay);
-					sliceExposureDelay = foundExposureDelay;
+					headerSliceExposureTime = foundExposureDelay;
 					continue;
 				}
 				
@@ -383,24 +390,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 					continue;
 				}
 
-				/*matcher = gCodePattern.matcher(currentLine);
-				if (matcher.matches()) {
-					String gCode = matcher.group(1).trim();
-					logger.info("Send GCode:{}", gCode);
-
-					for (int t = 0; t < 3; t++) {
-						gCode = printer.getGCodeControl().sendGcodeAndRespectPrinter(printJob, gCode);
-						if (gCode != null) {
-							break;
-						}
-						logger.info("Printer timed out:{}", t);
-					}
-					logger.info("Printer Response:{}", gCode);
-					continue;
-				}*/
 				
-				// print out comments
-				//logger.info("Ignored line:{}", currentLine);
 				printer.getGCodeControl().executeGCodeWithTemplating(printJob, currentLine, true);
 			}
 			
