@@ -87,6 +87,16 @@
 			overflow: hidden;
 		}
 
+		.serialNumber {
+			position: absolute;
+			top: 465px;
+			left: 495px;
+			width: 300px;
+			color: white;
+			font-size: 10px;
+			text-align: right;
+		}
+
         </style>
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css">
@@ -114,6 +124,7 @@
 			function init(){
 				startpage();
 				setInterval(updateNetworkInfo(), 10000);
+				getSerialNumber();
 			}
 			
 			function updateNetworkInfo() {
@@ -126,6 +137,20 @@
 						document.getElementById("IPaddress").innerHTML = IPs;
 					})
 					.fail(function () {
+					});
+			}
+
+			function getSerialNumber(){
+				document.getElementById("serialNumber").innerHTML = "----------"
+
+				$.getJSON('/services/machine/serialNumber')
+					.done(function (serialNumber) {
+						if (serialNumber != null){
+							document.getElementById("serialNumber").innerHTML = serialNumber;
+						}
+					})
+					.fail(function () {
+						console.error("Failed to get serial number.")
 					});
 			}
 	</script>
@@ -145,6 +170,7 @@
 				<div name="webinfo" id="webinfo" class="webinfo">
 					<div name="IP" id="IP" class="IP"><span id="IPaddress" class="details"></span></div>
 				</div>
+				<div name="serialNumber" id="serialNumber" class="serialNumber"></div>
 			</div>
         </div>	
     </body>
