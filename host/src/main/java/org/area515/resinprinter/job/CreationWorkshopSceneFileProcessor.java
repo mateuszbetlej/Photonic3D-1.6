@@ -195,16 +195,16 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 				//Slice Parameters 
 				Matcher matcher = sliceParameters.matcher(currentLine);
 				if (matcher.matches()) {
-					logger.info("Parameters Found: {}", currentLine);
+					logger.info("Next Slice Parameters Found: {}", currentLine);
 					String[] splittedParams = currentLine.split("\\s+");
 					for(String parameter:splittedParams){
 						if(parameter.startsWith("e=")){
 							currentSliceExposureTime = parameter.substring(2);
-							logger.info("Slice exposure set to: {}", currentSliceExposureTime);
+							logger.info("Current Slice exposure set to: {}", currentSliceExposureTime);
 							exposureOveridden = true;
 						}else if(parameter.startsWith("d=")){
 							currentSliceLedWarmupTime = parameter.substring(2);
-							logger.info("LED Warmup set to: {}", currentSliceLedWarmupTime);
+							logger.info("Current Slice LED Warmup set to: {}", currentSliceLedWarmupTime);
 						}
 					}
 				}
@@ -265,7 +265,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 							"-m", "/home/pi/mask/mask.png",
 							slicePath
 						};
-						logger.info("Args: {}", String.join(",", args));
+			
 						Process showingSlice = Runtime.getRuntime().exec(args);
 						showingSlice.waitFor();
 
