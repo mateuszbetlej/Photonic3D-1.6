@@ -188,7 +188,7 @@
 				$.getJSON('/services/machine/serialNumber')
 					.done(function (serialNumber) {
 						if (serialNumber != null){
-							document.getElementById("serialNumber").innerHTML = serialNumber;
+							document.getElementById("serialNumber").innerHTML = "SN: "+ serialNumber;
 						}
 					})
 					.fail(function () {
