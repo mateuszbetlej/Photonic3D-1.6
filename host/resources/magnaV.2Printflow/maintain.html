@@ -139,7 +139,7 @@
 			-ms-user-select: none;
 		}
 
-		.calibrate {
+		.LedOff {
 			position: absolute;
 			top: 270px;
 			left: 430px;
@@ -151,32 +151,6 @@
 			-webkit-user-drag: none;
 			-webkit-user-select: none;
 			-ms-user-select: none;
-		}
-
-		.togglebutton {
-			position: absolute;
-			line-height: 11em;
-			top: 100px;
-			left: 250px;
-			width: 110px;
-			text-align: center;
-			height: 110px;
-			color: white;
-			font-size: 18px;
-			font-family: Helvetica;
-		}
-		
-		.toggleledbutton {
-			position: absolute;
-			line-height: 11em;
-			top: 100px;
-			left: 430px;
-			width: 110px;
-			text-align: center;
-			height: 110px;
-			color: white;
-			font-size: 18px;
-			font-family: Helvetica;
 		}
 
 		.show {
@@ -191,7 +165,7 @@
 			transition: opacity 3s;
 		}
 
-		.LedOff {
+		.calibrate {
 			position: absolute;
 			top: 100px;
 			left: 250px;
@@ -233,7 +207,7 @@
 			-ms-user-select: none;
 		}
 
-		/* .togglebutton {
+		.togglebutton {
 			position: absolute;
 			line-height: 55em;
 			top: 0px;
@@ -244,7 +218,7 @@
 			color: white;
 			font-size: 18px;
 			font-family: Helvetica;
-		} */
+		}
 
 		.IP {
 			font-size: 15px;
@@ -349,11 +323,8 @@
 		var PRINTERONIMAGE = "images/printer-on.png";
 		var PRINTEROFFIMAGE = "images/printer-off.png";
 		var PRINTERMIDCHANGEIMAGE = "images/printer-midchange.png";
-		var LEDSTATUSON = "LED On"
-		var LEDSTATUSOFF = "LED Off"
 
 		function init() {
-			document.getElementById("toggleledbutton").innerHTML = LEDSTATUSON;
 			startpage();
 			pagelight();
 			setInterval(updateNetworkInfo(), 10000);
@@ -474,7 +445,6 @@
 		}
 
 		function togglePrinter() {
-			$('#layover_4').show(0).delay(80).hide(0);
 			$('#warning').html("Processing. Please wait.");
 			$('#warning').show();
 			no();
@@ -507,28 +477,6 @@
 			}
 		}
 
-		var action = 1;
-
-		
-		document.getElementById("toggleledbutton").innerHTML = LEDSTATUSOFF;
-		
-		function ledtoggle() {
-			if (document.getElementById("toggleledbutton").innerHTML !== WAITINGTEXT) {
-				document.getElementById("toggleledbutton").innerHTML = WAITINGTEXT;
-				
-				
-				if ( action == 1 ) {
-					lighton();
-					document.getElementById("toggleledbutton").innerHTML = LEDSTATUSOFF;
-					action = 2;
-				} else {
-					lightoff();
-					document.getElementById("toggleledbutton").innerHTML = LEDSTATUSON;
-					action = 1;
-				}
-			}
-		}
-
 		var LT1;
 		var LT2;
 		var LT3;
@@ -536,9 +484,9 @@
 
 		function lighton() {
 			$('#layover_3').show(0).delay(80).hide(0);
-			//$("#togglebutton").hide();
+			$("#togglebutton").hide();
 			$("#whitecure").hide();
-			//$("#LedOn").hide();
+			$("#LedOn").hide();
 			$('#warning').html("Backlight ON");
 			$('#warning').show();
 			no();
@@ -549,8 +497,6 @@
 			LT1 = setTimeout(function () {
 				$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
 				$("#togglebutton").show();
-				action = 1;
-				document.getElementById("toggleledbutton").innerHTML = LEDSTATUSON;
 				$('#warning').html("Backlight Auto OFF");
 				$("#whitecure").show();
 			}, 10000);
@@ -558,14 +504,12 @@
 				$('#warning').hide();
 				$("#LedOn").show();
 			}, 15000);
-			
 			clearTimeout(LT3);
 			clearTimeout(LT4);
 		}
 
-
 		function lightoff() {
-			$('#layover_3').show(0).delay(80).hide(0);
+			$('#layover_6').show(0).delay(80).hide(0);
 			$('#warning').html("Backlight OFF");
 			$('#warning').show();
 			$("#togglebutton").show();
@@ -575,7 +519,6 @@
 			$("#testdisplaybtn").show();
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
 			$.getJSON('../services/printers/showBlankScreen/Photocentric%20Magna');
-			action = 1;
 			$("#togglebutton").show();
 			$("#whitecure").show();
 			$("#LedOn").show();
@@ -599,7 +542,7 @@
 		}
 
 		function calibutton() {
-			$('#layover_8').show(0).delay(80).hide(0);
+			$('#layover_4').show(0).delay(80).hide(0);
 			$.getJSON('../services/printers/showBlankScreen/Photocentric%20Magna');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0')
@@ -770,7 +713,7 @@
 		}
 
 		function pbutton() {
-			$('#layover_6').show(0).delay(80).hide(0);
+			$('#layover_8').show(0).delay(80).hide(0);
 			$.getJSON('../services/printers/showBlankScreen/Photocentric%20Magna');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0')
@@ -788,22 +731,22 @@
 				<img name="layover_1" id="layover_1" class="layover_1 collapse" src="images/layovers/m_01.png" />
 				<img name="layover_2" id="layover_2" class="layover_2 collapse" src="images/layovers/m_02.png" />
 				<img name="layover_3" id="layover_3" class="layover_3 collapse" src="images/layovers/m_03.png" />
-				<img name="layover_4" id="layover_4" class="layover_4 collapse" src="images/layovers/m_09.png" />
+				<img name="layover_4" id="layover_4" class="layover_4 collapse" src="images/layovers/m_04.png" />
 				<img name="layover_5" id="layover_5" class="layover_5 collapse" src="images/layovers/m_05.png" />
-				<img name="layover_6" id="layover_6" class="layover_6 collapse" src="images/layovers/m_08.png" />
+				<img name="layover_6" id="layover_6" class="layover_6 collapse" src="images/layovers/m_06.png" />
 				<img name="layover_7" id="layover_7" class="layover_7 collapse" src="images/layovers/m_07.png" />
-				<img name="layover_8" id="layover_8" class="layover_8 collapse" src="images/layovers/m_04.png" />
+				<img name="layover_8" id="layover_8" class="layover_8 collapse" src="images/layovers/m_08.png" />
 
 				<img name="homebutton" id="homebutton" class="homebutton" src="images/menumainbuttonANIM.png"
 					onclick="hbutton();" />
-				<img name="LedOn" id="LedOn" class="LedOn" src="images/menumainbuttonANIM.png" onClick="ledtoggle();" />
+				<img name="LedOn" id="LedOn" class="LedOn" src="images/menumainbuttonANIM.png" onClick="lighton();" />
 				<img name="LedOff" id="LedOff" class="LedOff" src="images/menumainbuttonANIM.png"
-					onclick="togglePrinter();" />
+					onclick="lightoff();" />
 				<img name="calibrate" id="calibrate" class="calibrate" src="images/menumainbuttonANIM.png"
-					onClick="pbutton();" />
+					onClick="calibutton();" />
 				<img name="homez" id="homez" class="homez" src="images/menumainbuttonANIM.png"
 					onclick="Doliftcheck();" />
-				<img name="pump" id="pump" class="pump" src="images/menumainbuttonANIM.png" onClick="calibutton();" />
+				<img name="pump" id="pump" class="pump" src="images/menumainbuttonANIM.png" onClick="pbutton();" />
 			</map>
 			<img name="whitecure" id="whitecure" class="whitecure" src="images/menumainbuttonANIM.png"
 				onClick="dowhitecheck();">
@@ -824,7 +767,7 @@
 					<button type="button" class="btn btn-default btn-block btn-lg" onclick="no();">No</button>
 				</div>
 			</div>
-			<!-- <div name="togglebutton" class="togglebutton" id="togglebutton" onClick="togglePrinter();">ENABLE</div> -->
+
 			<img name="wifi" id="wifi" class="wifi" src="images/pixel.png">
 			<img name="doorcheck" id="doorcheck" class="doorcheck" src="images/pixel.png">
 			<img name="printerstatus" id="printerstatus" class="printerstatus" src="images/pixel.png">
@@ -834,7 +777,6 @@
 				<div id="warning" role="alert" class="alert alert-danger collapse"><strong>Error</strong><br></div>
 			</div>
 			<div name="togglebutton" class="togglebutton" id="togglebutton" onClick="togglePrinter();"></div>
-			<div name="toggleledbutton" class="toggleledbutton" id="toggleledbutton" onClick="ledtoggle();"></div>
 			<div name="webinfo" id="webinfo" class="webinfo">
 				<div name="IP" id="IP" class="IP"><span id="IPaddress" class="details"></span></div>
 			</div>

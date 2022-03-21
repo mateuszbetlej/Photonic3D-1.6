@@ -124,6 +124,17 @@
 			font-size: 10px;
 			text-align: right;
 		}
+
+		.firmwareVersion {
+			position: absolute;
+			top: 322px;
+			left: -75px;
+			width: 300px;
+			color: white;
+			font-size: 18px;
+			text-align: right;
+			font-family: 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
+		}
 	</style>
 
 	<!-- Latest compiled and minified CSS -->
@@ -154,6 +165,7 @@
 			startpage();
 			setInterval(updateNetworkInfo(), 10000);
 			getSerialNumber();
+			getFirmwareVersion();
 		}
 
 		function home_btn() {
@@ -171,19 +183,36 @@
 		}
 
 		function getSerialNumber(){
-			document.getElementById("serialNumber").innerHTML = "----------"
+				document.getElementById("serialNumber").innerHTML = "----------"
 
-			$.getJSON('/services/machine/serialNumber')
-				.done(function (serialNumber) {
-					if (serialNumber != null){
-						document.getElementById("serialNumber").innerHTML = "SN: " + serialNumber;
+				$.getJSON('/services/machine/serialNumber')
+					.done(function (serialNumber) {
+						if (serialNumber != null){
+							document.getElementById("serialNumber").innerHTML = "SN: "+ serialNumber;
+						}
+					})
+					.fail(function () {
+						console.error("Failed to get serial number.")
+					});
+			}
+
+		function getFirmwareVersion(){
+			document.getElementById("firmwareVersion").innerHTML = "---"
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M115')
+				.done(function (result) {
+					var response = result["message"];
+					if (response.indexOf("FIRMWARE_VERSION:") !== -1){
+							var firmwareVersion = response.substring(
+							response.indexOf("FIRMWARE_VERSION: ") + 18, 
+							response.lastIndexOf(" ELECTRONICS")
+						);
+						document.getElementById("firmwareVersion").innerHTML = "Firmware V" +firmwareVersion;
 					}
 				})
 				.fail(function () {
-					console.error("Failed to get serial number.")
+					console.error("Failed on Firmware Version request.")
 				});
 		}
-
 	</script>
 	<div class="screen">
 		<div class="main">
@@ -201,7 +230,7 @@
 			<img name="layover_1" id="layover_1" class="layover_1 collapse" src="images/layovers/pr_1.png" />
 			<img name="layover_2" id="layover_2" class="layover_2 collapse" src="images/layovers/sys.png" />
 			<div name="warn" id="warn" class="warn"></div>
-			
+
 			<div name="serialNumber" id="serialNumber" class="serialNumber"></div>
 			<img name="homehighlight" id="homehighlight" class="homehighlight" src=""
 				onClick="location.href='index.html';">
@@ -210,6 +239,7 @@
 			<div name="webinfo" id="webinfo" class="webinfo">
 				<div name="IP" id="IP" class="IP"><span id="IPaddress" class="details"></span></div>
 			</div>
+			<div name="firmwareVersion" id="firmwareVersion" class="firmwareVersion"></div>
 		</div>
 	</div>
 

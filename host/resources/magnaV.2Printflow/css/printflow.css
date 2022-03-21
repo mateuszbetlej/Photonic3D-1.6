@@ -10,7 +10,7 @@ html, body {
 .screen{
 	width: 800px;
 	height: 480px;
-	background-image: url("../images/emptybackground1.png");
+	background-image: url("../images/emptybackground.png");
 	user-drag: none; 
 	user-select: none;
 	-moz-user-select: none;
