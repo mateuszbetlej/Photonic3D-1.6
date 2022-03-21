@@ -1,6 +1,6 @@
 {  
    "configuration":{  
-      "name":"Photocentric Magna",
+      "name":"Photocentric Magna V.2",
       "machineConfig":{  
          "FileVersion":0,
          "PlatformXSize":527.04,
@@ -86,7 +86,7 @@
             }
          ]
       },
-      "MachineConfigurationName":"Photocentric Magna",
+      "MachineConfigurationName":"Photocentric Magna V.2",
       "SlicingProfileName":"Hard daylight red 0.1",
       "AutoStart":true
    },
