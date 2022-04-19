@@ -15,6 +15,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -127,9 +128,12 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 		String FilePath = FilenameUtils.getPath(FilepathAsString);
 		DataAid aid = initializeJobCacheWithDataAid(printJob);
 		
-		Integer numberOfBottomLayers = 0;
-		Integer headerSliceExposureTime = 0;
-		Integer bottomLayerExposureTime = 0;
+		int numberOfBottomLayers = 0;
+		int defaultLayerExposureTime = 0;
+		int defaultBottomLayerExposureTime = 0;
+		int defaultLayerExposureWarmUpTime = 0;
+		Integer layerExposureTimeOverride = null;
+		Integer layerExposureWarmupTimeOverride = null;
 
 		Pattern slicePattern = Pattern.compile("\\s*;\\s*<\\s*Slice\\s*>\\s*(\\d+|blank)\\s*", Pattern.CASE_INSENSITIVE);
 		Pattern liftSpeedPattern = Pattern.compile(   "\\s*;\\s*\\(?\\s*Z\\s*Lift\\s*Feed\\s*Rate\\s*=\\s*([\\d\\.]+)\\s*(?:[Mm]{2}?/[Ss])?\\s*\\)?\\s*", Pattern.CASE_INSENSITIVE);
@@ -176,22 +180,22 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 			//data.printJob.setZLiftSpeed(data.slicingProfile.getLiftDistance());
 			ImageIO.setUseCache(false);
 
-			String defaultLedWarmUpTime = null;
+			
 			printerName = printerName.replaceAll("\\s+", "\\%20");
 			if (printerName.equals("Photocentric%20Magna")){
-				defaultLedWarmUpTime = "1700";
+				defaultLayerExposureWarmUpTime = 1700;
+			} else if (printerName.equals("Photocentric%20Magna%20V.2")){
+				defaultLayerExposureWarmUpTime = 1700;
 			} else if (printerName.equals("LC%20Opus")){
-				defaultLedWarmUpTime = "200";
+				defaultLayerExposureWarmUpTime = 200;
 			} else if (printerName.equals("LC%20Dental")){
-				defaultLedWarmUpTime = "200";
+				defaultLayerExposureWarmUpTime = 200;
 			} else if (printerName.equals("LC%20Nano")){
-				defaultLedWarmUpTime = "0";
+				defaultLayerExposureWarmUpTime = 0;
 			}
-
-			String currentSliceExposureTime = null;
-			String currentSliceLedWarmupTime = defaultLedWarmUpTime;
-			Boolean exposureOveridden = false;
+			
 			while ((currentLine = stream.readLine()) != null && printer.isPrintActive()) {
+				
 				//Slice Parameters 
 				Matcher matcher = sliceParameters.matcher(currentLine);
 				if (matcher.matches()) {
@@ -199,14 +203,14 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 					String[] splittedParams = currentLine.split("\\s+");
 					for(String parameter:splittedParams){
 						if(parameter.startsWith("e=")){
-							currentSliceExposureTime = parameter.substring(2);
-							logger.info("Current Slice exposure set to: {}", currentSliceExposureTime);
-							exposureOveridden = true;
+							layerExposureTimeOverride = Integer.parseInt(parameter.substring(2));
+							logger.info("Current Slice exposure set to: {}", layerExposureTimeOverride);
 						}else if(parameter.startsWith("d=")){
-							currentSliceLedWarmupTime = parameter.substring(2);
-							logger.info("Current Slice LED Warmup set to: {}", currentSliceLedWarmupTime);
+							layerExposureWarmupTimeOverride = Integer.parseInt(parameter.substring(2));
+							logger.info("Current Slice LED Warmup set to: {}", layerExposureWarmupTimeOverride);
 						}
 					}
+					continue;
 				}
 
 				matcher = slicePattern.matcher(currentLine);
@@ -216,9 +220,6 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 					}
 
 					if (matcher.group(1).toUpperCase().equals("BLANK")) {
-						logger.info("Show Blank");
-						//printer.showBlankImage();
-						
 						//This is the perfect time to wait for a pause if one is required.
 						printer.waitForPauseIfRequired();
 					} else {
@@ -241,43 +242,68 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 						data.setPrintableImage(newImage);
 						// Notify the client that the printJob has increased the currentSlice
 						NotificationManager.jobChanged(printer, printJob);
-						//bottom layer exposure check
-						if (!exposureOveridden){
-							if(sliceIndex < numberOfBottomLayers){
-								currentSliceExposureTime = Integer.toString(bottomLayerExposureTime);
-							}
-						}
 						String slicePath = "/" + FilePath + imageFilename;	
-
-						logger.info("CURRENT LAYER Exposure Time:{}", currentSliceExposureTime);
-						logger.info("Display picture on screen: {}", imageFilename);
-						logger.info("LED Warmup: {}", currentSliceLedWarmupTime);
+						
 						//printer.showImage(data.getPrintableImage(), true);
-						// Call show image.
-						String[] args = new String[]{
+						//show image arguments list.
+						List<String> args =Arrays.asList(
 							"nice",
 							"-n", "-2",
 							"/opt/cwh/os/Linux/armv61/show_image",
 							"-d", "5",
-							"-p", printerName,
-							"-e", currentSliceExposureTime,
-							"-b", currentSliceLedWarmupTime,
-							"-m", "/home/pi/mask/mask.png",
-							slicePath
-						};
-			
-						Process showingSlice = Runtime.getRuntime().exec(args);
+							"-p", printerName
+						);
+
+						//Exposure time 
+						args.add("-e");
+						if (layerExposureTimeOverride != null){
+							args.add(Integer.toString(layerExposureTimeOverride));
+							logger.info("CURRENT LAYER Exposure Time:{}", layerExposureTimeOverride);
+						} else {
+							args.add(sliceIndex < numberOfBottomLayers
+								? Integer.toString(defaultBottomLayerExposureTime)
+								: Integer.toString(defaultLayerExposureTime));
+
+							if (sliceIndex < numberOfBottomLayers){
+								logger.info("Currant Layer Exposure Time:{}", defaultBottomLayerExposureTime);
+							}else{
+								logger.info("Currant Layer Exposure Time:{}", defaultLayerExposureTime);
+							}
+						}
+
+						//warmup time 
+						args.add("-b");
+						if(layerExposureWarmupTimeOverride != null){
+							args.add(Integer.toString(layerExposureWarmupTimeOverride));
+							logger.info("LED Warmup: {}", layerExposureWarmupTimeOverride);
+						}else{
+							args.add(Integer.toString(defaultLayerExposureWarmUpTime));
+							logger.info("LED Warmup: {}", defaultLayerExposureWarmUpTime);
+						}
+
+						//mask
+						args.add("-m");
+						args.add("/home/pi/mask/mask.png");
+
+						//layer image path
+						args.add(slicePath);
+
+						logger.info("Display picture on screen: {}", imageFilename);
+
+						//execute show image
+						Process showingSlice = Runtime.getRuntime().exec(String.join(" ", args));
 						showingSlice.waitFor();
 
 						//reseting slice params 
-						currentSliceExposureTime = Integer.toString(headerSliceExposureTime);
-						currentSliceLedWarmupTime = defaultLedWarmUpTime;
-						exposureOveridden = false;
+						layerExposureTimeOverride = null;
+						layerExposureWarmupTimeOverride = null;
 
 						if (oldImage != null) {
 								oldImage.flush();
 						}
-					}continue;
+					}
+					
+					continue;
 				}
 				
 				//matching gcode params
@@ -316,7 +342,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 				if (matcher.matches()) {
 					Integer foundBottomDelay = Integer.parseInt(matcher.group(1));
 					logger.info("Found: Bottom Layer Exposure time:{}", foundBottomDelay);
-					bottomLayerExposureTime = foundBottomDelay;
+					defaultBottomLayerExposureTime = foundBottomDelay;
 					continue;
 				}
 
@@ -324,8 +350,8 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 				if (matcher.matches()) {
 					Integer foundExposureDelay = Integer.parseInt(matcher.group(1));
 					logger.info("Found: Layer Layer Exposure time:{}", foundExposureDelay);
-					headerSliceExposureTime = foundExposureDelay;
-					currentSliceExposureTime = Integer.toString(headerSliceExposureTime);
+					defaultLayerExposureTime = foundExposureDelay;
+					layerExposureTimeOverride = defaultLayerExposureTime;
 					continue;
 				}
 				
@@ -343,8 +369,8 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 					{
 						continue;
 					}
-				}else if(printerName.equals("Photocentric%20Magna")){
-					if(currentLine.contains(";<Delay> 2000") || currentLine.contains(";<Delay> " + headerSliceExposureTime) || currentLine.contains(";<Delay> " + bottomLayerExposureTime) || (currentLine.contains("M42 P0 S1") && currentLine.contains("SLICE LED on")) || (currentLine.contains("M42 P0 S0") && currentLine.contains("SLICE LED off")))
+				}else if(printerName.equals("Photocentric%20Magna") || printerName.equals("Photocentric%20Magna%20V.2")){
+					if(currentLine.contains(";<Delay> 2000") || currentLine.contains(";<Delay> " + defaultLayerExposureTime) || currentLine.contains(";<Delay> " + defaultBottomLayerExposureTime) || (currentLine.contains("M42 P0 S1") && currentLine.contains("SLICE LED on")) || (currentLine.contains("M42 P0 S0") && currentLine.contains("SLICE LED off")))
 					{
 						continue;
 					}
