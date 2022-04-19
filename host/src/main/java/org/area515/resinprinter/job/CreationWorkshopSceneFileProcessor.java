@@ -246,28 +246,26 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 						
 						//printer.showImage(data.getPrintableImage(), true);
 						//show image arguments list.
-						List<String> args =Arrays.asList(
+						List<String> args =new ArrayList<> (Arrays.asList(
 							"nice",
 							"-n", "-2",
 							"/opt/cwh/os/Linux/armv61/show_image",
 							"-d", "5",
 							"-p", printerName
-						);
+						));
 
 						//Exposure time 
 						args.add("-e");
 						if (layerExposureTimeOverride != null){
 							args.add(Integer.toString(layerExposureTimeOverride));
-							logger.info("CURRENT LAYER Exposure Time:{}", layerExposureTimeOverride);
+							logger.info("Overriden Layer Exposure Time: {}", layerExposureTimeOverride);
 						} else {
-							args.add(sliceIndex < numberOfBottomLayers
-								? Integer.toString(defaultBottomLayerExposureTime)
-								: Integer.toString(defaultLayerExposureTime));
-
 							if (sliceIndex < numberOfBottomLayers){
-								logger.info("Currant Layer Exposure Time:{}", defaultBottomLayerExposureTime);
+								args.add(Integer.toString(defaultBottomLayerExposureTime));
+								logger.info("Current Layer Exposure Time (Bottom Layers): {}", defaultBottomLayerExposureTime);
 							}else{
-								logger.info("Currant Layer Exposure Time:{}", defaultLayerExposureTime);
+								args.add(Integer.toString(defaultLayerExposureTime));
+								logger.info("Current Layer Exposure Time: {}", defaultLayerExposureTime);
 							}
 						}
 
@@ -275,7 +273,7 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 						args.add("-b");
 						if(layerExposureWarmupTimeOverride != null){
 							args.add(Integer.toString(layerExposureWarmupTimeOverride));
-							logger.info("LED Warmup: {}", layerExposureWarmupTimeOverride);
+							logger.info("Overidden LED Warmup: {}", layerExposureWarmupTimeOverride);
 						}else{
 							args.add(Integer.toString(defaultLayerExposureWarmUpTime));
 							logger.info("LED Warmup: {}", defaultLayerExposureWarmUpTime);
@@ -291,7 +289,8 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 						logger.info("Display picture on screen: {}", imageFilename);
 
 						//execute show image
-						Process showingSlice = Runtime.getRuntime().exec(String.join(" ", args));
+						ProcessBuilder pb = new ProcessBuilder(args);
+						Process showingSlice = pb.start();
 						showingSlice.waitFor();
 
 						//reseting slice params 
@@ -351,7 +350,6 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 					Integer foundExposureDelay = Integer.parseInt(matcher.group(1));
 					logger.info("Found: Layer Layer Exposure time:{}", foundExposureDelay);
 					defaultLayerExposureTime = foundExposureDelay;
-					layerExposureTimeOverride = defaultLayerExposureTime;
 					continue;
 				}
 				
