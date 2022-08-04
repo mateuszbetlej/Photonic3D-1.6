@@ -190,6 +190,8 @@ public class CreationWorkshopSceneFileProcessor extends AbstractPrintFileProcess
 				defaultLayerExposureWarmUpTime = 200;
 			} else if (printerName.equals("LC%20Dental")){
 				defaultLayerExposureWarmUpTime = 200;
+			} else if (printerName.equals("LC%20Magna%20Figurine")){
+				defaultLayerExposureWarmUpTime = 200;
 			} else if (printerName.equals("LC%20Nano")){
 				defaultLayerExposureWarmUpTime = 0;
 			}
