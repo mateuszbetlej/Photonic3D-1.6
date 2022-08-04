@@ -1,2 +1,2 @@
 var printerName = "Photocentric Magna V.2";
-var repo = "mateuszbetlej/Photonic3D-1.6";
+var repo = "photocentric/Photonic3D";
