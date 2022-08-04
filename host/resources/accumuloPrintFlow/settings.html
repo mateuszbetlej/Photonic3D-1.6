@@ -1,0 +1,249 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<title>information</title>
+	<style>
+		* {
+			cursor: none;
+		}
+
+		.layover_1 {
+			position: absolute;
+			top: 365px;
+			left: 42px;
+			opacity: 50%;
+			user-drag: none;
+			user-select: none;
+			-moz-user-select: none;
+			-webkit-user-drag: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+		}
+
+		.layover_2 {
+			position: absolute;
+			top: 360px;
+			left: 709px;
+			opacity: 50%;
+			user-drag: none;
+			user-select: none;
+			-moz-user-select: none;
+			-webkit-user-drag: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+		}
+
+		.log {
+			position: absolute;
+			top: 85px;
+			left: 257px;
+			width: 370px;
+			height: 260px;
+			background-color: transparent;
+			color: white;
+			font-size: 12px;
+			border: none;
+			padding: 5px;
+			resize: none;
+			overflow: hidden;
+		}
+
+		.homebutton {
+			position: absolute;
+			top: 358px;
+			left: 22px;
+			height: 90px;
+			width: 90px;
+			user-drag: none;
+			user-select: none;
+			-moz-user-select: none;
+			-webkit-user-drag: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+		}
+
+		.syslog {
+			position: absolute;
+			top: 358px;
+			left: 690px;
+			height: 90px;
+			width: 90px;
+			user-drag: none;
+			user-select: none;
+			-moz-user-select: none;
+			-webkit-user-drag: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+		}
+
+		.IP {
+			font-size: 15px;
+			padding-bottom: 2.5px;
+			padding-left: 5px;
+		}
+
+		.details {
+			font-size: 15px;
+			padding-bottom: 2.5px;
+			padding-left: 5px;
+		}
+
+		.visiblelabel {
+			position: absolute;
+			top: 65px;
+			left: 460px;
+			width: 350px;
+			color: white;
+			text-align: left;
+			padding-left: 20px;
+			padding-top: 5px;
+			font-size: 20px;
+			z-index: 2;
+		}
+
+		.wifiselect {
+			position: absolute;
+			top: 121px;
+			left: 485px;
+			width: 270px;
+			height: 109px;
+			background-color: transparent;
+			color: white;
+			border: none;
+			line-height: 50px;
+			font-size: 20px;
+			overflow: hidden;
+		}
+
+		.serialNumber {
+			position: absolute;
+			top: 465px;
+			left: 495px;
+			width: 300px;
+			color: white;
+			font-size: 10px;
+			text-align: right;
+		}
+
+		.firmwareVersion {
+			position: absolute;
+			top: 322px;
+			left: -75px;
+			width: 300px;
+			color: white;
+			font-size: 18px;
+			text-align: right;
+			font-family: 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
+		}
+	</style>
+
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css">
+
+	<!-- jQuery library -->
+	<script src="../jquery/jquery.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="../bootstrap/js/bootstrap.min.js"></script>
+
+	<!-- Latest v1 Angular -->
+	<script src="../angular/js/angular.min.js"></script>
+
+	<script src="js/moment.min.js"></script>
+
+	<script src="js/printflow.js"></script>
+	<script src="js/printerconfig.js"></script>
+
+	<script src="js/js.cookie.js"></script>
+
+	<link href="css/printflow.css" rel="stylesheet">
+</head>
+
+<body style="background-color: black;" onload="init()">
+	<script>
+		function init() {
+			startpage();
+			setInterval(updateNetworkInfo(), 10000);
+			getSerialNumber();
+			getFirmwareVersion();
+		}
+
+		function home_btn() {
+			setTimeout(function () {
+				location.href = "index.html";
+			}, 150);
+			$('#layover_1').show(0).delay(80).hide(0);
+		}
+
+		function sys_btn() {
+			setTimeout(function () {
+				location.href = "syslog.html";
+			}, 150);
+			$('#layover_2').show(0).delay(80).hide(0);
+		}
+
+		function getSerialNumber(){
+				document.getElementById("serialNumber").innerHTML = "----------"
+
+				$.getJSON('/services/machine/serialNumber')
+					.done(function (serialNumber) {
+						if (serialNumber != null){
+							document.getElementById("serialNumber").innerHTML = "SN: "+ serialNumber;
+						}
+					})
+					.fail(function () {
+						console.error("Failed to get serial number.")
+					});
+			}
+
+		function getFirmwareVersion(){
+			document.getElementById("firmwareVersion").innerHTML = "---"
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M115')
+				.done(function (result) {
+					var response = result["message"];
+					if (response.indexOf("FIRMWARE_VERSION:") !== -1){
+							var firmwareVersion = response.substring(
+							response.indexOf("FIRMWARE_VERSION: ") + 18, 
+							response.lastIndexOf(" ELECTRONICS")
+						);
+						document.getElementById("firmwareVersion").innerHTML = "Firmware V" +firmwareVersion;
+					}
+				})
+				.fail(function () {
+					console.error("Failed on Firmware Version request.")
+				});
+		}
+	</script>
+	<div class="screen">
+		<div class="main">
+			<img src="images/information.png" usemap="information" class="uilayer">
+			<map name="information" style="z-index: 100;">
+				<img name="homebutton" id="homebutton" class="homebutton" src="images/menumainbuttonANIM.png"
+					onClick="home_btn();" />
+				<img name="syslog" id="syslog" class="syslog" src="images/menumainbuttonANIM.png"
+					onClick="sys_btn();" />
+			</map>
+			<img name="wifi" id="wifi" class="wifi" src="images/pixel.png">
+			<img name="interlockcheck" id="interlockcheck" class="interlockcheck" src="images/pixel.png">
+			<img name="doorcheck" id="doorcheck" class="doorcheck" src="images/pixel.png">
+			<img name="printerstatus" id="printerstatus" class="printerstatus" src="images/pixel.png">
+			<img name="layover_1" id="layover_1" class="layover_1 collapse" src="images/layovers/pr_1.png" />
+			<img name="layover_2" id="layover_2" class="layover_2 collapse" src="images/layovers/sys.png" />
+			<div name="warn" id="warn" class="warn"></div>
+
+			<div name="serialNumber" id="serialNumber" class="serialNumber"></div>
+			<img name="homehighlight" id="homehighlight" class="homehighlight" src=""
+				onClick="location.href='index.html';">
+			<img name="bigbuttonhighlight" id="bigbuttonhighlight" class="bigbuttonhighlight" src=""
+				onClick="location.href='maintain.html';">
+			<div name="webinfo" id="webinfo" class="webinfo">
+				<div name="IP" id="IP" class="IP"><span id="IPaddress" class="details"></span></div>
+			</div>
+			<div name="firmwareVersion" id="firmwareVersion" class="firmwareVersion"></div>
+		</div>
+	</div>
+
+
+</body>
+
+</html>
