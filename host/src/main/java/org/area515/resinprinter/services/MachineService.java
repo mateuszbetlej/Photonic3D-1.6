@@ -380,8 +380,19 @@ public class MachineService {
 		ZipOutputStream zipOutputStream = null;
 		try {
 			zipOutputStream = new ZipOutputStream(new FileOutputStream(zippedFile));
-			String logFiles[] = new String[] { "log.scrout", "log.screrr", "log.out", "log.err", "cwh.log",
-					"log4j2.properties", "debuglog4j2.properties", "testlog4j2.properties" };
+			ArrayList<String> logFiles = new ArrayList<String>(
+					Arrays.asList("log.scrout", "log.screrr", "log.out", "log.err", "cwh.log", "log4j2.properties",
+							"debuglog4j2.properties", "testlog4j2.properties"));
+			File[] logDirectory = new File("./").listFiles();
+
+			for (File logBackupfile : logDirectory) {
+				if (logBackupfile.isFile()) {
+					if (logBackupfile.getName().endsWith("log.gz")) {
+						logFiles.add(logBackupfile.getName());
+					}
+
+				}
+			}
 			for (String logFile : logFiles) {
 				File file = new File(logFile);
 				if (file.exists()) {
