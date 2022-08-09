@@ -9,8 +9,8 @@
          "MaxXFeedRate":0,
          "MaxYFeedRate":0,
          "MaxZFeedRate":0,
-         "XRenderSize":1440,
-         "YRenderSize":2560,
+         "XRenderSize":2160,
+         "YRenderSize":3840,
          "MotorsDriverConfig":{  
             "DriverType":"Photocentric",
             "ComPortSettings":{  
@@ -23,8 +23,8 @@
             }
          },
          "MonitorDriverConfig":{  
-            "DLP_X_Res":1440,
-            "DLP_Y_Res":2560,
+            "DLP_X_Res":2160,
+            "DLP_Y_Res":3840,
             "OSMonitorID":"Raspberry Pi Force TV",
             "DisplayCommEnabled":false,
             "ComPortSettings":{  
