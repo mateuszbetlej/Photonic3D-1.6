@@ -490,7 +490,7 @@
 			$('#warning').html("Backlight ON");
 			$('#warning').show();
 			no();
-			$.getJSON('../services/printers/showBlankScreen/Photocentric%20Magna%20V.2');
+			$.getJSON('../services/printers/showBlankScreen/LC%20Magna%20Figurine');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S1');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S1');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S1');
@@ -518,7 +518,7 @@
 			$("#homez").show();
 			$("#testdisplaybtn").show();
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
-			$.getJSON('../services/printers/showBlankScreen/Photocentric%20Magna%20V.2');
+			$.getJSON('../services/printers/showBlankScreen/LC%20Magna%20Figurine');
 			$("#togglebutton").show();
 			$("#whitecure").show();
 			$("#LedOn").show();
@@ -533,7 +533,7 @@
 
 		function hbutton() {
 			$('#layover_1').show(0).delay(80).hide(0);
-			$.getJSON('../services/printers/showBlankScreen/Photocentric%20Magna%20V.2');
+			$.getJSON('../services/printers/showBlankScreen/LC%20Magna%20Figurine');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0')
 				.done(function (data) {
@@ -543,7 +543,7 @@
 
 		function calibutton() {
 			$('#layover_4').show(0).delay(80).hide(0);
-			$.getJSON('../services/printers/showBlankScreen/Photocentric%20Magna%20V.2');
+			$.getJSON('../services/printers/showBlankScreen/LC%20Magna%20Figurine');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0')
 				.done(function (data) {
@@ -560,7 +560,7 @@
 			$("#homez").hide();
 			$("#pump").hide();
 			$("#testdisplaybtn").hide();
-			$.getJSON('../services/customizers/projectCustomizerOnPrinter/display_test_to_be_hidden.zip.Photocentric%20Magna%20V.2')
+			$.getJSON('../services/customizers/projectCustomizerOnPrinter/display_test_to_be_hidden.zip.LC%20Magna%20Figurine')
 				.done(function (data) {
 					$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S1');
 					$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S1');
@@ -568,7 +568,7 @@
 				});
 			LT4 = setTimeout(function () {
 				$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
-				$.getJSON('../services/printers/showBlankScreen/Photocentric%20Magna%20V.2');
+				$.getJSON('../services/printers/showBlankScreen/LC%20Magna%20Figurine');
 				$("#togglebutton").show();
 				$("#whitecure").show();
 				$("#LedOn").show();
@@ -652,7 +652,7 @@
 			$("#LedOn").hide();
 			$("#pump").hide();
 			$("#whitecure").hide();
-			$.getJSON('../services/customizers/projectCustomizerOnPrinter/display_cure_to_be_hidden.zip.Photocentric%20Magna%20V.2')
+			$.getJSON('../services/customizers/projectCustomizerOnPrinter/display_cure_to_be_hidden.zip.LC%20Magna%20Figurine')
 				.done(function (data) {
 					$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S1');
 					$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S1');
@@ -660,7 +660,7 @@
 				});
 			setTimeout(function () {
 				$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
-				$.getJSON('../services/printers/showBlankScreen/Photocentric%20Magna%20V.2')
+				$.getJSON('../services/printers/showBlankScreen/LC%20Magna%20Figurine')
 					.done(function (data) {
 						$("#homez").show();
 						$("#togglebutton").show();
@@ -714,7 +714,7 @@
 
 		function pbutton() {
 			$('#layover_8').show(0).delay(80).hide(0);
-			$.getJSON('../services/printers/showBlankScreen/Photocentric%20Magna%20V.2');
+			$.getJSON('../services/printers/showBlankScreen/LC%20Magna%20Figurine');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0')
 				.done(function (data) {
