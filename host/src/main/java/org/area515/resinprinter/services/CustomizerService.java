@@ -47,151 +47,169 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
-@Api(value="customizers")
+@Api(value = "customizers")
 @RolesAllowed(PhotonicUser.FULL_RIGHTS)
 @Path("customizers")
 public class CustomizerService {
 	private static final Logger logger = LogManager.getLogger();
-    public static CustomizerService INSTANCE = new CustomizerService();
-    
-    //TODO: Should this be a cache? Aren't these really small objects now without the original BufferedImage embedded in them?
-    private Cache<String, Customizer> customizersByName = CacheBuilder.newBuilder().softValues().build();
-    
-    /*
-     * This cache is only for previewing purposes:
-     *  1. It allows the web to store BufferedImage cache
-     *  2. It also allows us to use a more realistic way of previewing images.
-     *  3. We don't have to create a DataAid for every preview of an image now...
-     */
-	private LoadingCache<Customizer, DataAid> dataAidsByCustomizer = CacheBuilder.newBuilder().softValues().build(new CacheLoader<Customizer, DataAid>() {
-	     public DataAid load(Customizer customizer) throws JobManagerException, NoPrinterFoundException, InappropriateDeviceException {
-	 		//find the first activePrinter
-	    	Printer activePrinter = null;
-	 		String printerName = customizer.getPrinterName();
-	 		if (printerName == null || printerName.isEmpty()) {
-	 			//if customizer doesn't have a printer stored, set first active printer as printer
-	 			try {
-	 				activePrinter = PrinterService.INSTANCE.getFirstAvailablePrinter();
-	 			} catch (NoPrinterFoundException e) {
-	 				throw new NoPrinterFoundException("No printers found for slice preview. You must have a started printer or specify a valid printer in the Customizer.");
-	 			}
-	 			
-	 		} else {
-	 			try {
-	 				activePrinter = PrinterService.INSTANCE.getPrinter(printerName);
-	 			} catch (InappropriateDeviceException e) {
-	 				logger.warn("Could not locate printer {}", printerName, e);
-	 			}
-	 		}
-			
-			File file = new File(HostProperties.Instance().getUploadDir(), customizer.getPrintableName() + "." + customizer.getPrintableExtension());
-			PrintFileProcessor<?,?> processor = PrintFileFilter.INSTANCE.findAssociatedPrintProcessor(file);
-			if (!(processor instanceof Previewable)) {
-				if (processor == null) {
-					throw new IllegalArgumentException("Couldn't find file processor for file:" + file);
+	public static CustomizerService INSTANCE = new CustomizerService();
+
+	// TODO: Should this be a cache? Aren't these really small objects now without
+	// the original BufferedImage embedded in them?
+	private Cache<String, Customizer> customizersByName = CacheBuilder.newBuilder().softValues().build();
+
+	/*
+	 * This cache is only for previewing purposes:
+	 * 1. It allows the web to store BufferedImage cache
+	 * 2. It also allows us to use a more realistic way of previewing images.
+	 * 3. We don't have to create a DataAid for every preview of an image now...
+	 */
+	private LoadingCache<Customizer, DataAid> dataAidsByCustomizer = CacheBuilder.newBuilder().softValues()
+			.build(new CacheLoader<Customizer, DataAid>() {
+				public DataAid load(Customizer customizer)
+						throws JobManagerException, NoPrinterFoundException, InappropriateDeviceException {
+					// find the first activePrinter
+					Printer activePrinter = null;
+					String printerName = customizer.getPrinterName();
+					if (printerName == null || printerName.isEmpty()) {
+						// if customizer doesn't have a printer stored, set first active printer as
+						// printer
+						try {
+							activePrinter = PrinterService.INSTANCE.getFirstAvailablePrinter();
+						} catch (NoPrinterFoundException e) {
+							throw new NoPrinterFoundException(
+									"No printers found for slice preview. You must have a started printer or specify a valid printer in the Customizer.");
+						}
+
+					} else {
+						try {
+							activePrinter = PrinterService.INSTANCE.getPrinter(printerName);
+						} catch (InappropriateDeviceException e) {
+							logger.warn("Could not locate printer {}", printerName, e);
+						}
+					}
+
+					File file = new File(HostProperties.Instance().getUploadDir(),
+							customizer.getPrintableName() + "." + customizer.getPrintableExtension());
+					PrintFileProcessor<?, ?> processor = PrintFileFilter.INSTANCE.findAssociatedPrintProcessor(file);
+					if (!(processor instanceof Previewable)) {
+						if (processor == null) {
+							throw new IllegalArgumentException("Couldn't find file processor for file:" + file);
+						}
+
+						throw new IllegalArgumentException(
+								processor.getFriendlyName() + " files don't support image preview.");
+					}
+
+					if (!(processor instanceof AbstractPrintFileProcessor)) {
+						throw new IllegalArgumentException("Processor:" + processor.getFriendlyName()
+								+ " needs to extend AbstractPrintFileProcessor");
+					}
+
+					// instantiate a new print job based on the jobFile and set its printer to
+					// activePrinter
+					PrintJob printJob = new PrintJob(new File(HostProperties.Instance().getUploadDir(),
+							customizer.getPrintableName() + "." + customizer.getPrintableExtension()));
+					printJob.setPrinter(activePrinter);
+					printJob.setCustomizer(customizer);
+					printJob.setPrintFileProcessor(processor);
+					printJob.setCurrentSlice(customizer.getNextSlice());
+
+					return ((AbstractPrintFileProcessor<?, ?>) processor).initializeJobCacheWithDataAid(printJob);
 				}
-				
-				throw new IllegalArgumentException(processor.getFriendlyName() + " files don't support image preview.");
-			}
-			
-			if (!(processor instanceof AbstractPrintFileProcessor)) {
-				throw new IllegalArgumentException("Processor:" + processor.getFriendlyName() + " needs to extend AbstractPrintFileProcessor");
-			}
-			
-	 		//instantiate a new print job based on the jobFile and set its printer to activePrinter
-	 		PrintJob printJob = new PrintJob(new File(HostProperties.Instance().getUploadDir(), customizer.getPrintableName() + "." + customizer.getPrintableExtension()));
-	 		printJob.setPrinter(activePrinter);
-	 		printJob.setCustomizer(customizer);
-	 		printJob.setPrintFileProcessor(processor);
-	 		printJob.setCurrentSlice(customizer.getNextSlice());
+			});
 
-			return ((AbstractPrintFileProcessor<?,?>)processor).initializeJobCacheWithDataAid(printJob);
-	       }
-	     });
-
-    @ApiOperation(value="Retrieves all Customizers")
+	@ApiOperation(value = "Retrieves all Customizers")
 	@GET
-    @Path("list")
-    @Produces(MediaType.APPLICATION_JSON)
+	@Path("list")
+	@Produces(MediaType.APPLICATION_JSON)
 	public Map<String, Customizer> getCustomizers() {
 		return customizersByName.asMap();
 	}
-    
-    //TODO: Why don't we read this from disk if it doesn't exist first?
-    @ApiOperation(value="Find a customizer by name.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = SwaggerMetadata.SUCCESS),
-            @ApiResponse(code = 500, message = SwaggerMetadata.UNEXPECTED_ERROR)})
+
+	// TODO: Why don't we read this from disk if it doesn't exist first?
+	@ApiOperation(value = "Find a customizer by name.")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = SwaggerMetadata.SUCCESS),
+			@ApiResponse(code = 500, message = SwaggerMetadata.UNEXPECTED_ERROR) })
 	@GET
 	@Path("get/{customizerName}")
-    @Produces(MediaType.APPLICATION_JSON)
-	public Customizer getCustomizer(@PathParam("customizerName")String customizerName, @QueryParam("externalState") String externalState) {
+	@Produces(MediaType.APPLICATION_JSON)
+	public Customizer getCustomizer(@PathParam("customizerName") String customizerName,
+			@QueryParam("externalState") String externalState) {
 		Customizer customizer = customizersByName.getIfPresent(customizerName);
 		if (customizer != null) {
-			if (customizer.getExternalImageAffectingState() == null || !customizer.getExternalImageAffectingState().equals(externalState)) {
+			if (customizer.getExternalImageAffectingState() == null
+					|| !customizer.getExternalImageAffectingState().equals(externalState)) {
 				dataAidsByCustomizer.invalidate(customizer);
-				//TODO: start building image in a background task before the client asks for it!
+				// TODO: start building image in a background task before the client asks for
+				// it!
 			}
 			customizer.setExternalImageAffectingState(externalState);
 		}
-		
+
 		return customizer;
 	}
-    
-    //TODO: Why don't we save this to disk as an async action?
-	@ApiOperation(value="Save Customizer.")
+
+	// TODO: Why don't we save this to disk as an async action?
+	@ApiOperation(value = "Save Customizer.")
 	@POST
 	@Path("upsert")
-    @Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Customizer addOrUpdateCustomizer(Customizer customizer) {
 		Customizer oldCustomizer = customizersByName.getIfPresent(customizer.getName());
 		if (oldCustomizer != null) {
-			//If the image was affected by some external state other than the customizer(e.g. calibration), trash the cache.
-			if (customizer.getExternalImageAffectingState() != null && 
-				customizer.getExternalImageAffectingState().equals(oldCustomizer.getExternalImageAffectingState())) {
+			// If the image was affected by some external state other than the
+			// customizer(e.g. calibration), trash the cache.
+			if (customizer.getExternalImageAffectingState() != null &&
+					customizer.getExternalImageAffectingState()
+							.equals(oldCustomizer.getExternalImageAffectingState())) {
 				try {
 					DataAid oldAid = dataAidsByCustomizer.get(oldCustomizer);
 					dataAidsByCustomizer.put(customizer, oldAid);
 					oldAid.customizer = customizer;
 					oldAid.clearAffineTransformCache();
-					
-					//TODO: do we have to do this? Shouldn't this be done naturally through the soft references?
+
+					// TODO: do we have to do this? Shouldn't this be done naturally through the
+					// soft references?
 					dataAidsByCustomizer.invalidate(oldCustomizer);
 				} catch (ExecutionException e) {
 					logger.error("Couldn't create dataAid:", e);
 				}
 			}
-			//else TODO: start building image in a background task before the client asks for it!
+			// else TODO: start building image in a background task before the client asks
+			// for it!
 		}
-		
+
 		customizersByName.put(customizer.getName(), customizer);
 		return customizer;
 	}
 
-	@ApiOperation(value="Deletes a Customizer given it's name")
+	@ApiOperation(value = "Deletes a Customizer given it's name")
 	@DELETE
 	@Path("delete/{customizerName}")
 	public void removeCustomizer(@PathParam("customizerName") String customizerName) {
 		customizersByName.invalidate(customizerName);
 	}
 
-	@ApiOperation(value="Displays a blank slice to the printer light source")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = SwaggerMetadata.SUCCESS),
-        @ApiResponse(code = 500, message = SwaggerMetadata.UNEXPECTED_ERROR)})
+	@ApiOperation(value = "Displays a blank slice to the printer light source")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = SwaggerMetadata.SUCCESS),
+			@ApiResponse(code = 500, message = SwaggerMetadata.UNEXPECTED_ERROR) })
 	@GET
 	@Path("projectCustomizerCureLayer/{customizerName}")
-	public void projectCureLayerImage(@PathParam("customizerName") String customizerName) throws SliceHandlingException, InappropriateDeviceException, NoPrinterFoundException {
+	public void projectCureLayerImage(@PathParam("customizerName") String customizerName)
+			throws SliceHandlingException, InappropriateDeviceException, NoPrinterFoundException {
 		Customizer customizer = customizersByName.getIfPresent(customizerName);
 		if (customizer == null) {
 			throw new IllegalArgumentException("Customizer is missing");
 		}
-		
+
 		String printerName = customizer.getPrinterName();
 		if (printerName == null) {
 			throw new IllegalArgumentException("No printer available.");
 		}
-		
+
 		Printer printer = PrinterService.INSTANCE.getPrinter(printerName);
 		if (!printer.isStarted()) {
 			throw new IllegalArgumentException("Printer must be started");
@@ -203,39 +221,45 @@ public class CustomizerService {
 
 		try {
 			DataAid aid = dataAidsByCustomizer.get(customizer);
-			AbstractPrintFileProcessor<?,?> previewableProcessor = (AbstractPrintFileProcessor<?,?>)aid.printJob.getPrintFileProcessor();
-			BufferedImage img = previewableProcessor.buildPreviewSlice(customizer, dataAidsByCustomizer.get(customizer));
-			printer.setStatus(printer.getStatus());//This is to make sure the slicenumber is reset.
+			AbstractPrintFileProcessor<?, ?> previewableProcessor = (AbstractPrintFileProcessor<?, ?>) aid.printJob
+					.getPrintFileProcessor();
+			BufferedImage img = previewableProcessor.buildPreviewSlice(customizer,
+					dataAidsByCustomizer.get(customizer));
+			printer.setStatus(printer.getStatus());// This is to make sure the slicenumber is reset.
 			// printer.showImage(img, true);
-			
+
 			try {
-				Process showingSlice = Runtime.getRuntime().exec(new String[]{"nice", "-n", "-2", "/opt/cwh/os/Linux/armv61/show_image", "-d", "5", "-t", "10", "-p", printerName, "-e", "10000", "-b", "5", "-x", "50000", "-m", "/home/pi/mask/mask.png", "/tmp/printdir/display_cure_to_be_hidden.zip/display_cure_to_be_hidden.png"});
+				Process showingSlice = Runtime.getRuntime()
+						.exec(new String[] { "nice", "-n", "-2", "/opt/cwh/os/Linux/armv61/show_image", "-d", "5", "-p",
+						printerName.replaceAll(" ", "%20"), "-e", "15000",
+								"/tmp/printdir/display_cure_to_be_hidden.zip/display_cure_to_be_hidden.png" });
 				showingSlice.waitFor();
-			} catch(Exception e) {
-				
+			} catch (Exception e) {
+
 			}
 		} catch (ExecutionException e) {
 			throw new IllegalArgumentException("Couldn't build data aid", e);
 		}
 	}
 
-	@ApiOperation(value="Displays a Photocentric Logo to a light source")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = SwaggerMetadata.SUCCESS),
-        @ApiResponse(code = 500, message = SwaggerMetadata.UNEXPECTED_ERROR)})
+	@ApiOperation(value = "Displays a Photocentric Logo to a light source")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = SwaggerMetadata.SUCCESS),
+			@ApiResponse(code = 500, message = SwaggerMetadata.UNEXPECTED_ERROR) })
 	@GET
 	@Path("projectCustomizerLogo/{customizerName}")
-	public void projectLogoImage(@PathParam("customizerName") String customizerName) throws SliceHandlingException, InappropriateDeviceException, NoPrinterFoundException {
+	public void projectLogoImage(@PathParam("customizerName") String customizerName)
+			throws SliceHandlingException, InappropriateDeviceException, NoPrinterFoundException {
 		Customizer customizer = customizersByName.getIfPresent(customizerName);
 		if (customizer == null) {
 			throw new IllegalArgumentException("Customizer is missing");
 		}
-		
+
 		String printerName = customizer.getPrinterName();
 		if (printerName == null) {
 			throw new IllegalArgumentException("No printer available.");
 		}
-		
+
 		Printer printer = PrinterService.INSTANCE.getPrinter(printerName);
 		if (!printer.isStarted()) {
 			throw new IllegalArgumentException("Printer must be started");
@@ -247,39 +271,45 @@ public class CustomizerService {
 
 		try {
 			DataAid aid = dataAidsByCustomizer.get(customizer);
-			AbstractPrintFileProcessor<?,?> previewableProcessor = (AbstractPrintFileProcessor<?,?>)aid.printJob.getPrintFileProcessor();
-			BufferedImage img = previewableProcessor.buildPreviewSlice(customizer, dataAidsByCustomizer.get(customizer));
-			printer.setStatus(printer.getStatus());//This is to make sure the slicenumber is reset.
+			AbstractPrintFileProcessor<?, ?> previewableProcessor = (AbstractPrintFileProcessor<?, ?>) aid.printJob
+					.getPrintFileProcessor();
+			BufferedImage img = previewableProcessor.buildPreviewSlice(customizer,
+					dataAidsByCustomizer.get(customizer));
+			printer.setStatus(printer.getStatus());// This is to make sure the slicenumber is reset.
 			// printer.showImage(img, true);
-			
+			logger.info("Printer Name for display test: {}", printerName.replaceAll(" ", "%20"));
 			try {
-				Process showingSlice = Runtime.getRuntime().exec(new String[]{"nice", "-n", "-2", "/opt/cwh/os/Linux/armv61/show_image", "-d", "5", "-t", "10", "-p", printerName, "-e", "15000", "-b", "5", "-x", "50000", "-m", "/home/pi/mask/mask.png", "/tmp/printdir/display_test_to_be_hidden.zip/display_test_to_be_hidden.png"});
+				Process showingSlice = Runtime.getRuntime()
+						.exec(new String[] { "nice", "-n", "-2", "/opt/cwh/os/Linux/armv61/show_image", "-d", "5", "-p",
+								printerName.replaceAll(" ", "%20"), "-e", "15000",
+								"/tmp/printdir/display_test_to_be_hidden.zip/display_test_to_be_hidden.png" });
 				showingSlice.waitFor();
-			} catch(Exception e) {
-				
+			} catch (Exception e) {
+
 			}
 		} catch (ExecutionException e) {
 			throw new IllegalArgumentException("Couldn't build data aid", e);
 		}
 	}
 
-	@ApiOperation(value="Displays a slice of a printable based on the Customizer to the printer light source")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = SwaggerMetadata.SUCCESS),
-        @ApiResponse(code = 500, message = SwaggerMetadata.UNEXPECTED_ERROR)})
+	@ApiOperation(value = "Displays a slice of a printable based on the Customizer to the printer light source")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = SwaggerMetadata.SUCCESS),
+			@ApiResponse(code = 500, message = SwaggerMetadata.UNEXPECTED_ERROR) })
 	@GET
 	@Path("projectCustomizerOnPrinter/{customizerName}")
-	public void projectImage(@PathParam("customizerName") String customizerName) throws SliceHandlingException, InappropriateDeviceException, NoPrinterFoundException {
+	public void projectImage(@PathParam("customizerName") String customizerName)
+			throws SliceHandlingException, InappropriateDeviceException, NoPrinterFoundException {
 		Customizer customizer = customizersByName.getIfPresent(customizerName);
 		if (customizer == null) {
 			throw new IllegalArgumentException("Customizer is missing");
 		}
-		
+
 		String printerName = customizer.getPrinterName();
 		if (printerName == null) {
 			throw new IllegalArgumentException("No printer available.");
 		}
-		
+
 		Printer printer = PrinterService.INSTANCE.getPrinter(printerName);
 		if (!printer.isStarted()) {
 			throw new IllegalArgumentException("Printer must be started");
@@ -291,23 +321,26 @@ public class CustomizerService {
 
 		try {
 			DataAid aid = dataAidsByCustomizer.get(customizer);
-			AbstractPrintFileProcessor<?,?> previewableProcessor = (AbstractPrintFileProcessor<?,?>)aid.printJob.getPrintFileProcessor();
-			BufferedImage img = previewableProcessor.buildPreviewSlice(customizer, dataAidsByCustomizer.get(customizer));
-			printer.setStatus(printer.getStatus());//This is to make sure the slicenumber is reset.
+			AbstractPrintFileProcessor<?, ?> previewableProcessor = (AbstractPrintFileProcessor<?, ?>) aid.printJob
+					.getPrintFileProcessor();
+			BufferedImage img = previewableProcessor.buildPreviewSlice(customizer,
+					dataAidsByCustomizer.get(customizer));
+			printer.setStatus(printer.getStatus());// This is to make sure the slicenumber is reset.
 			printer.showImage(img, true);
 		} catch (ExecutionException e) {
 			throw new IllegalArgumentException("Couldn't build data aid", e);
 		}
 	}
-	
-	@ApiOperation(value="Renders a slice of a printable based on the customizer")
-	    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = SwaggerMetadata.SUCCESS),
-            @ApiResponse(code = 500, message = SwaggerMetadata.UNEXPECTED_ERROR)})
+
+	@ApiOperation(value = "Renders a slice of a printable based on the customizer")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = SwaggerMetadata.SUCCESS),
+			@ApiResponse(code = 500, message = SwaggerMetadata.UNEXPECTED_ERROR) })
 	@GET
 	@Path("renderPreviewImage/{customizerName}")
 	@Produces("image/png")
-	public StreamingOutput renderFirstSliceImage(@PathParam("customizerName") String customizerName) throws NoPrinterFoundException, SliceHandlingException {
+	public StreamingOutput renderFirstSliceImage(@PathParam("customizerName") String customizerName)
+			throws NoPrinterFoundException, SliceHandlingException {
 		Customizer customizer = customizersByName.getIfPresent(customizerName);
 		if (customizer == null) {
 			throw new IllegalArgumentException("Customizer is missing for:" + customizerName);
@@ -315,7 +348,8 @@ public class CustomizerService {
 
 		try {
 			DataAid aid = dataAidsByCustomizer.get(customizer);
-			AbstractPrintFileProcessor<?,?> previewableProcessor = (AbstractPrintFileProcessor<?,?>)aid.printJob.getPrintFileProcessor();
+			AbstractPrintFileProcessor<?, ?> previewableProcessor = (AbstractPrintFileProcessor<?, ?>) aid.printJob
+					.getPrintFileProcessor();
 			BufferedImage img = previewableProcessor.buildPreviewSlice(customizer, aid);
 
 			logger.debug("just got the bufferedimg from previewSlice");
@@ -335,7 +369,7 @@ public class CustomizerService {
 			return stream;
 		} catch (ExecutionException e) {
 			throw new SliceHandlingException(e.getCause());
-		} catch (NoPrinterFoundException|SliceHandlingException |IllegalArgumentException e) {
+		} catch (NoPrinterFoundException | SliceHandlingException | IllegalArgumentException e) {
 			throw e;
 		}
 	}
