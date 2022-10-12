@@ -491,11 +491,13 @@
 			$('#warning').show();
 			no();
 			$.getJSON('../services/printers/showBlankScreen/LC%20Magna%20Figurine');
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S1');
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S1');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S1');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S0.2');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S1');
 			LT1 = setTimeout(function () {
 				$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
+				$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S1');
+				$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0');
 				$("#togglebutton").show();
 				$('#warning').html("Backlight Auto OFF");
 				$("#whitecure").show();
@@ -518,6 +520,8 @@
 			$("#homez").show();
 			$("#testdisplaybtn").show();
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S1');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0');
 			$.getJSON('../services/printers/showBlankScreen/LC%20Magna%20Figurine');
 			$("#togglebutton").show();
 			$("#whitecure").show();
@@ -535,6 +539,7 @@
 			$('#layover_1').show(0).delay(80).hide(0);
 			$.getJSON('../services/printers/showBlankScreen/LC%20Magna%20Figurine');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S1');
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0')
 				.done(function (data) {
 					location.href = "index.html";
@@ -544,8 +549,9 @@
 		function calibutton() {
 			$('#layover_4').show(0).delay(80).hide(0);
 			$.getJSON('../services/printers/showBlankScreen/LC%20Magna%20Figurine');
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0');
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0')
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S1');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0')
 				.done(function (data) {
 					location.href = "calibration_1.html";
 				});
@@ -562,13 +568,13 @@
 			$("#testdisplaybtn").hide();
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P5 S255')
 				.done(function (data) {
-					$.getJSON('../services/customizers/projectCustomizerLogo/display_test_to_be_hidden.zip.LC%20Magna%20Figurine');
-					//$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S1');
-					//$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S1');
+					$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S1');
+					$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S0.2');
+					setTimeout(function () {
+						$.getJSON('../services/customizers/projectCustomizerLogo/display_test_to_be_hidden.zip.LC%20Magna%20Figurine');
+					}, 10000);
 				});
 			LT4 = setTimeout(function () {
-				//$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
-				//$.getJSON('../services/printers/showBlankScreen/LC%20Nano');
 				$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P5 S0');
 				$("#togglebutton").show();
 				$("#whitecure").show();
@@ -577,7 +583,9 @@
 				$("#pump").show();
 				$("#testdisplaybtn").show();
 				$('#warning').hide();
-			}, 20000);
+			}, 25000);
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S1');
 			clearTimeout(LT1);
 			clearTimeout(LT2);
 			clearTimeout(LT3);
@@ -610,6 +618,7 @@
 
 		function zbutton() {
 			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S1');
 			$('#warning').html("Platform homing. Please wait.");
 			$('#warning').show();
 			$("#togglebutton").hide();
@@ -654,12 +663,11 @@
 			$("#LedOn").hide();
 			$("#pump").hide();
 			$("#whitecure").hide();
-			$.getJSON('../services/customizers/projectCustomizerOnPrinter/display_cure_to_be_hidden.zip.LC%20Magna%20Figurine')
-				.done(function (data) {
-					$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S1');
-					$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S1');
-					$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S1');
-				});
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S1');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S0.2');
+			setTimeout(function () {
+				$.getJSON('../services/customizers/projectCustomizerCureLayer/display_cure_to_be_hidden.zip.LC%20Magna%20Figurine');
+			}, 10000);
 			setTimeout(function () {
 				$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
 				$.getJSON('../services/printers/showBlankScreen/LC%20Magna%20Figurine')
@@ -674,8 +682,10 @@
 						$("#pump").show();
 						$('#warning').html("Layer ready, please remove it from the Vat.");
 					});
-			}, 20000);
+			}, 25000);
 			setTimeout(function () {
+				$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S1');
+				$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0');
 				$('#warning').hide();
 				$("#whitecure").show();
 			}, 25000);
@@ -717,8 +727,8 @@
 		function pbutton() {
 			$('#layover_8').show(0).delay(80).hide(0);
 			$.getJSON('../services/printers/showBlankScreen/LC%20Magna%20Figurine');
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0');
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0')
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0')
 				.done(function (data) {
 					location.href = "pump.html";
 				});
