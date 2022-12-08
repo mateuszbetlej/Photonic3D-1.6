@@ -560,16 +560,15 @@
 			$("#homez").hide();
 			$("#pump").hide();
 			$("#testdisplaybtn").hide();
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P5 S255')
+			$.getJSON('../services/customizers/projectCustomizerOnPrinter/display_test_to_be_hidden.zip.Photocentric%20Magna%20V.2')
 				.done(function (data) {
 					$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S1');
-					$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S0.2');
-					setTimeout(function () {
-						$.getJSON('../services/customizers/projectCustomizerLogo/display_test_to_be_hidden.zip.Photocentric%20Magna%20V.2');
-					}, 10000);
+					$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S1');
+					$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S1');
 				});
 			LT4 = setTimeout(function () {
-				$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P5 S0');
+				$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
+				$.getJSON('../services/printers/showBlankScreen/Photocentric%20Magna%20V.2');
 				$("#togglebutton").show();
 				$("#whitecure").show();
 				$("#LedOn").show();
@@ -577,56 +576,10 @@
 				$("#pump").show();
 				$("#testdisplaybtn").show();
 				$('#warning').hide();
-			}, 25000);
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0');
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S1');
+			}, 20000);
 			clearTimeout(LT1);
 			clearTimeout(LT2);
 			clearTimeout(LT3);
-			no();
-		}
-function whitecurescr() {
-			$('#warning').html("Curing layer. . .");
-			$('#warning').show();
-			$("#homez").hide();
-			$("#togglebutton").hide();
-			$("#testdisplaybtn").hide();
-			$("#calibrate").hide();
-			$("#homebutton").hide();
-			$("#LedOff").hide();
-			$("#LedOn").hide();
-			$("#pump").hide();
-			$("#whitecure").hide();
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S1');
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S0.2');
-			setTimeout(function () {
-				$.getJSON('../services/customizers/projectCustomizerCureLayer/display_cure_to_be_hidden.zip.Photocentric%20Magna%20V.2');
-			}, 10000);
-			setTimeout(function () {
-				$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
-				$.getJSON('../services/printers/showBlankScreen/Photocentric%20Magna%20V.2')
-					.done(function (data) {
-						$("#homez").show();
-						$("#togglebutton").show();
-						$("#testdisplaybtn").show();
-						$("#calibrate").show();
-						$("#homebutton").show();
-						$("#LedOff").show();
-						$("#LedOn").show();
-						$("#pump").show();
-						$('#warning').html("Layer ready, please remove it from the Vat.");
-					});
-			}, 25000);
-			setTimeout(function () {
-				$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S1');
-				$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0');
-				$('#warning').hide();
-				$("#whitecure").show();
-			}, 25000);
-			clearTimeout(LT1);
-			clearTimeout(LT2);
-			clearTimeout(LT3);
-			clearTimeout(LT4);
 			no();
 		}
 
@@ -686,6 +639,51 @@ function whitecurescr() {
 			clearTimeout(LT4);
 			no();
 		}
+
+		function whitecurescr() {
+			$('#warning').html("Curing layer. . .");
+			$('#warning').show();
+			$("#homez").hide();
+			$("#togglebutton").hide();
+			$("#testdisplaybtn").hide();
+			$("#calibrate").hide();
+			$("#homebutton").hide();
+			$("#LedOff").hide();
+			$("#LedOn").hide();
+			$("#pump").hide();
+			$("#whitecure").hide();
+			$.getJSON('../services/customizers/projectCustomizerOnPrinter/display_cure_to_be_hidden.zip.Photocentric%20Magna%20V.2')
+				.done(function (data) {
+					$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S1');
+					$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P1 S1');
+					$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S1');
+				});
+			setTimeout(function () {
+				$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
+				$.getJSON('../services/printers/showBlankScreen/Photocentric%20Magna%20V.2')
+					.done(function (data) {
+						$("#homez").show();
+						$("#togglebutton").show();
+						$("#testdisplaybtn").show();
+						$("#calibrate").show();
+						$("#homebutton").show();
+						$("#LedOff").show();
+						$("#LedOn").show();
+						$("#pump").show();
+						$('#warning').html("Layer ready, please remove it from the Vat.");
+					});
+			}, 20000);
+			setTimeout(function () {
+				$('#warning').hide();
+				$("#whitecure").show();
+			}, 25000);
+			clearTimeout(LT1);
+			clearTimeout(LT2);
+			clearTimeout(LT3);
+			clearTimeout(LT4);
+			no();
+		}
+
 
 		function dowhitecheck() {
 			$('#layover_2').show(0).delay(80).hide(0);
