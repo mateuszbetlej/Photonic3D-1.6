@@ -168,7 +168,7 @@
 				console.log(data);
 				data = sortBy(data, "startTime");
 				$.each(data, function (key, val) {
-					document.getElementById("log").innerHTML += "[" + moment(val.startTime).format("HH:mm:ss[ ]DD-MMM-YY") + "] Started printing: " + val.jobName + "\n&nbsp;&nbsp;&nbsp;&nbsp;Status: " + val.status + "\n";
+					document.getElementById("log").innerHTML += "[" + moment(val.startTime).format("HH:mm:ss[ ]DD-MMM-YY") + "] Started printing: " + val.jobName + "\n&nbsp;&nbsp;&nbsp;&nbsp;Status: " + val.status + " Elapsed Time: " + moment(val.startTime + val.elapsedTime).format("HH:mm:ss[ ]DD-MMM-YY") + "\n";
 				});
 			});
 
