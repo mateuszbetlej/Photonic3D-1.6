@@ -111,7 +111,11 @@
 
 		function home_btn() {
 			setTimeout(function () {
-				location.href = 'index.html';
+				$.getJSON('../services/printers/executeGCode/' + printerName + '/M42 P0 S0');
+				$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0')
+					.done(function (data) {
+						location.href = "index.html";
+					});
 			}, 150);
 			$('#layover_1').show(0).delay(80).hide(0);
 		}
