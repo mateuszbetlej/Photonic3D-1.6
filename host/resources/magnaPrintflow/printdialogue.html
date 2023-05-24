@@ -683,7 +683,7 @@
 		window.ondragstart = function () { return false; }
 
 		function pagelight() {
-			$.getJSON('../services/printers/executeGCode/' + printerName + '/M150 R0 U255 B0');
+			$.getJSON('../services/printers/executeGCode/' + printerName + '/M150 R255 U0 B0');
 			//$.getJSON('../services/printers/executeGCode/' + printerName + '/M106 P0 S0');
 		}
 
